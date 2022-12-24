@@ -1,8 +1,8 @@
 {
   "private": true,
   "scripts": {
-    "dev": "NODE_OPTIONS='--inspect' next dev",
-    "https": "npx local-ssl-proxy --key localhost-key.pem --cert localhost.pem --source 443 --target 3000",
+    "dev": "NODE_OPTIONS='--inspect' next dev -p 3004",
+    "https": "npx local-ssl-proxy --key localhost-key.pem --cert localhost.pem --source 443 --target 3004",
     "build": "next build",
     "start": "next start",
     "svg": "svgr -d src/components/icons src/components/icons/svgs "
