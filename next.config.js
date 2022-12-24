@@ -38,8 +38,28 @@ module.exports = {
               permanent: true,
           },
           {
+              source: '/customer-service',
+              destination: '/customer_service/contact',
+              permanent: true,
+          },
+          {
+              source: '/customer-service/:slug',
+              destination: '/customer_service/:slug',
+              permanent: true,
+          },
+          {
               source: '/legal_area',
               destination: '/legal_area/terms-and-conditions',
+              permanent: true,
+          },
+          {
+              source: '/legal-area',
+              destination: '/legal_area/terms-and-conditions',
+              permanent: true,
+          },
+          {
+              source: '/legal-area/:slug',
+              destination: '/legal_area/:slug',
               permanent: true,
           }
       ]

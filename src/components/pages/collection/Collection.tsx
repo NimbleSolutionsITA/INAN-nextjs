@@ -18,7 +18,7 @@ const Collection = ({collection}: CollectionProps) => {
     return (
         <>
             <Container disableGutters={!isMobile}>
-                <Typography variant="h1">{collection.title.rendered}</Typography>
+                <Typography sx={{marginTop: isMobile ? '21px' : undefined}} variant="h1">{collection.title.rendered}</Typography>
             </Container>
             <Divider />
             {gallery && (
@@ -73,7 +73,7 @@ const Collection = ({collection}: CollectionProps) => {
                                         breakpoint: { max: 735, min: 0 },
                                         items: 2,
 
-                                        partialVisibilityGutter: 40
+                                        partialVisibilityGutter: 20
                                     }
                                 }}
                             >

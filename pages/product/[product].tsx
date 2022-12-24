@@ -79,6 +79,6 @@ export async function getStaticPaths() {
     const paths = await getAllProductsIds();
     return {
         paths,
-        fallback: true,
+        fallback: 'blocking',
     };
 }

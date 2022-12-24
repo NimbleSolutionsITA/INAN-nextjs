@@ -11,6 +11,6 @@ export async function getStaticPaths() {
     const paths = await getAllCollectionIds();
     return {
         paths,
-        fallback: false,
+        fallback: 'blocking',
     };
 }

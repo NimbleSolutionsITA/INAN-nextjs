@@ -27,7 +27,7 @@ const ProductView = ({product, relatedProducts, variations, colors, sizeGuide}: 
     return (
         <div style={{
             width: '100%',
-            paddingTop: height,
+            paddingTop: !isMobile ? height : '21px',
             paddingBottom: '40px'
         }}>
             {currentProduct && variations && isMobile && (

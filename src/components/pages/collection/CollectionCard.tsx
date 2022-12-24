@@ -21,13 +21,13 @@ const CollectionCard = ({product, isMobile, isLookbook}: CollectionCardProps) =>
 
     return (
         <>
-            <img onClick={handleOpen} style={{width: '100%', marginBottom: '-2px', cursor: 'pointer'}} src={product.image.sizes.woocommerce_thumbnail} alt="inan collection" />
+            <img onClick={handleOpen} style={{width: '100%', marginBottom: '-3px', cursor: 'pointer'}} src={product.image.sizes.woocommerce_thumbnail} alt="inan collection" />
             <Divider />
             <Container disableGutters={!isMobile || isLookbook}>
                 <div style={{display: 'flex', padding: '2px 0'}}>
                     <Typography variant="h3" component="div" style={{lineHeight: '21px'}}>{product.product.post_title === 'BAG BELT 4' ? 'bag belt' : product.product.post_title}</Typography>
                     <div style={{flexGrow: 1}} />
-                    {product.product.post_name && <Button style={{padding: 0}} disablePadding disableHover disableGutters lineThrough href={`/shop/${product.product.post_name}`}>{isMobile ? 'View' : 'View Product'}</Button>}
+                    {product.product.post_name && <Button color="secondary" style={{padding: 0}} disablePadding disableHover disableGutters lineThrough href={`/product/${product.product.post_name}`}>{isMobile ? 'View' : 'View Product'}</Button>}
                 </div>
             </Container>
             <Dialog
@@ -42,7 +42,7 @@ const CollectionCard = ({product, isMobile, isLookbook}: CollectionCardProps) =>
                     <div style={{display: 'flex', padding: '2px 0'}}>
                         <Typography variant="h3" component="div" style={{lineHeight: '21px'}}>{product.product.post_title === 'BAG BELT 4' ? 'bag belt' : product.product.post_title}</Typography>
                         <div style={{flexGrow: 1}} />
-                        {product.product.post_name && <Button style={{padding: 0}} disablePadding disableHover disableGutters lineThrough href={`/shop/${product.product.post_name}`}>{isMobile ? 'View' : 'View Product'}</Button>}
+                        {product.product.post_name && <Button style={{padding: 0}} disablePadding disableHover disableGutters lineThrough href={`/product/${product.product.post_name}`}>{isMobile ? 'View' : 'View Product'}</Button>}
                     </div>
                     <Divider />
                 </div>
