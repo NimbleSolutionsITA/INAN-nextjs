@@ -90,7 +90,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(({children, navLinks}, he
                         </IconButton>
                         <div style={{flex: 1}} />
                         <IconButton onClick={handleBagClick} sx={styles.toolbarIcons} color="inherit" aria-label="menu">
-                            <CartIcon color={open ? '#fff' : '#000'} height={20} open={open} items={cartItems.items.length} />
+                            <CartIcon color={open ? '#fff' : '#000'} height={20} open={open} items={cartItems?.items?.length ?? 0} />
                         </IconButton>
                         <IconButton onClick={() => handleOpenDrawer(!open)} edge="end" sx={styles.toolbarIcons} color="inherit" aria-label="menu">
                             <BurgerIcon color={open ? '#fff' : '#000'} open={open}/>
