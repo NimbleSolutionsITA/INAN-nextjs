@@ -11,6 +11,7 @@ export const cartSlice = createSlice({
     initialState,
     reducers: {
         addCartItem: (state, { payload }: PayloadAction<CartItem>) => {
+            console.log(state.items)
             const i = state.items.findIndex((_element: CartItem) => _element.id === payload.id)
             if (i > -1) state.items[i].qty = state.items[i].qty + 1
             else state.items.push(payload)
@@ -30,7 +31,7 @@ export const cartSlice = createSlice({
             return initialState
         },
         initCart: (state) => {
-            state = JSON.parse( localStorage.getItem( 'next-cart' ) || '{}' )
+            state = JSON.parse( localStorage.getItem( 'next-cart' ) || '{ "items": [] }' )
             return state
         },
     },
