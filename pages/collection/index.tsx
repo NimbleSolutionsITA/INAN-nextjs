@@ -6,6 +6,8 @@ import {BasePageProps} from "../../@types";
 import Container from "../../src/components/Container"
 import {useRouter} from "next/router";
 import Collection from "../../src/components/pages/collection/Collection";
+import {useSelector} from "react-redux";
+import {RootState} from "../../src/redux/store";
 
 export type CollectionProps = BasePageProps & CollectionPageProps
 
@@ -15,6 +17,7 @@ const CollectionPage: NextPage<CollectionProps> = ({
    links,
    collections
 }) => {
+    const { isMobile } = useSelector((state: RootState) => state.header);
     const [hideLoader, setHideLoader] = useState(false)
     const router = useRouter()
     const slug = router.query.cslug ?? (links && links[links.length - 1]?.slug)
@@ -29,7 +32,7 @@ const CollectionPage: NextPage<CollectionProps> = ({
         <Layout {...layoutProps} links={links} news={news} activeLink={collection?.slug}>
             <>
                 {!hideLoader && <div style={{zIndex: 9999, width: '100vw', height: '100vh', position: 'fixed', top: 0, backgroundImage: 'url(/loader-collection.gif)', backgroundSize: 'cover', backgroundPosition: 'center'}} />}
-                <Container>
+                <Container disableGutters={isMobile} headerPadding>
                     {collection && <Collection collection={collection} />}
                 </Container>
             </>

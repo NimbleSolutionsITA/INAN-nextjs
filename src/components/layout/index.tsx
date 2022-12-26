@@ -81,6 +81,7 @@ export default function Layout({ header: { siteTitle, favicon, headerMenuItems }
             dispatch(initCart())
             dispatch(initWishlist())
         }
+        dispatch(setHeader({height: getHeaderHeight()}))
         if (!headerEl.current) return; // wait for the elementRef to be available
         const resizeObserver = new ResizeObserver(() => {
             dispatch(setHeader({height: getHeaderHeight()}))

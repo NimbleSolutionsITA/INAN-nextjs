@@ -29,7 +29,7 @@ const styles: {
     [key: string]: SxProps<Theme>
 } = {
     root: {
-        height: 73,
+        minHeight: 73,
         display: "flex",
         flexGrow: 1,
         '& header': {
@@ -61,10 +61,10 @@ const styles: {
 const AppBar = forwardRef<HTMLDivElement, AppBarProps>(({children, navLinks}, headerEl) => {
     const router = useRouter()
     const {
-        header: { open },
+        header: { open, height },
         auth: { authenticated },
-        cart: cartItems,
-        wishlist: wishlistItems
+        cart: {items: cartItems},
+        wishlist: {items: wishlistItems}
     } = useSelector((state: RootState) => state);
     const dispatch = useDispatch()
 
@@ -76,9 +76,9 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(({children, navLinks}, he
         dispatch(setHeader({ open: false }))
         return router.push('/bag')
     }
-
+    console.log({wishlistItems: wishlistItems.length})
     return (
-        <Box sx={styles.root}>
+        <Box sx={{...styles.root, height}}>
             <MuiAppBar ref={headerEl} position="fixed" square elevation={0} sx={{
                 backgroundColor: open ? 'transparent' : '#fff',
                 zIndex: (theme) => theme.zIndex.modal+2,
@@ -90,7 +90,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(({children, navLinks}, he
                         </IconButton>
                         <div style={{flex: 1}} />
                         <IconButton onClick={handleBagClick} sx={styles.toolbarIcons} color="inherit" aria-label="menu">
-                            <CartIcon color={open ? '#fff' : '#000'} height={20} open={open} items={cartItems?.items?.length ?? 0} />
+                            <CartIcon color={open ? '#fff' : '#000'} height={20} open={open} items={cartItems.length} />
                         </IconButton>
                         <IconButton onClick={() => handleOpenDrawer(!open)} edge="end" sx={styles.toolbarIcons} color="inherit" aria-label="menu">
                             <BurgerIcon color={open ? '#fff' : '#000'} open={open}/>
@@ -129,10 +129,10 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(({children, navLinks}, he
                             ))}
                             <ListItem component="div" style={{flexGrow: 1}} />
                             <ListItem component={Link} href="/bag" disableGutters button onClick={() => handleOpenDrawer(false)}>
-                                <ListItemText primary={`SHOPPING BAG (${cartItems})`} />
+                                <ListItemText primary={`SHOPPING BAG (${cartItems.length})`} />
                             </ListItem>
                             <ListItem component={Link} href="/wishlist" disableGutters button onClick={() => handleOpenDrawer(false)}>
-                                <ListItemText primary={`WISHLIST (${wishlistItems})`} />
+                                <ListItemText primary={`WISHLIST (${wishlistItems.length})`} />
                             </ListItem>
                             <ListItem component={Link} href={authenticated ? '/account' : '/login'} disableGutters button onClick={() => handleOpenDrawer(false)}>
                                 <ListItemText primary={authenticated ? 'ACCOUNT' : 'LOGIN / REGISTER'} />
