@@ -55,7 +55,6 @@ const pattern = [UP, DOWN, UP, DOWN];
 const Carousel = ({children}: CarouselProps) => {
     const numItems = Children.count(children);
     const [state, dispatch] = useReducer(reducer, getInitialState(numItems));
-    const [pIdx, setPIdx] = useState(0);
     const loading = useRef(false)
 
     const slide = (dir: Direction) => {
@@ -70,34 +69,9 @@ const Carousel = ({children}: CarouselProps) => {
 
     };
 
-    const handleSwiped = (eventData: SwipeEventData) => {
-        if (eventData.dir === pattern[pIdx]) {
-            // user successfully got to the end of the pattern!
-            if (pIdx + 1 === pattern.length) {
-                setPIdx(pattern.length);
-                slide('NEXT');
-                setTimeout(() => {
-                    setPIdx(0);
-                }, 50);
-            } else {
-                // user is cont. with the pattern
-                setPIdx((i) => (i += 1));
-            }
-        } else {
-            // user got the next pattern step wrong, reset pattern
-            setPIdx(0);
-        }
-    };
-
     const handlers = useSwipeable({
         onSwipedLeft: () => slide('NEXT'),
         onSwipedRight: () => slide('PREV'),
-        onSwiped: handleSwiped,
-        onTouchStartOrOnMouseDown: (({ event }) => {
-            event.preventDefault()
-            event.stopPropagation()
-        }),
-        touchEventOptions: { passive: false },
         swipeDuration: 500,
         preventScrollOnSwipe: true,
         trackMouse: true,

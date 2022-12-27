@@ -8,7 +8,7 @@ import ExpansionPanel from "./ExpansionPanel";
 import {ProductPageProps} from "../../../utils/layout";
 import {ProductAttribute} from "../../../../@types/woocommerce";
 import CheckboxFromControl from "./CheckboxFormControl";
-import {Variation} from "../../../utils/products";
+import {ShopProduct, Variation} from "../../../utils/products";
 import SizeGuide from "./SizeGuide";
 import AddToBag from "./AddToBag";
 import GetNotified from "./GetNotified";
@@ -21,8 +21,8 @@ type ProductSidebarProps = {
     colors: ProductAttribute[]
     isMobile: boolean
     sizeGuide: ProductPageProps['sizeGuide']
-    colorType: string | null
-    setColorType: Dispatch<SetStateAction<string | null>>
+    currentProduct: ShopProduct | Variation
+    setCurrentProduct: Dispatch<SetStateAction<ShopProduct | Variation>>
 }
 
 const Sale = styled.span`
@@ -32,7 +32,7 @@ const AddToBagWrapper = styled.div`
   margin: 40px 0;
 `
 
-const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, colorType, setColorType}: ProductSidebarProps) => {
+const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, currentProduct, setCurrentProduct}: ProductSidebarProps) => {
     const dispatch = useDispatch()
     const leatherOptions = product?.attributes.filter(attribute => attribute.id === 3)[0]?.options
     const colorOptions = product?.attributes.filter(attribute => attribute.id === 4)[0]?.options
@@ -41,24 +41,56 @@ const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, color
     const isOutOfStock = product?.stock_status === 'outofstock'
     const isVeganOption = !!leatherOptions?.filter(opt => opt === 'Vegan')[0]
 
+    const [colorType, setColorType] = useState<string | null>(null)
     const [leatherType, setLeatherType] = useState<string | null>(leatherOptions ? leatherOptions[0] : null)
     const [sizeType, setSizeType] = useState<string | null>( sizeOptions ? sizeOptions[0] : null)
     const [openDetails, setOpenDetails] = useState(false)
 
-    const currentProd = variations?.length ?
-        variations.filter(variation => {
-            return ((!leatherType || variation.attributes?.filter(attr => attr.id === 3 && attr.option === leatherType).length > 0) &&
-                (!sizeType || variation.attributes?.filter(attr => attr.id === 2 && attr.option === sizeType).length > 0))
-        })[0] :
-        product
-    const itemId = currentProd.id
+    const itemId = currentProduct.id
+
+    const availableSizeOptions = product.type === 'variable' ? variations.filter(v => v.stock_status !== 'outofstock').map(v => v.attributes.find(attribute => attribute.id === 2)?.option) : sizeOptions
+    const availableLeatherOptions = product.type === 'variable' ? variations.filter(v => v.stock_status !== 'outofstock').map(v => v.attributes.find(attribute => attribute.id === 3)?.option) : leatherOptions
+    const availableColorOptions = product.type === 'variable' ? variations.filter(v => v.stock_status !== 'outofstock').map(v => v.attributes.find(attribute => attribute.id === 4)?.option) : colorOptions
+
+    const setColor = (color: string) => {
+        setCurrentProduct(variations?.length ?
+            variations.filter(variation => {
+                return ((!leatherType || variation.attributes?.filter(attr => attr.id === 3 && attr.option === leatherType).length > 0) &&
+                    (!sizeType || variation.attributes?.filter(attr => attr.id === 2 && attr.option === sizeType).length > 0) &&
+                    (variation.attributes?.filter(attr => attr.id === 4 && attr.option === color).length > 0))
+            })[0] :
+            product)
+        setColorType(color)
+    }
+
+    const setLeather = (leather: string) => {
+        setCurrentProduct(variations?.length ?
+            variations.filter(variation => {
+                return (variation.attributes?.filter(attr => attr.id === 3 && attr.option === leather).length > 0 &&
+                    (!sizeType || variation.attributes?.filter(attr => attr.id === 2 && attr.option === sizeType).length > 0) &&
+                    (!colorType || variation.attributes?.filter(attr => attr.id === 4 && attr.option === colorType).length > 0))
+            })[0] :
+            product)
+        setLeatherType(leather)
+    }
+
+    const setSize = (size: string) => {
+        setCurrentProduct(variations?.length ?
+            variations.filter(variation => {
+                return ((!leatherType || variation.attributes?.filter(attr => attr.id === 3 && attr.option === leatherType).length > 0) &&
+                    (variation.attributes?.filter(attr => attr.id === 2 && attr.option === size).length > 0) &&
+                    (!colorType || variation.attributes?.filter(attr => attr.id === 4 && attr.option === colorType).length > 0))
+            })[0] :
+            product)
+        setSizeType(size)
+    }
 
     return(
         <>
             <Typography component="h2" variant="h2" style={{paddingTop: '10px'}}>{product?.name}<br />
-                {currentProd.on_sale ?
-                    <><Sale>€ {currentProd.regular_price}</Sale> - € {currentProd.sale_price}</> :
-                    `€ ${currentProd.price}`
+                {currentProduct.on_sale ?
+                    <><Sale>€ {currentProduct.regular_price}</Sale> - € {currentProduct.sale_price}</> :
+                    `€ ${currentProduct.price}`
                 }
                 {isOutOfStock && ' - out of stock'}
                 {isPreOrder && ' - pre-order'}
@@ -76,7 +108,7 @@ const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, color
             {isVeganOption && (
                 <>
                     <ExpansionPanel title={<Typography><b>Leather type :</b> {leatherType || leatherOptions[0]}</Typography>}>
-                        <CheckboxFromControl options={leatherOptions} type={leatherType} setType={setLeatherType} />
+                        <CheckboxFromControl options={leatherOptions} type={leatherType} setType={setLeather} availableOptions={availableLeatherOptions} />
                     </ExpansionPanel>
                     <Divider />
                 </>
@@ -84,14 +116,14 @@ const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, color
             {colorOptions && (
                 <>
                     <ExpansionPanel title={<Typography><b>Color :</b> {colorType || colorOptions[0]}</Typography>}>
-                        <CheckboxFromControl colors={colors} options={colorOptions} type={colorType} setType={setColorType} />
+                        <CheckboxFromControl colors={colors} options={colorOptions} type={colorType} setType={setColor} availableOptions={availableColorOptions} />
                     </ExpansionPanel>
                     <Divider />
                 </>
             )}
             <ExpansionPanel title={<Typography><b>Size :</b> {sizeType || (sizeOptions ? sizeOptions[0] : 'one size')}</Typography>}>
                 {sizeOptions && (
-                    <CheckboxFromControl options={sizeOptions} type={sizeType} setType={setSizeType} />
+                    <CheckboxFromControl options={sizeOptions} type={sizeType} setType={setSize} availableOptions={availableSizeOptions} />
                 )}
                 <div>
                     {product.acf.size && (
