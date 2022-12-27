@@ -29,12 +29,12 @@ const Letter = styled.span<{ delay: number}>`
 
 const Loading = ({children}: {children: JSX.Element}) => {
     const {isFallback} = useRouter()
-    const { isMobile, height, loading } = useSelector((state: RootState) => state.header);
+    const { isMobile, loading } = useSelector((state: RootState) => state.header);
     const letters = '...'.split('')
     return (
         <>
             {(loading || isFallback) && (
-                <div style={{width: !isMobile ? '100%' : undefined, paddingTop: !isMobile ? height : undefined, paddingBottom: '40px'}}>
+                <div style={{width: !isMobile ? '100%' : undefined, paddingBottom: '40px'}}>
                     <div style={{borderBottom: isMobile ? '1px solid black' : undefined}}>
                         <Container style={{display: 'flex'}}>
                             <Waivy>

@@ -16,7 +16,7 @@ type HomeCoversProps = {
 }
 
 const HomeCovers = ({covers, showContent, setShowContent, currentCoverIndex, setCurrentCoverIndex, currentCover }: HomeCoversProps) => {
-    const { height, isMobile } = useSelector((state: RootState) => state.header);
+    const { isMobile } = useSelector((state: RootState) => state.header);
     const dispatch = useDispatch()
     const arrLength = covers?.length;
     const elRefs = useRef<RefObject<HTMLDivElement>[]>([]);
@@ -94,7 +94,6 @@ const HomeCovers = ({covers, showContent, setShowContent, currentCoverIndex, set
                         autoplay={cover.autoplay}
                         mute={cover.mute}
                         isMobile={isMobile}
-                        headerHeight={height}
                         showContent={showContent}
                         setShowContent={setShowContent}
                     />

@@ -7,7 +7,6 @@ import {Dispatch, SetStateAction} from "react";
 type HomeCoverProps = {
     bg: string
     isMobile: boolean
-    headerHeight: number
     bgMobile?: string | undefined
     title: string
     isCover: boolean
@@ -42,7 +41,7 @@ const PortraitImageWrapper = styled.div<{ isMobile: boolean }>`
   }
 `;
 
-const HomeCover = ({headerHeight, bg, bgMobile, title, isCover, isCoverMobile, color, colorMobile, video, loop, autoplay, mute, showContent, setShowContent, isMobile}: HomeCoverProps) => {
+const HomeCover = ({bg, bgMobile, title, isCover, isCoverMobile, color, colorMobile, video, loop, autoplay, mute, showContent, setShowContent, isMobile}: HomeCoverProps) => {
     return(
         <CoverWrapper
             hasBgImage={(isMobile ? isCoverMobile : isCover) || (!!video && showContent)}
@@ -62,7 +61,7 @@ const HomeCover = ({headerHeight, bg, bgMobile, title, isCover, isCoverMobile, c
                     setShowContent={setShowContent}
                 />
             ) : (
-                <Container style={{paddingTop: isMobile ? 0 : headerHeight}}>
+                <Container>
                     {((!isCover && !isMobile) || (!isCoverMobile && isMobile)) && (
                         <>
                             <Typography

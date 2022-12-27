@@ -36,7 +36,7 @@ const Cta = styled.div`
 `;
 
 const CoverContent = ({title, ctaLink, ctaText}: CoverContentProps) => {
-    const { headerColor, headerColorMobile, height, isMobile } = useSelector((state: RootState) => state.header);
+    const { headerColor, headerColorMobile, isMobile } = useSelector((state: RootState) => state.header);
     return (
         <CoverWrapper>
             <Container sx={{color: {xs: headerColorMobile, md: headerColor}}}>
@@ -44,7 +44,7 @@ const CoverContent = ({title, ctaLink, ctaText}: CoverContentProps) => {
                     {title && (
                         <Typography
                             sx={{
-                                marginTop: {xs: '10px%', md: `calc(${height}px + 5px)`},
+                                marginTop: {xs: '10px%', md: '5px'},
                                 textTransform: 'uppercase',
                                 minHeight: '75px',
                                 width: {xs: '100%', md: 'calc(100% - 80px)'},
