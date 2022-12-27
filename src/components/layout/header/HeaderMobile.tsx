@@ -12,25 +12,26 @@ type HeaderMobileProps = {
     links: LinkItem[] | undefined
     news: BasePageProps['news']
     activeLink?: string
+    pageTitle: string | null
 }
 
-const HeaderMobile = forwardRef<HTMLDivElement, HeaderMobileProps>(({  headerMenuItems, links, news, activeLink }, headerEl) => {
-    const { open, sizeGuideOpen } = useSelector((state: RootState) => state.header);
+const HeaderMobile = ({  headerMenuItems, links, news, activeLink, pageTitle }: HeaderMobileProps) => {
+    const { open, sizeGuideOpen, height } = useSelector((state: RootState) => state.header);
     return (
         <AppBar
-            ref={headerEl}
             navLinks={headerMenuItems}
+            height={height}
         >
             {!open && !sizeGuideOpen && (
                 <>
                     <NewsFeed currentNews={news} />
                     {links && activeLink && <Filters activeLink={activeLink} links={links}/>}
-                    <PageTitle />
+                    <PageTitle pageTitle={pageTitle}/>
                 </>
             )}
         </AppBar>
     )
 
-})
+}
 
 export default HeaderMobile

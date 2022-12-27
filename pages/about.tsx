@@ -18,6 +18,13 @@ export type AboutPageProps = BasePageProps & { page: PageProps['page'] & { acf: 
     subtitle: string
 }}}
 
+const pageSettings = {
+    bgColor: '#000',
+    headerColor: '#fff',
+    headerColorMobile: '#fff',
+    pageTitle: 'about'
+}
+
 const AboutPage: NextPage<AboutPageProps> = ({
                                        layoutProps,
                                        news,
@@ -32,7 +39,7 @@ const AboutPage: NextPage<AboutPageProps> = ({
         return () => clearTimeout(timer)
     })
     return (
-        <Layout {...layoutProps} links={links} news={news}>
+        <Layout pageSettings={pageSettings} {...layoutProps} links={links} news={news}>
             <div style={{backgroundColor: '#000'}}>
                 {!hideLoader && <div style={{zIndex: 9999, width: '100vw', height: '100vh', position: 'fixed', top: 0, backgroundImage: 'url(/loader-about.gif)', backgroundSize: 'cover', backgroundPosition: 'center'}} />}
                 {content && (

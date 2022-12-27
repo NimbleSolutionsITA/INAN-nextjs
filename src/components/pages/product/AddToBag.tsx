@@ -22,7 +22,7 @@ type AddToBagProps = {
 const TitleWrapper = styled.div`
   padding: 10px 0;
   border-bottom: 1px solid;
-  margin-bottom: 10px;
+  margin-bottom: 2px;
 `
 
 const AddToBag = ({itemId, name, price, leather, size, color, image, slug, children = 'add to bag'}: AddToBagProps) => {
@@ -50,51 +50,46 @@ const AddToBag = ({itemId, name, price, leather, size, color, image, slug, child
     return (
         <>
             <Button fullWidth onClick={handleAddToCart} color="secondary" variant="contained">{children}</Button>
-            <RightDrawer open={open} setOpen={setOpen}>
-                <TitleWrapper>
-                    <Typography variant="h3" component="h3">Added to shopping bag</Typography>
-                </TitleWrapper>
-                {qty &&
-                    <Grid container spacing={2}>
-                        <Grid style={{paddingTop: 0, marginTop: '-2px'}} item xs={6}>
-                            <img width='100%' src={image} alt={name}/>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Typography><b>{name}</b></Typography>
-                            <Typography><b>€ {price}</b></Typography>
-                            {leather && (
-                                <>
-                                    <br />
-                                    <Typography>Leather Type:</Typography>
-                                    <Typography>{leather}</Typography>
-                                </>
-                            )}
-                            {size && (
-                                <>
-                                    <br />
-                                    <Typography>size:</Typography>
-                                    <Typography>{size}</Typography>
-                                </>
-                            )}
-                            {color && (
-                                <>
-                                    <br />
-                                    <Typography>color:</Typography>
-                                    <Typography>{color}</Typography>
-                                </>
-                            )}
-                            <br />
-                            <Typography>Quantity:</Typography>
-                            <Typography>{qty}</Typography>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Button fullWidth href="/bag" color="secondary" variant="outlined">View bag</Button>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Button fullWidth href="/checkout" color="secondary" variant="contained">Checkout</Button>
-                        </Grid>
+            <RightDrawer open={open} setOpen={setOpen} title="Added to shopping bag">
+                <Grid container spacing={2}>
+                    <Grid style={{paddingTop: 0, marginTop: '-2px'}} item xs={6}>
+                        <img width='100%' src={image} alt={name}/>
                     </Grid>
-                }
+                    <Grid item xs={6}>
+                        <Typography><b>{name}</b></Typography>
+                        <Typography><b>€ {price}</b></Typography>
+                        {leather && (
+                            <>
+                                <br />
+                                <Typography>Leather Type:</Typography>
+                                <Typography>{leather}</Typography>
+                            </>
+                        )}
+                        {size && (
+                            <>
+                                <br />
+                                <Typography>size:</Typography>
+                                <Typography>{size}</Typography>
+                            </>
+                        )}
+                        {color && (
+                            <>
+                                <br />
+                                <Typography>color:</Typography>
+                                <Typography>{color}</Typography>
+                            </>
+                        )}
+                        <br />
+                        <Typography>Quantity:</Typography>
+                        <Typography>{qty}</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Button fullWidth href="/bag" color="secondary" variant="outlined">View bag</Button>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Button fullWidth href="/checkout" color="secondary" variant="contained">Checkout</Button>
+                    </Grid>
+                </Grid>
             </RightDrawer>
         </>
     )

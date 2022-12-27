@@ -7,11 +7,18 @@ import ResetPassword from "../src/components/pages/reset-password/ResetPassword"
 
 export type ResetPasswordPageProps = BasePageProps
 
+const pageSettings = {
+    bgColor: '#fff',
+    headerColor: '#000',
+    headerColorMobile: '#000',
+    pageTitle: 'account'
+}
+
 const ResetPasswordPage: NextPage<ResetPasswordPageProps> = ({
                                                 layoutProps,
                                                 news,
                                             }) => (
-    <Layout {...layoutProps} news={news}>
+    <Layout {...layoutProps} pageSettings={pageSettings} news={news}>
         <Container headerPadding >
             <ResetPassword />
         </Container>

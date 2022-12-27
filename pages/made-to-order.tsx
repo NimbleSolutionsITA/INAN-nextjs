@@ -7,7 +7,7 @@ import Container from '../src/components/Container';
 import MultiCarousel from "../src/components/MultiCarousel";
 const _ = require('lodash');
 
-export type AboutPageProps = BasePageProps & { page: PageProps['page'] & { acf: {
+export type MadeToOrderPageProps = BasePageProps & { page: PageProps['page'] & { acf: {
     color: string
             gallery: ACFMedia[]
             body1: string
@@ -15,7 +15,14 @@ export type AboutPageProps = BasePageProps & { page: PageProps['page'] & { acf: 
             body2: string
 }}}
 
-const AboutPage: NextPage<AboutPageProps> = ({
+const pageSettings = {
+    bgColor: '#fff',
+    headerColor: '#000',
+    headerColorMobile: '#000',
+    pageTitle: 'made to order'
+}
+
+const MadeToOrderPage: NextPage<MadeToOrderPageProps> = ({
    layoutProps,
    news,
    page: {acf: {gallery, body1, body2, email}},
@@ -23,7 +30,7 @@ const AboutPage: NextPage<AboutPageProps> = ({
 }) => {
     const body = _.template(body1)
     return (
-        <Layout {...layoutProps} links={links} news={news}>
+        <Layout {...layoutProps} pageSettings={pageSettings} links={links} news={news}>
             <Container headerPadding>
                 {gallery && (
                     <Grid container justifyContent="center">
@@ -46,7 +53,7 @@ const AboutPage: NextPage<AboutPageProps> = ({
     )
 }
 
-export default AboutPage
+export default MadeToOrderPage
 
 export async function getStaticProps() {
     const [

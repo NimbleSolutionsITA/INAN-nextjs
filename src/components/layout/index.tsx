@@ -1,10 +1,10 @@
 import Header from './header'
 import Footer from './footer'
 import Head from "next/head";
-import {BasePageProps, LinkItem} from "../../../@types";
+import {BasePageProps, LinkItem, PageSettings} from "../../../@types";
 import {Router, useRouter} from "next/router";
 import Loading from "../Loading";
-import {useEffect, useRef} from "react";
+import {useEffect,} from "react";
 import {useDispatch} from "react-redux";
 import {setHeader} from "../../redux/headerSlice";
 import {initCart} from "../../redux/cartSlice";
@@ -22,42 +22,21 @@ type MenuItem = {
     url: string
 }
 
-type PageLayoutProps = BasePageProps['layoutProps'] & { children: JSX.Element, news: BasePageProps['news'], links?: LinkItem[], activeLink?: string }
-
-const darkMode = {bgColor: '#000', headerColor: '#fff', headerColorMobile: '#fff'}
-const lightMode = {bgColor: '#fff', headerColor: '#000', headerColorMobile: '#000'}
-
-const headerSettingsMap: {[key: string]: Partial<HeaderType>} = {
-    '/':                        {pageTitle: null, ...lightMode, bgColor: 'transparent'},
-    '/account':                 {pageTitle: 'account', ...lightMode},
-    '/made-to-order':           {pageTitle: 'made to order', ...lightMode},
-    '/about':                   {pageTitle: 'about', ...darkMode},
-    '/stockists':               {pageTitle: 'stockists', ...lightMode},
-    '/bag':                     {pageTitle: 'shopping bag', ...lightMode},
-    '/wishlist':                {pageTitle: 'wishlist', ...lightMode},
-    '/acccustomer-service':     {pageTitle: 'customer service', ...lightMode},
-    '/legal-area':              {pageTitle: 'legal area', ...lightMode},
-    '/checkout':                {pageTitle: 'checkout', ...lightMode},
-    default:                    {pageTitle: null, ...lightMode}
+type PageLayoutProps = BasePageProps['layoutProps'] & {
+    children: JSX.Element,
+    news: BasePageProps['news'],
+    links?: LinkItem[],
+    activeLink?: string
+    pageSettings: PageSettings
 }
 
-export default function Layout({ header: { siteTitle, favicon, headerMenuItems }, footer, news, children, links, activeLink }: PageLayoutProps) {
+
+export default function Layout({ header: { siteTitle, favicon, headerMenuItems }, footer, news, children, links, activeLink, pageSettings }: PageLayoutProps) {
     const router = useRouter()
-    const headerEl = useRef<HTMLInputElement>(null);
     const dispatch = useDispatch()
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
-    const getHeaderHeight = () => {
-        if(headerEl.current?.offsetHeight) {
-            if(isMobile) {
-                document.documentElement.style.scrollPaddingTop = `${headerEl.current.offsetHeight}px`
-            }
-            return headerEl.current.offsetHeight - 2
-        }
-        return 100
-    }
 
     useEffect(() => {
         Router.events.on('routeChangeStart', () => dispatch(setHeader({loading: true})));
@@ -71,9 +50,7 @@ export default function Layout({ header: { siteTitle, favicon, headerMenuItems }
     }, [Router.events]);
 
     useEffect( () => {
-        if ( typeof window !== "undefined" ) {
-            dispatch(setHeader(headerSettingsMap[router.pathname] ?? headerSettingsMap.default))
-        }
+        dispatch(setHeader(pageSettings))
     }, [router.pathname] );
 
     useEffect( () => {
@@ -81,19 +58,11 @@ export default function Layout({ header: { siteTitle, favicon, headerMenuItems }
             dispatch(initCart())
             dispatch(initWishlist())
         }
-        dispatch(setHeader({height: getHeaderHeight()}))
-        if (!headerEl.current) return; // wait for the elementRef to be available
-        const resizeObserver = new ResizeObserver(() => {
-            dispatch(setHeader({height: getHeaderHeight()}))
-        });
-        resizeObserver.observe(headerEl.current);
-        return () => resizeObserver.disconnect();
     }, [] );
 
     useEffect(() => {
-        dispatch(setHeader({isMobile}))
+        dispatch(setHeader({isMobile, height: isMobile ? (pageSettings.pageTitle || links ? 94 : 74) : (103 + (pageSettings.pageTitle ? 65 : 0) + (links ? 20 : 0))}))
     }, [isMobile]);
-
 
     return (
         <>
@@ -102,7 +71,7 @@ export default function Layout({ header: { siteTitle, favicon, headerMenuItems }
                 <link rel="icon" href={ favicon || '/favicon.ico' }/>
             </Head>
             <main>
-                <Header ref={headerEl} headerMenuItems={headerMenuItems} links={links} activeLink={activeLink} news={news} />
+                <Header pageTitle={pageSettings.pageTitle} headerMenuItems={headerMenuItems} links={links} activeLink={activeLink} news={news} />
                 <div style={{minHeight: '100vh', backgroundColor: router.pathname === '/about' ? '#000' : undefined}}>
                     <Loading>
                         {children}

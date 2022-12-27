@@ -1,6 +1,6 @@
 import React, {useState} from "react"
 import styled from "@emotion/styled"
-import {List, ListItem, ListItemText, Typography} from "@mui/material";
+import {List, ListItem, ListItemText} from "@mui/material";
 import { LinkItem} from "../../../../@types";
 import Container from "../../Container";
 import Link from "../../Link";
@@ -94,23 +94,13 @@ const Filters = ({links, activeLink}: FiltersProps) => {
                                 {isCollection ? 'PAST COLLECTIONS' : 'FILTER'}
                             </Link>
                         </Container>
-                        <RightDrawer open={open} setOpen={setOpen}>
+                        <RightDrawer open={open} setOpen={setOpen} title={isCollection ? 'PAST COLLECTIONS' : 'FILTER'}>
                             <List style={{
                                 width: '90%',
                                 display: 'flex',
                                 flexDirection: 'column',
                                 height: '100%',
                             }}>
-                                {(!isCollection || links.length > 2) && (
-                                    <ListItem
-                                        component={Typography}
-                                        disableGutters
-                                    >
-                                        <ListItemText primaryTypographyProps={{variant: 'h5'}}>
-                                            <b>{isCollection ? 'PAST COLLECTIONS' : 'FILTER'}</b>
-                                        </ListItemText>
-                                    </ListItem>
-                                )}
                                 {FilterLinks}
                             </List>
                         </RightDrawer>

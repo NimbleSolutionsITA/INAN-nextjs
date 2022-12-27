@@ -10,12 +10,11 @@ type MuiContainerProps = {
 } & Partial<ContainerProps>
 
 const Container = (props: MuiContainerProps) => {
-    const { isMobile, height } = useSelector((state: RootState) => state.header);
+    const { isMobile } = useSelector((state: RootState) => state.header);
     const {headerPadding, children, noPaddingBottom, ...rest} = props
     return (
         <div style={headerPadding ? {
             width: isMobile ? undefined : '100%',
-            paddingTop: isMobile ? undefined : height,
             paddingBottom: noPaddingBottom ? 0 : '40px'
         } : {}}>
             <MuiContainer fixed maxWidth="xl" {...rest}>

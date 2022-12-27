@@ -8,11 +8,11 @@ import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../../redux/store";
 import {resetAuth} from "../../../redux/authSlice";
 
-const PageTitle = () => {
+const PageTitle = ({pageTitle}: { pageTitle: string | null }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const {
-        auth: { authenticated }, cart: {items: cart}, wishlist: {items: wishlist}, header: {pageTitle, headerColor, bgColor, loading}
+        auth: { authenticated }, cart: {items: cart}, wishlist: {items: wishlist}, header: {headerColor, bgColor, loading}
     } = useSelector((state: RootState) => state);
     const dispatch = useDispatch()
     const router = useRouter()

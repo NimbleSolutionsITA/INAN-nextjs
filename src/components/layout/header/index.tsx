@@ -11,16 +11,17 @@ type HeaderProps = {
     links: LinkItem[] | undefined
     news: HomeProps['news']
     activeLink?: string
+    pageTitle: string | null
 }
 
-const Header = forwardRef<HTMLDivElement, HeaderProps>(({ headerMenuItems, links, news, activeLink }, headerEl) => {
+const Header = ({ headerMenuItems, links, news, activeLink, pageTitle }: HeaderProps) => {
     const { isMobile } =  useSelector((state: RootState) => state.header);
 
     return isMobile ? (
-        <HeaderMobile ref={headerEl} headerMenuItems={headerMenuItems} activeLink={activeLink} links={links} news={news}/>
+        <HeaderMobile headerMenuItems={headerMenuItems} activeLink={activeLink} links={links} news={news} pageTitle={pageTitle}/>
     ) : (
-        <HeaderDesktop ref={headerEl} headerMenuItems={headerMenuItems} activeLink={activeLink} links={links} news={news}/>
+        <HeaderDesktop headerMenuItems={headerMenuItems} activeLink={activeLink} links={links} news={news} pageTitle={pageTitle}/>
     )
-})
+}
 
 export default Header;

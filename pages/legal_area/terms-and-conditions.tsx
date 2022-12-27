@@ -8,6 +8,13 @@ export type TermsAndConditionsPageProps = BasePageProps & { page: PageProps['pag
 
 }}}
 
+const pageSettings = {
+    bgColor: '#fff',
+    headerColor: '#000',
+    headerColorMobile: '#000',
+    pageTitle: 'legal area'
+}
+
 const TermsAndConditionsPage: NextPage<TermsAndConditionsPageProps> = ({
                                        layoutProps,
                                        news,
@@ -15,7 +22,7 @@ const TermsAndConditionsPage: NextPage<TermsAndConditionsPageProps> = ({
                                        links
                                    }) => {
     return (
-        <Layout {...layoutProps} links={links} news={news}>
+        <Layout {...layoutProps} pageSettings={pageSettings} links={links} news={news}>
             <LegalAreaLayout content={content} />
         </Layout>
     )

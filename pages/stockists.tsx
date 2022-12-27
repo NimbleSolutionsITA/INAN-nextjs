@@ -9,19 +9,25 @@ import Button from "../src/components/Button"
 
 export type StockistsPageProps = BasePageProps & { stockists: StockistsPostACF[]}
 
+const pageSettings = {
+    bgColor: '#fff',
+    headerColor: '#000',
+    headerColorMobile: '#000',
+    pageTitle: 'stockists'
+}
+
 const StockistsPage: NextPage<StockistsPageProps> = ({
    layoutProps,
    news,
    stockists: shops,
    links
 }) => {
-    console.log(shops)
     const [current, setCurrent] = useState('')
     const cities = shops?.map(s => {
         return s.acf.city
     }).filter((v, i, a) => a.indexOf(v) === i)
     return (
-        <Layout {...layoutProps} links={links} news={news}>
+        <Layout {...layoutProps} pageSettings={pageSettings} links={links} news={news}>
             <Container headerPadding>
                 {shops && (
                     <>

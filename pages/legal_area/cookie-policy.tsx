@@ -8,6 +8,13 @@ export type CookiePolicyPageProps = BasePageProps & { page: PageProps['page'] & 
 
 }}}
 
+const pageSettings = {
+    bgColor: '#fff',
+    headerColor: '#000',
+    headerColorMobile: '#000',
+    pageTitle: 'legal area'
+}
+
 const CookiePolicyPage: NextPage<CookiePolicyPageProps> = ({
                                        layoutProps,
                                        news,
@@ -15,7 +22,7 @@ const CookiePolicyPage: NextPage<CookiePolicyPageProps> = ({
                                        links
                                    }) => {
     return (
-        <Layout {...layoutProps} links={links} news={news}>
+        <Layout {...layoutProps} pageSettings={pageSettings} links={links} news={news}>
             <LegalAreaLayout content={content} />
         </Layout>
     )

@@ -6,6 +6,12 @@ import {Divider, Typography} from "@mui/material";
 import Container from "../src/components/Container";
 import {useRouter} from "next/router";
 
+const pageSettings = {
+    bgColor: '#fff',
+    headerColor: '#000',
+    headerColorMobile: '#000',
+    pageTitle: null
+}
 
 const FourOFourPage: NextPage<BasePageProps> = ({
                                                              layoutProps,
@@ -14,7 +20,7 @@ const FourOFourPage: NextPage<BasePageProps> = ({
                                                          }) => {
     const router = useRouter()
     return (
-        <Layout {...layoutProps} links={links} news={news}>
+        <Layout pageSettings={pageSettings} {...layoutProps} links={links} news={news}>
             <Container headerPadding>
                 <Typography style={{color: 'red'}} variant="h1">ERROR 404</Typography>
                 <Divider />

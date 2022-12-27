@@ -71,10 +71,7 @@ const GetNotified = ({ isMobile, leatherType, colorType, sizeType, itemId, produ
     return (
         <>
             <Button fullWidth color="secondary" variant="contained" onClick={() => setOpenPreOrder(true)}>get notified</Button>
-            <RightDrawer open={openPreOrder} setOpen={setOpenPreOrder}>
-                <GetNotifiedTitleWrapper>
-                    <Typography variant="h3" component="h3">Get notified</Typography>
-                </GetNotifiedTitleWrapper>
+            <RightDrawer open={openPreOrder} setOpen={setOpenPreOrder} title="Get notified">
                 {emailSuccess ? (
                     <>
                         <Typography variant={isMobile ? 'h1' : 'h2'} component="h3">Thank you</Typography>

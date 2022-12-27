@@ -25,6 +25,7 @@ export type Cart = CartItem[] | undefined
 
 export type Header = {
     height: number
+    heightMobile: number
     headerColorMobile: string
     headerColor: string
     open: boolean
@@ -54,4 +55,11 @@ export type Auth = {
     authenticated: boolean
     authenticating: boolean
     user: User | undefined
+}
+
+export type PageSettings = {
+    bgColor: string,
+    headerColor: string,
+    headerColorMobile: string,
+    pageTitle: string | null
 }

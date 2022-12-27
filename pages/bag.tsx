@@ -6,11 +6,20 @@ import Bag from "../src/components/pages/bag/Bag";
 
 export type BagPageProps = BasePageProps
 
+const pageSettings = {
+    bgColor: '#fff',
+    headerColor: '#000',
+    headerColorMobile: '#000',
+    height: 168,
+    heightMobile: 94,
+    pageTitle: 'shopping bag'
+}
+
 const BagPage: NextPage<BagPageProps> = ({
                                        layoutProps,
                                        news,
                                    }) => (
-    <Layout {...layoutProps} news={news}>
+    <Layout {...layoutProps} pageSettings={pageSettings} news={news}>
         <Bag />
     </Layout>
 )

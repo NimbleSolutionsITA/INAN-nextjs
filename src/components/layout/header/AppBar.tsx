@@ -23,13 +23,13 @@ import {setHeader} from "../../../redux/headerSlice";
 type AppBarProps = {
     children: ReactNode,
     navLinks: string | MenuItem[]
+    height?: number
 }
 
 const styles: {
     [key: string]: SxProps<Theme>
 } = {
     root: {
-        minHeight: 73,
         display: "flex",
         flexGrow: 1,
         '& header': {
@@ -58,10 +58,10 @@ const styles: {
     }
 }
 
-const AppBar = forwardRef<HTMLDivElement, AppBarProps>(({children, navLinks}, headerEl) => {
+const AppBar = ({children, navLinks, height = 94}: AppBarProps) => {
     const router = useRouter()
     const {
-        header: { open, height },
+        header: { open },
         auth: { authenticated },
         cart: {items: cartItems},
         wishlist: {items: wishlistItems}
@@ -76,10 +76,10 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(({children, navLinks}, he
         dispatch(setHeader({ open: false }))
         return router.push('/bag')
     }
-    console.log({wishlistItems: wishlistItems.length})
+
     return (
         <Box sx={{...styles.root, height}}>
-            <MuiAppBar ref={headerEl} position="fixed" square elevation={0} sx={{
+            <MuiAppBar position="fixed" square elevation={0} sx={{
                 backgroundColor: open ? 'transparent' : '#fff',
                 zIndex: (theme) => theme.zIndex.modal+2,
             }}>
@@ -150,6 +150,6 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(({children, navLinks}, he
             )}
         </Box>
     );
-});
+}
 
 export default AppBar;

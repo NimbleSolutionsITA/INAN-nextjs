@@ -9,6 +9,13 @@ import ProductView from "../../src/components/pages/product/ProductView";
 
 export type ProductProps = BasePageProps & ProductPageProps
 
+const pageSettings = {
+    bgColor: '#fff',
+    headerColor: '#000',
+    headerColorMobile: '#000',
+    pageTitle: null
+}
+
 const Product: NextPage<ProductProps> = ({
     layoutProps,
     productCategories,
@@ -23,6 +30,7 @@ const Product: NextPage<ProductProps> = ({
     return (
         <Layout
             key={router.asPath}
+            pageSettings={pageSettings}
             {...layoutProps}
             links={productCategories.map(productCategory => ({
                 id: productCategory.id,

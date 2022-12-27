@@ -13,7 +13,7 @@ import {RootState} from "../../../redux/store";
 type GridViewProps = { products: ShopPageProps['products'], productCategories: ShopPageProps['productCategories']}
 
 const GridView = ({products, productCategories}: GridViewProps) => {
-    const { height, isMobile} = useSelector((state: RootState) => state.header);
+    const { isMobile} = useSelector((state: RootState) => state.header);
     const router = useRouter()
 
     const currentCategorySlug = router.query.category || 'view-all'
@@ -42,7 +42,7 @@ const GridView = ({products, productCategories}: GridViewProps) => {
     );
 
     return (
-        <div style={{width: !isMobile ? '100%' : undefined, paddingTop: !isMobile ? height : undefined, paddingBottom: '40px'}}>
+        <div style={{width: !isMobile ? '100%' : undefined, paddingBottom: '40px'}}>
             <div style={{borderBottom: isMobile ? '1px solid black' : undefined}}>
                 <Container style={{display: 'flex'}}>
                     <Typography style={{width: '100%', textTransform: 'uppercase', borderBottom: !isMobile ? '1px solid' : undefined}} variant="h1" component="h1">{category?.name}</Typography>

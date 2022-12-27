@@ -7,11 +7,18 @@ import Container from "../src/components/Container"
 
 export type NextPageProps = BasePageProps
 
+const pageSettings = {
+    bgColor: '#fff',
+    headerColor: '#000',
+    headerColorMobile: '#000',
+    pageTitle: 'account'
+}
+
 const LoginPage: NextPage<NextPageProps> = ({
    layoutProps,
    news,
 }) => (
-    <Layout {...layoutProps} news={news}>
+    <Layout {...layoutProps} pageSettings={pageSettings} news={news}>
         <Container headerPadding >
             <Login />
         </Container>

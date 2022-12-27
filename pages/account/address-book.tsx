@@ -7,6 +7,13 @@ import AddressBook from "../../src/components/pages/account/AddressBook";
 import {getCountries} from "../../src/utils/shop";
 import {Country} from "../../@types/woocommerce";
 
+const pageSettings = {
+    bgColor: '#fff',
+    headerColor: '#000',
+    headerColorMobile: '#000',
+    pageTitle: 'account'
+}
+
 export type AddressBookPageProps = BasePageProps & { countries: Country[]}
 
 const AddressBookPage: NextPage<AddressBookPageProps> = ({
@@ -15,7 +22,7 @@ const AddressBookPage: NextPage<AddressBookPageProps> = ({
     countries
 }) => {
     return (
-        <Layout {...layoutProps} news={news}>
+        <Layout {...layoutProps} pageSettings={pageSettings} news={news}>
            <AccountLayout>
                <AddressBook countries={countries} />
            </AccountLayout>

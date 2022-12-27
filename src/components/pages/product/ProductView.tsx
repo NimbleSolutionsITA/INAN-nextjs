@@ -20,14 +20,13 @@ type ProductViewProps = {
     variations: ProductPageProps['variations']
 }
 const ProductView = ({product, relatedProducts, variations, colors, sizeGuide}: ProductViewProps) => {
-    const { height, isMobile } = useSelector((state: RootState) => state.header);
+    const { isMobile } = useSelector((state: RootState) => state.header);
     const [colorType, setColorType] = useState<string | null>(null)
     const currentProduct = product
     const {video, video_cover: videoCover} = product.acf
     return (
         <div style={{
             width: '100%',
-            paddingTop: !isMobile ? height : '21px',
             paddingBottom: '40px'
         }}>
             {currentProduct && variations && isMobile && (

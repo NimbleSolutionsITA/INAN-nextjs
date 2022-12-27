@@ -8,6 +8,13 @@ import HomeCovers from "../src/components/pages/home/HomeCovers";
 
 export type HomeProps = BasePageProps & HomePageProps
 
+const pageSettings = {
+    bgColor: '#fff',
+    headerColor: '#000',
+    headerColorMobile: '#000',
+    pageTitle: null
+}
+
 const Home: NextPage<HomeProps> = ({
    layoutProps,
    news,
@@ -18,7 +25,7 @@ const Home: NextPage<HomeProps> = ({
     const [currentCoverIndex, setCurrentCoverIndex] = useState(0);
     const currentCover = covers[currentCoverIndex]
     return (
-        <Layout {...layoutProps} links={links} news={news}>
+        <Layout {...layoutProps} pageSettings={pageSettings} links={links} news={news}>
             <div style={{position: 'relative'}}>
                 {showContent && (
                     <CoverContent
@@ -54,7 +61,7 @@ export async function getStaticProps() {
     props: {
         layoutProps,
         covers,
-        news
+        news,
     },
     revalidate: 10
   }

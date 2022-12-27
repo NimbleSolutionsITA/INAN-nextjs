@@ -9,6 +9,13 @@ import Collection from "../../src/components/pages/collection/Collection";
 import {useSelector} from "react-redux";
 import {RootState} from "../../src/redux/store";
 
+const pageSettings = {
+    bgColor: '#fff',
+    headerColor: '#000',
+    headerColorMobile: '#000',
+    pageTitle: null
+}
+
 export type CollectionProps = BasePageProps & CollectionPageProps
 
 const CollectionPage: NextPage<CollectionProps> = ({
@@ -29,7 +36,7 @@ const CollectionPage: NextPage<CollectionProps> = ({
         return () => clearTimeout(timer)
     })
     return (
-        <Layout {...layoutProps} links={links} news={news} activeLink={collection?.slug}>
+        <Layout {...layoutProps} pageSettings={pageSettings} links={links} news={news} activeLink={collection?.slug}>
             <>
                 {!hideLoader && <div style={{zIndex: 9999, width: '100vw', height: '100vh', position: 'fixed', top: 0, backgroundImage: 'url(/loader-collection.gif)', backgroundSize: 'cover', backgroundPosition: 'center'}} />}
                 <Container disableGutters={isMobile} headerPadding>

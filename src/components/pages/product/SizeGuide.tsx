@@ -61,7 +61,7 @@ const SizeGuide = ({sizes}: SizeGuideProps) => {
                             <br />
                             <br />
                             {sizes.map(row => (
-                                <>
+                                <div key={row.id}>
                                     <Divider />
                                     <Typography variant="h2">{row.title.rendered}</Typography>
                                     <Divider />
@@ -73,7 +73,7 @@ const SizeGuide = ({sizes}: SizeGuideProps) => {
                                     <Typography><b>Matching size:</b> {row.acf.matching_size}</Typography>
                                     <br />
                                     <br />
-                                </>
+                                </div>
                             ))}
                         </>
                     ) : (

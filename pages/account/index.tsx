@@ -5,6 +5,13 @@ import {BasePageProps} from "../../@types";
 import AccountLayout from "../../src/components/pages/account/AccountLayout";
 import PersonalInfo from "../../src/components/pages/account/PersonalInfo";
 
+const pageSettings = {
+    bgColor: '#fff',
+    headerColor: '#000',
+    headerColorMobile: '#000',
+    pageTitle: 'account'
+}
+
 export type AccountPageProps = BasePageProps
 
 const AccountPage: NextPage<AccountPageProps> = ({
@@ -12,7 +19,7 @@ const AccountPage: NextPage<AccountPageProps> = ({
                                        news,
                                    }) => {
     return (
-        <Layout {...layoutProps} news={news}>
+        <Layout {...layoutProps} pageSettings={pageSettings} news={news}>
            <AccountLayout>
                 <PersonalInfo />
            </AccountLayout>

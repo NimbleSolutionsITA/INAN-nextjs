@@ -8,10 +8,11 @@ const initialState: Header = {
     bgColor: '#fff',
     open: false,
     sizeGuideOpen: false,
-    height: 70,
+    height: 168,
+    heightMobile: 94,
     pageTitle: null,
     isMobile: false,
-    loading: false
+    loading: false,
 }
 
 export const headerSlice = createSlice({

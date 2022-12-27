@@ -9,6 +9,13 @@ import {useRouter} from "next/router";
 
 export type ShopProps = BasePageProps & ShopPageProps
 
+const pageSettings = {
+    bgColor: '#fff',
+    headerColor: '#000',
+    headerColorMobile: '#000',
+    pageTitle: null
+}
+
 const Shop: NextPage<ShopProps> = ({
    layoutProps,
    productCategories,
@@ -19,6 +26,7 @@ const Shop: NextPage<ShopProps> = ({
     return (
         <Layout
             key={router.asPath}
+            pageSettings={pageSettings}
             {...layoutProps}
             links={productCategories.map(productCategory => ({
                 id: productCategory.id,

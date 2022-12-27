@@ -8,6 +8,13 @@ export type PrivacyPolicyPageProps = BasePageProps & { page: PageProps['page'] &
 
 }}}
 
+const pageSettings = {
+    bgColor: '#fff',
+    headerColor: '#000',
+    headerColorMobile: '#000',
+    pageTitle: 'legal area'
+}
+
 const PrivacyPolicyPage: NextPage<PrivacyPolicyPageProps> = ({
                                        layoutProps,
                                        news,
@@ -15,7 +22,7 @@ const PrivacyPolicyPage: NextPage<PrivacyPolicyPageProps> = ({
                                        links
                                    }) => {
     return (
-        <Layout {...layoutProps} links={links} news={news}>
+        <Layout {...layoutProps} pageSettings={pageSettings} links={links} news={news}>
             <LegalAreaLayout content={content} />
         </Layout>
     )

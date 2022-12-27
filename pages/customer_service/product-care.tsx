@@ -4,9 +4,14 @@ import {getLayoutProps, getPageProps, PageProps} from "../../src/utils/layout";
 import {BasePageProps} from "../../@types";
 import CustomerServiceLayout from "../../src/components/pages/customer-service/CustomerServiceLayout";
 
-export type ProductCarePageProps = BasePageProps & { page: PageProps['page'] & { acf: {
+export type ProductCarePageProps = BasePageProps & { page: PageProps['page'] & { acf: { }}}
 
-}}}
+const pageSettings = {
+    bgColor: '#fff',
+    headerColor: '#000',
+    headerColorMobile: '#000',
+    pageTitle: 'customer service'
+}
 
 const ProductCarePage: NextPage<ProductCarePageProps> = ({
                                        layoutProps,
@@ -15,7 +20,7 @@ const ProductCarePage: NextPage<ProductCarePageProps> = ({
                                        links
                                    }) => {
     return (
-        <Layout {...layoutProps} links={links} news={news}>
+        <Layout {...layoutProps} pageSettings={pageSettings} links={links} news={news}>
             <CustomerServiceLayout content={content} />
         </Layout>
     )

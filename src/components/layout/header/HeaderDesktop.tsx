@@ -15,6 +15,7 @@ type HeaderDesktopProps = {
     news: BasePageProps['news']
     headerMenuItems: BasePageProps['layoutProps']['header']['headerMenuItems']
     activeLink?: string
+    pageTitle: string | null
 }
 
 const HeaderWrapper = styled.div<{color: string, bgColor: string}>`
@@ -26,23 +27,25 @@ const HeaderWrapper = styled.div<{color: string, bgColor: string}>`
   background-color: ${({bgColor}) => bgColor};
 `;
 
-const HeaderDesktop = forwardRef<HTMLDivElement, HeaderDesktopProps>(({ links, news, headerMenuItems, activeLink }, headerEl) => {
-    const { headerColor, sizeGuideOpen, open, bgColor } = useSelector((state: RootState) => state.header);
+const HeaderDesktop = ({ links, news, headerMenuItems, activeLink, pageTitle }: HeaderDesktopProps) => {
+    const { headerColor, sizeGuideOpen, open, bgColor, height } = useSelector((state: RootState) => state.header);
     return (
-        <HeaderWrapper ref={headerEl} color={headerColor} bgColor={bgColor}>
-            <Container>
-                <NewsFeed  currentNews={news}/>
-                <LogoBar />
-                {!sizeGuideOpen && (
-                    <>
-                        <NavBar headerMenuItems={headerMenuItems} />
-                        {links && <Filters activeLink={activeLink} links={links} />}
-                        {!open && <PageTitle />}
-                    </>
-                )}
-            </Container>
-        </HeaderWrapper>
+        <div style={{height, width: '100%'}}>
+            <HeaderWrapper color={headerColor} bgColor={bgColor}>
+                <Container>
+                    <NewsFeed  currentNews={news}/>
+                    <LogoBar />
+                    {!sizeGuideOpen && (
+                        <>
+                            <NavBar headerMenuItems={headerMenuItems} />
+                            {links && <Filters activeLink={activeLink} links={links} />}
+                            {!open && <PageTitle pageTitle={pageTitle} />}
+                        </>
+                    )}
+                </Container>
+            </HeaderWrapper>
+        </div>
     )
-})
+}
 
 export default HeaderDesktop

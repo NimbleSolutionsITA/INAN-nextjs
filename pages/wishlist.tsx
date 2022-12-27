@@ -6,11 +6,18 @@ import Wishlist from "../src/components/pages/wishlist/Wishlist";
 
 export type WishlistPageProps = BasePageProps
 
+const pageSettings = {
+    bgColor: '#fff',
+    headerColor: '#000',
+    headerColorMobile: '#000',
+    pageTitle: 'shopping bag'
+}
+
 const WishlistPage: NextPage<WishlistPageProps> = ({
                                        layoutProps,
                                        news,
                                    }) => (
-    <Layout {...layoutProps} news={news}>
+    <Layout {...layoutProps} pageSettings={pageSettings} news={news}>
         <Wishlist />
     </Layout>
 )

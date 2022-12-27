@@ -7,11 +7,18 @@ import Register from "../src/components/pages/register/Register";
 
 export type NextPageProps = BasePageProps
 
+const pageSettings = {
+    bgColor: '#fff',
+    headerColor: '#000',
+    headerColorMobile: '#000',
+    pageTitle: 'account'
+}
+
 const RegisterPage: NextPage<NextPageProps> = ({
    layoutProps,
    news,
 }) => (
-    <Layout {...layoutProps} news={news}>
+    <Layout {...layoutProps} pageSettings={pageSettings} news={news}>
         <Container headerPadding >
             <Register />
         </Container>

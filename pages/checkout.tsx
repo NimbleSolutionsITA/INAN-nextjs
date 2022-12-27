@@ -7,12 +7,19 @@ import {getCheckoutProps, ShippingProps} from "../src/utils/shop";
 
 export type CheckoutPageProps = BasePageProps & { woocommerce: ShippingProps}
 
+const pageSettings = {
+    bgColor: '#fff',
+    headerColor: '#000',
+    headerColorMobile: '#000',
+    pageTitle: 'checkout'
+}
+
 const CheckoutPage: NextPage<CheckoutPageProps> = ({
    layoutProps,
    news,
                                                        woocommerce
 }) => (
-    <Layout {...layoutProps} news={news}>
+    <Layout {...layoutProps} pageSettings={pageSettings} news={news}>
         <Checkout woocommerce={woocommerce} />
     </Layout>
 )

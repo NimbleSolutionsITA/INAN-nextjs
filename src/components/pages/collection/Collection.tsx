@@ -18,7 +18,7 @@ const Collection = ({collection}: CollectionProps) => {
     return (
         <>
             <Container disableGutters={!isMobile}>
-                <Typography sx={{marginTop: isMobile ? '21px' : undefined}} variant="h1">{collection.title.rendered}</Typography>
+                <Typography variant="h1">{collection.title.rendered}</Typography>
             </Container>
             <Divider />
             {gallery && (
