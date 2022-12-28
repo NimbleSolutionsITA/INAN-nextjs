@@ -1,5 +1,5 @@
-import {Children, cloneElement, ReactNode, useReducer, useRef, useState} from "react";
-import {DOWN, SwipeEventData, UP, useSwipeable} from 'react-swipeable';
+import {Children, cloneElement, ReactNode, useReducer, useRef} from "react";
+import {DOWN, UP, useSwipeable} from 'react-swipeable';
 import {MobileStepper} from "@mui/material";
 import styled from "@emotion/styled";
 
@@ -83,8 +83,8 @@ const Carousel = ({children}: CarouselProps) => {
                 {Children.map(
                     // @ts-ignore
                     children,
-                    (slot: JSX.Element, index) => slot && (
-                        <CarouselSlot key={index} order={getOrder(index, state.pos, numItems)}>
+                    (slot: JSX.Element, index) => (
+                        <CarouselSlot key={slot.props.url?.id ?? slot.props.video} order={getOrder(index, state.pos, numItems)}>
                             {cloneElement(slot, {ref: loading})}
                         </CarouselSlot>
                     )

@@ -37,8 +37,8 @@ const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, curre
     const leatherOptions = product?.attributes.filter(attribute => attribute.id === 3)[0]?.options
     const colorOptions = product?.attributes.filter(attribute => attribute.id === 4)[0]?.options
     const sizeOptions = product?.attributes.filter(attribute => attribute.id === 2)[0]?.options
-    const isPreOrder = product?.stock_status === 'onbackorder'
-    const isOutOfStock = product?.stock_status === 'outofstock'
+    const isPreOrder = currentProduct?.stock_status === 'onbackorder'
+    const isOutOfStock = currentProduct?.stock_status === 'outofstock'
     const isVeganOption = !!leatherOptions?.filter(opt => opt === 'Vegan')[0]
 
     const [colorType, setColorType] = useState<string | null>(null)
@@ -148,7 +148,7 @@ const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, curre
             <AddToBagWrapper>
                 {isPreOrder && (
                     <>
-                        <Typography variant="body2" component="p">Expected shipping in 60 days</Typography>
+                        <Typography variant="body2" component="p">{product.acf.pre_order ?? 'Expected shipping in 60 days'}</Typography>
                         <AddToBag name={product.name} itemId={itemId} leather={leatherType} size={sizeType} color={colorType} image={product.images[0].src} slug={product.slug} price={Number(product.price)}>pre-order</AddToBag>
                     </>
                 )}

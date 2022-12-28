@@ -13,6 +13,7 @@ type CheckboxFromControl = {
 
 const CheckboxFromControl = ({options, type, setType, colors, availableOptions}: CheckboxFromControl) => {
     const checked = (option: string, index: number) => type ? type === option : index === 0
+    // const isNotAvailable = (option: string) => availableOptions ? !availableOptions.includes(option) : false
     return (
         <FormControl component="fieldset" style={{width: '100%', padding: '0 3px'}}>
             <FormGroup aria-label="position" row>
@@ -35,7 +36,6 @@ const CheckboxFromControl = ({options, type, setType, colors, availableOptions}:
                                         textDecoration: 'line-through'
                                     }
                                 } : undefined}
-                                disabled={availableOptions ? !availableOptions.includes(option) : false}
                             />
                         </Grid>
                     ))}

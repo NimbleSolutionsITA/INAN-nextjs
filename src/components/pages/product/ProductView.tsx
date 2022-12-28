@@ -25,15 +25,19 @@ const ProductView = ({product, relatedProducts, variations, colors, sizeGuide}: 
     const {video, video_cover: videoCover} = product.acf
     // @ts-ignore
     const images = product.type === 'variable' && currentProduct.image ? [currentProduct.image, ...product.images.slice(1)] : product.images
+    console.log(images, product.images)
+    const slides =  video ? [
+        ...images.map((image) =>  <ModalImage url={image} alt={image.alt} />),
+        <VimeoPlayer video={video} autoplay={!videoCover && !isMobile} cover={videoCover} color="#fff" />
+    ] : images.map((image) =>  <ModalImage url={image} alt={image.alt} />)
     return (
         <div style={{
             width: '100%',
             paddingBottom: '40px'
         }}>
-            {currentProduct && variations && isMobile && (
+            {currentProduct && isMobile && (
                 <Carousel>
-                    {images.map((image) =>  <ModalImage url={image} alt={image.alt} />)}
-                    {video && <VimeoPlayer video={video} autoplay={!videoCover && !isMobile} cover={videoCover} color="#fff" />}
+                    {slides}
                 </Carousel>
             )}
             <Container>

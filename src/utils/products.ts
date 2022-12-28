@@ -45,27 +45,7 @@ const api = new WooCommerceRestApi( {
 export type ShopProduct = Prod & {
     stock_status: string,
     acf: {
-        collection: string | false
-        collection2: string | false
-        collection3: string | false
-        collection4: string | false
-        collectionOrder: string | false
-        color: {
-            count: number
-            filter: string
-            name: string
-            parent: number
-            slug: string
-            taxonomy: string
-            term_group: number
-            term_id: number
-            term_taxonomy_id: number
-        } | false
-        hideCollection: boolean
-        isTakeOver: boolean
-        lookbook: boolean
-        lookbook2: boolean
-        lookbook3: boolean
+        pre_order?: string
         size: string
         video: string
         video_cover: false | ACFMedia
