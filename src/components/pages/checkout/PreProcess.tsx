@@ -46,6 +46,7 @@ const PreProcess = ({currentOrder, setCurrentOrder, isGuest, setPaypalSuccess, s
                 .finally(() => dispatch(setHeader({loading: false})))
         }
     }, []);
+    console.log(currentOrder, loading, isCheckoutReady)
     return (isGuest || customer) ? (
         <SplitLayout
             left={
@@ -59,13 +60,13 @@ const PreProcess = ({currentOrder, setCurrentOrder, isGuest, setPaypalSuccess, s
                 />
             }
             right={isCheckoutReady ?
-                !loading && currentOrder &&
+                (!loading && currentOrder &&
                 <PaypalButton
                     order={currentOrder}
                     setOrder={setCurrentOrder}
                     setPaypalSuccess={setPaypalSuccess}
                     setPaypalError={setPaypalError}
-                /> :
+                />) :
                 <PreProcessPay setIsCheckoutReady={setIsCheckoutReady} order={currentOrder} />
 
             }
