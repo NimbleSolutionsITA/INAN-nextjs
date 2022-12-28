@@ -60,7 +60,7 @@ const ProductCard = ({product}: {product: ShopProduct}) => {
             price: Number(product.price),
             leather: product.attributes.filter(attribute => attribute.id === 3)[0]?.options[0],
             size: product.attributes.filter(attribute => attribute.id === 2)[0]?.options[0],
-            color: product.acf.color && product.acf.color.name,
+            color: product.attributes.filter(attribute => attribute.id === 4)[0]?.options[0],
             image: product.images[0].src,
             slug: product.slug,
             qty: 1
