@@ -219,6 +219,7 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
                     method_title: "Flat Rate",
                     total: shippingCost.settings.cost.value
                 }],
+                // @ts-ignore
                 meta_data: [{key: 'vat', value: vat}]
             })
             setOrder(newOrder)
