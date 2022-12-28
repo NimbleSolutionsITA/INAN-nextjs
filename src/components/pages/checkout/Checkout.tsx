@@ -29,7 +29,6 @@ const Checkout = ({woocommerce}: CheckoutProps) => {
            router.back()
         }
     }, [])
-    console.log(currentOrder)
     return (
         <Container headerPadding>
             {!isMobile  && <br/>}

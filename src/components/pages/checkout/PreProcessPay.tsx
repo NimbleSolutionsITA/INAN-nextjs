@@ -47,8 +47,6 @@ const PreProcessPay = ({order, setIsCheckoutReady}: PreProcessPayProps) => {
             .catch(error => setError(error.message))
             .finally(() => setIsCheckoutReady(true))
     }
-    console.log(order?.id)
-    console.log(!order?.id)
     return order ? (
         <>
             <Typography variant="h2">Products</Typography>

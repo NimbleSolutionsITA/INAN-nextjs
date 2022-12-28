@@ -1,4 +1,3 @@
-import {useDispatch} from "react-redux";
 import {Typography} from "@mui/material"
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import {Order} from "../../../../@types/woocommerce";
@@ -17,8 +16,6 @@ const CLIENT_ID =
     process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_PAYPAL_PRODUCTION : process.env.NEXT_PUBLIC_PAYPAL_SANDBOX;
 
 const PaypalButton = ({order, setOrder, setPaypalError, setPaypalSuccess}: PaypalButtonProps) => {
-    const dispatch = useDispatch()
-    console.log({CLIENT_ID})
     return CLIENT_ID ? (
         <PayPalScriptProvider options={{ "client-id": CLIENT_ID, currency: "EUR" }}>
             <Typography variant="h2">Select your payment method</Typography>
