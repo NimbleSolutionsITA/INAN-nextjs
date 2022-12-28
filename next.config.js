@@ -48,12 +48,32 @@ module.exports = {
               permanent: true,
           },
           {
+              source: '/contact',
+              destination: '/customer_service/contact',
+              permanent: true,
+          },
+          {
+              source: '/shipping',
+              destination: '/customer_service/shipping',
+              permanent: true,
+          },
+          {
+              source: '/returns',
+              destination: '/customer_service/returns',
+              permanent: true,
+          },
+          {
               source: '/legal_area',
               destination: '/legal_area/terms-and-conditions',
               permanent: true,
           },
           {
               source: '/legal-area',
+              destination: '/legal_area/terms-and-conditions',
+              permanent: true,
+          },
+          {
+              source: '/terms-and-conditions',
               destination: '/legal_area/terms-and-conditions',
               permanent: true,
           },
