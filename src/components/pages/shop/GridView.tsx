@@ -27,7 +27,7 @@ const GridView = ({products, productCategories}: GridViewProps) => {
             const {products: fetchedProducts} = await fetch(API_GET_PRODUCTS_ENDPOINT + '?' + new URLSearchParams({
                 page: pageParam,
                 per_page: '9',
-                category: router.query.category === 'in-stock' ? '15' : (category?.id.toString() || '15'),
+                category: category.slug === 'in-stock' ? '15' : (category?.id.toString() || '15'),
                 ...(router.query.category === 'in-stock' ? {stock_status: 'instock'} : {})
             }), {headers: { 'Accept-Encoding': 'application/json', 'Content-Type': 'application/json' }})
                 .then(response => response.json())
