@@ -16,7 +16,7 @@ const GridView = ({products, productCategories}: GridViewProps) => {
     const { isMobile} = useSelector((state: RootState) => state.header);
     const router = useRouter()
 
-    const currentCategorySlug = router.query.category || 'view-all'
+    const currentCategorySlug = router.query.category !== 'in-stock' ? (router.query.category || 'view-all') : 'view-all'
     const category = productCategories.find(cat => cat.slug === currentCategorySlug)
     const { data, status, fetchNextPage, hasNextPage } = useInfiniteQuery(
         ["products"],
@@ -24,10 +24,12 @@ const GridView = ({products, productCategories}: GridViewProps) => {
             if (pageParam === 1) {
                 return products
             }
+
             const {products: fetchedProducts} = await fetch(API_GET_PRODUCTS_ENDPOINT + '?' + new URLSearchParams({
                 page: pageParam,
                 per_page: '9',
-                category: category?.id.toString() || '15'
+                category: category?.id.toString() || '15',
+                ...(router.query.category === 'in-stock' ? {stock_status: 'instock'} : {})
             }), {headers: { 'Accept-Encoding': 'application/json', 'Content-Type': 'application/json' }})
                 .then(response => response.json())
             return fetchedProducts

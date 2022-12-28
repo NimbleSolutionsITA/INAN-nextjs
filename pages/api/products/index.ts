@@ -26,7 +26,7 @@ export default async function handler(
   const responseData: Data = {
     success: false,
   }
-  const { per_page, page, category, include } = req?.query ?? {};
+  const { per_page, page, category, include, stock_status } = req?.query ?? {};
   try {
     const { data } = await api.get(
         'products',
@@ -34,12 +34,13 @@ export default async function handler(
           status: 'publish',
           per_page: per_page || 10,
           page: page || 1,
-          include
+          include,
+          category,
+          stock_status
         }
     )
     responseData.success = true
     responseData.products = data.map(mapProduct)
-    console.log(req?.query, responseData)
     res.json(responseData)
   }
   catch ( error ) {
