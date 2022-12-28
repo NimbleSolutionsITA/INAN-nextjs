@@ -38,7 +38,7 @@ const CollectionPage: NextPage<CollectionProps> = ({
     return (
         <Layout {...layoutProps} pageSettings={pageSettings} links={links} news={news} activeLink={collection?.slug}>
             <>
-                {!hideLoader && <div style={{zIndex: 9999, width: '100vw', height: '100vh', position: 'fixed', top: 0, backgroundImage: 'url(/loader-collection.gif)', backgroundSize: 'cover', backgroundPosition: 'center'}} />}
+                {!hideLoader && <div style={{zIndex: 9999, width: '100vw', height: '100vh', position: 'fixed', top: 0, backgroundImage: 'url("/loaders/loader-collection.gif")', backgroundSize: 'cover', backgroundPosition: 'center'}} />}
                 <Container disableGutters={isMobile} headerPadding>
                     {collection && <Collection collection={collection} />}
                 </Container>

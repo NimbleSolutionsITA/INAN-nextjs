@@ -45,7 +45,7 @@ const VimeoPlayer = ({autoplay = true, video, loop = true, mute = true, color, b
         setShowContent && setShowContent(true)
     }
 
-    return (
+    return video ? (
         <div style={{position: 'relative', backgroundSize: 'cover', backgroundPosition: 'center', backgroundImage: cover ? `url(${cover.url})` : undefined}}>
             <Vimeo
                 style={{opacity: (!isPlaying && cover) ? 0 : 1}}
@@ -73,7 +73,7 @@ const VimeoPlayer = ({autoplay = true, video, loop = true, mute = true, color, b
                 </Typography>
             </WatchButton>
         </div>
-    )
+    ) : <span />
 }
 
 export default VimeoPlayer

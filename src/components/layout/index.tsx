@@ -11,7 +11,6 @@ import {initCart} from "../../redux/cartSlice";
 import {initWishlist} from "../../redux/wishlistSlice";
 import {useTheme} from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import {Header as HeaderType} from "../../../@types/index"
 
 type MenuItem = {
     ID: number
@@ -61,7 +60,7 @@ export default function Layout({ header: { siteTitle, favicon, headerMenuItems }
     }, [] );
 
     useEffect(() => {
-        dispatch(setHeader({isMobile, height: isMobile ? (pageSettings.pageTitle || links ? 94 : 74) : (103 + (pageSettings.pageTitle ? 65 : 0) + (links ? 20 : 0))}))
+        dispatch(setHeader({isMobile, height: isMobile ? (pageSettings.pageTitle || links ? 94 : 74) : (103 + (pageSettings.pageTitle && router.pathname !== '/about' ? 65 : 0) + (links ? 20 : 0))}))
     }, [isMobile]);
 
     return (

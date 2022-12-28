@@ -14,7 +14,6 @@ type CollectionProps = {
 const Collection = ({collection}: CollectionProps) => {
     const { isMobile } = useSelector((state: RootState) => state.header);
     const { gallery, products, lookbook} = collection.acf
-
     return (
         <>
             <Container disableGutters={!isMobile}>
@@ -33,7 +32,7 @@ const Collection = ({collection}: CollectionProps) => {
                 </Grid>
             )}
             <Grid container spacing={isMobile ? 0 : 4} style={{marginTop: '36px'}}>
-                {products?.map(prod => (
+                {Array.isArray(products) && products?.map(prod => (
                     <Grid key={prod.image.ID} item xs={12} md={6} style={{paddingBottom: isMobile ? '24px' : undefined}}>
                         <CollectionCard isMobile={isMobile} product={prod} />
                         <Divider />
@@ -50,9 +49,9 @@ const Collection = ({collection}: CollectionProps) => {
                     />
                 </div>
             )}
-            <div style={{height: '48px', width: '100%'}} />
-            {lookbook && (
+            {Array.isArray(lookbook) && lookbook && (
                 <>
+                    <div style={{height: '48px', width: '100%'}} />
                     <Container disableGutters={!isMobile}>
                         <Typography variant="h1">Lookbook</Typography>
                     </Container>

@@ -61,7 +61,7 @@ const styles: {
 const AppBar = ({children, navLinks, height = 94}: AppBarProps) => {
     const router = useRouter()
     const {
-        header: { open },
+        header: { open, headerColorMobile, bgColor },
         auth: { authenticated },
         cart: {items: cartItems},
         wishlist: {items: wishlistItems}
@@ -80,20 +80,20 @@ const AppBar = ({children, navLinks, height = 94}: AppBarProps) => {
     return (
         <Box sx={{...styles.root, height}}>
             <MuiAppBar position="fixed" square elevation={0} sx={{
-                backgroundColor: open ? 'transparent' : '#fff',
+                backgroundColor: open ? 'transparent' : bgColor,
                 zIndex: (theme) => theme.zIndex.modal+2,
             }}>
                 <>
                     <Toolbar component={Container}>
                         <IconButton edge="start" sx={styles.title} color="inherit">
-                            <Link onClick={() => handleOpenDrawer(false)} href="/"><Logo height={30} color={open ? '#fff' : '#000'} /></Link>
+                            <Link onClick={() => handleOpenDrawer(false)} href="/"><Logo height={30} color={open ? '#fff' : headerColorMobile} /></Link>
                         </IconButton>
                         <div style={{flex: 1}} />
                         <IconButton onClick={handleBagClick} sx={styles.toolbarIcons} color="inherit" aria-label="menu">
-                            <CartIcon color={open ? '#fff' : '#000'} height={20} open={open} items={cartItems.length} />
+                            <CartIcon color={open ? '#fff' : headerColorMobile} height={20} open={open} items={cartItems.length} />
                         </IconButton>
                         <IconButton onClick={() => handleOpenDrawer(!open)} edge="end" sx={styles.toolbarIcons} color="inherit" aria-label="menu">
-                            <BurgerIcon color={open ? '#fff' : '#000'} open={open}/>
+                            <BurgerIcon color={open ? '#fff' : headerColorMobile} open={open}/>
                         </IconButton>
                     </Toolbar>
                     {children}

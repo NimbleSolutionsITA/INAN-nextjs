@@ -41,7 +41,7 @@ const AboutPage: NextPage<AboutPageProps> = ({
     return (
         <Layout pageSettings={pageSettings} {...layoutProps} links={links} news={news}>
             <div style={{backgroundColor: '#000'}}>
-                {!hideLoader && <div style={{zIndex: 9999, width: '100vw', height: '100vh', position: 'fixed', top: 0, backgroundImage: 'url(/loader-about.gif)', backgroundSize: 'cover', backgroundPosition: 'center'}} />}
+                {!hideLoader && <div style={{zIndex: 9999, width: '100vw', height: '100vh', position: 'fixed', top: 0, backgroundImage: 'url("/loaders/loader-about.gif")', backgroundSize: 'cover', backgroundPosition: 'center'}} />}
                 {content && (
                     <Container headerPadding>
                         <Typography style={{color: '#fff'}} variant="h1">{content.title.rendered}</Typography>
