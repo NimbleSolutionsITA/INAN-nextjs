@@ -109,6 +109,7 @@ const AddressForm = ({data, setData, dataError, setDataError, countries, vat, se
                         <FormControl fullWidth>
                             <TextField
                                 placeholder="ENTER YOUR VAT ID"
+                                required
                                 autoComplete="vat"
                                 error={!!errorVat}
                                 label="VAT ID"
