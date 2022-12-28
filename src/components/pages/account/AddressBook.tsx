@@ -23,6 +23,7 @@ export type ShippingType = {
     postcode: string,
     company?: string,
     state: string
+    vat?: string
 }
 
 export type ShippingErrors = {
@@ -34,6 +35,7 @@ export type ShippingErrors = {
     postcode: false | string
     country: false | string
     state: false | string
+    vat?: false | string
 }
 
 export type ShippingData = {

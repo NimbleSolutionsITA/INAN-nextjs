@@ -1,6 +1,6 @@
 import {FormControl, Grid, TextField, Autocomplete} from "@mui/material";
 import {Dispatch, SetStateAction} from "react";
-import {ShippingData, ShippingErrors, ShippingType} from "./AddressBook";
+import {ShippingErrors, ShippingType} from "./AddressBook";
 import {AddressBookPageProps} from "../../../../pages/account/address-book";
 
 
@@ -10,9 +10,13 @@ type AddressFormProps = {
     dataError: ShippingErrors
     setDataError: Dispatch<SetStateAction<ShippingErrors>>
     countries: AddressBookPageProps['countries']
+    vat?: string
+    setVat?: Dispatch<SetStateAction<string>>
+    errorVat?: false | string
+    setErrorVat?: Dispatch<SetStateAction<false | string>>
 }
 
-const AddressForm = ({data, setData, dataError, setDataError, countries}: AddressFormProps) => {
+const AddressForm = ({data, setData, dataError, setDataError, countries, vat, setVat, errorVat, setErrorVat}: AddressFormProps) => {
     const countryList = countries?.map(c => {
         return {name: c.name, code: c.code, states: c.states}
     })
@@ -100,6 +104,31 @@ const AddressForm = ({data, setData, dataError, setDataError, countries}: Addres
                         />
                     </FormControl>
                 </Grid>
+                {setErrorVat && setVat && (
+                    <Grid item xs={12}>
+                        <FormControl fullWidth>
+                            <TextField
+                                placeholder="ENTER YOUR VAT ID"
+                                autoComplete="vat"
+                                error={!!errorVat}
+                                label="VAT ID"
+                                helperText={errorVat}
+                                fullWidth
+                                type="text"
+                                value={vat}
+                                onChange={(event) => {
+                                    setErrorVat(false)
+                                    setVat(event.target.value)
+                                }}
+                                InputLabelProps={{
+                                    disableAnimation: true,
+                                    focused: false,
+                                    shrink: true,
+                                }}
+                            />
+                        </FormControl>
+                    </Grid>
+                )}
                 <Grid item xs={12}>
                     <FormControl fullWidth>
                         <TextField

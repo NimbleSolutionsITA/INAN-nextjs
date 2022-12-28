@@ -52,10 +52,10 @@ export async function getStaticProps(context: {params?: {category?: string}}) {
         getLayoutProps(),
         getCategoriesProps()
     ]);
-    const currentCategoryId = context.params?.category && context.params?.category !== 'in-stock' ?
-        productCategories.find(productCategory => productCategory.slug === context?.params?.category)?.id || 15 :
-        15
-    const {products} = await getProducts({ category: currentCategoryId, per_page: 9, stock_status: context.params?.category === 'in-stock' ? 'instock' : undefined})
+    const currentCategoryId = context.params?.category ?
+        (productCategories.find(productCategory => productCategory.slug === context?.params?.category)?.id || 15) :
+        productCategories[0].id
+    const {products} = await getProducts({ category: context.params?.category !== 'in-stock' ? currentCategoryId : 15, per_page: 9, stock_status: context.params?.category === 'in-stock' ? 'instock' : undefined})
     return {
         props: {
             layoutProps,

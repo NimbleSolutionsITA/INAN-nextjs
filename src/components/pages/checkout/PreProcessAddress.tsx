@@ -85,16 +85,20 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
     }
     const [shippingData, setShippingData] = useState(initialState(shippingWP))
     // @ts-ignore
-    const [editShipping, setEditShipping] = useState(!shippingWP.address_1)
+    const [editShipping, setEditShipping] = useState(!!shippingWP.address_1)
     // @ts-ignore
-    const [editBilling, setEditBilling] = useState(!!billingWP.address_1)
+    const [editBilling, setEditBilling] = useState(!billingWP.address_1)
     const [billingData, setBillingData] = useState(initialState(billingWP))
     const [shippingError, setShippingError] = useState(errorInitialState)
     const [billingError, setBillingError] = useState(errorInitialState)
-    const [current, setCurrent] = useState('shipping')
+    const [current, setCurrent] = useState('billing')
     const [userCreated, setUserCreated] = useState(false)
     const [creatingUser, setCreatingUser] = useState(false)
     const [error, setError] = useState(false)
+    const [vat, setVat] = useState(userInfo?.meta_data.find(m => m.key === 'vat')?.value ?? '')
+    const [errorVat, setErrorVat] = useState<false | string>(false)
+
+    const vatProps = {vat, setVat, errorVat, setErrorVat}
 
     const [guestEmail, setGuestEmail] = useState('')
     const [guestEmailError, setGuestEmailError] = useState(false)
@@ -128,7 +132,7 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
     }
 
     // @ts-ignore
-    const saveData = (address, guestEmail = null) => {
+    const saveData = (address) => {
         return {
             first_name: address.firstName,
             last_name: address.lastName,
@@ -145,19 +149,24 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
 
     function handleSave() {
         setCreatingUser(true)
-        {
+
+        // @ts-ignore
+        setBillingError(getErrors(billingData))
+        if (editShipping) {
             // @ts-ignore
             setShippingError(getErrors(shippingData))
         }
-        if (editBilling) {
-            // @ts-ignore
-            setBillingError(getErrors(billingData))
-        }
 
-        if (checkAddress(getErrors(shippingData)) && (!editBilling || checkAddress(getErrors(billingData)))) {
-            let data: {shipping: Partial<Shipping>, billing?: Partial<Billing>} = {shipping: saveData(shippingData)}
-            if (editBilling) {
-                data = {...data, billing: saveData(billingData)}
+        !vat && setErrorVat('VAT ID IS REQUIRED')
+
+        if (checkAddress(getErrors(billingData)) && (!editShipping || checkAddress(getErrors(shippingData))) && vat) {
+            let data: {shipping?: Partial<Shipping>, billing: Partial<Billing>, meta_data: {id: number, key: string, value: string}[]} = {
+                billing: saveData(billingData),
+                shipping: saveData(billingData),
+                meta_data: [{id: 1, key: 'vat', value: vat}]
+            }
+            if (editShipping) {
+                data = {...data, shipping: saveData(shippingData)}
             }
             !isGuest && user && fetch(`${API_CUSTOMER_ENDPOINT}/${user.id}`, {
                 method: 'POST',
@@ -173,11 +182,13 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
                     dispatch(setCustomer(response.customer))
                 }))
                 .finally(() => setCreatingUser(false))
-            setEditShipping(false)
-        } else if (current === 'shipping' && checkAddress(getErrors(shippingData))) {
+            setEditBilling(false)
+        } else if (current === 'billing' && !checkAddress(getErrors(billingData)) && vat) {
+            setCurrent('shipping')
+        } else if (current === 'shipping' && !checkAddress(getErrors(shippingData))) {
             setCurrent('billing')
-            setCreatingUser(false)
         }
+        setCreatingUser(false)
     }
 
     const handleProceed = async () => {
@@ -207,7 +218,8 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
                     method_id: "flat_rate",
                     method_title: "Flat Rate",
                     total: shippingCost.settings.cost.value
-                }]
+                }],
+                meta_data: [{key: 'vat', value: vat}]
             })
             setOrder(newOrder)
             setCreatingUser(false)
@@ -224,7 +236,10 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
                     method_id: "flat_rate",
                     method_title: "Flat Rate",
                     total: shippingCost.settings.cost.value
-                }]})
+                }],
+                // @ts-ignore
+                meta_data: [{key: 'vat', value: vat}]
+            })
             setOrder(newOrder)
         }
         setCreatingUser(false)
@@ -235,16 +250,16 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
             <Divider />
             {userCreated && <Typography variant="body1" color="error">{error}</Typography> }
             <br />
-            <Typography style={{float: 'right', margin: '10px 0'}} ><b>Shipping</b></Typography>
-            <Typography style={{margin: '10px 0'}}><b>{shippingData.firstName} {shippingData.lastName} {shippingData.company && `- ${shippingData.company}`}</b></Typography>
-            <Typography>{shippingData.address ? `${shippingData.address}, ${shippingData.city}, ${shippingData.postcode},${shippingData.state && `${shippingData.state}, `} ${shippingData.country}` : ''}</Typography>
-            {billingData.address && (
+            <Typography style={{float: 'right', margin: '10px 0'}} ><b>Billing</b></Typography>
+            <Typography style={{margin: '10px 0'}}><b>{billingData.firstName && billingData.lastName ? `${billingData.firstName} ${billingData.lastName}${billingData.company && `- ${billingData.company}`}` : ''}</b></Typography>
+            <Typography>{billingData.address ? `${billingData.address}, ${billingData.city}, ${billingData.postcode},${billingData.state && `${billingData.state}, `} ${billingData.country}` : ''}</Typography>
+            {shippingData.address && (
                 <>
                     <Divider />
                     <br />
-                    <Typography style={{float: 'right', margin: '10px 0'}} ><b>Billing</b></Typography>
-                    <Typography style={{margin: '10px 0'}}><b>{billingData.firstName && billingData.lastName ? `${billingData.firstName} ${billingData.lastName}${billingData.company && `- ${billingData.company}`}` : ''}</b></Typography>
-                    <Typography>{billingData.address ? `${billingData.address}, ${billingData.city}, ${billingData.postcode},${billingData.state && `${billingData.state}, `} ${billingData.country}` : ''}</Typography>
+                    <Typography style={{float: 'right', margin: '10px 0'}} ><b>Shipping</b></Typography>
+                    <Typography style={{margin: '10px 0'}}><b>{shippingData.firstName} {shippingData.lastName} {shippingData.company && `- ${shippingData.company}`}</b></Typography>
+                    <Typography>{shippingData.address ? `${shippingData.address}, ${shippingData.city}, ${shippingData.postcode},${shippingData.state && `${shippingData.state}, `} ${shippingData.country}` : ''}</Typography>
                 </>
             )}
             {isGuest &&
@@ -273,48 +288,49 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
                 </>
             }
 
-            <Collapse in={(editShipping && !address.shipping)} style={{marginBottom: '20px'}}>
+            <Collapse in={(editBilling && !address.billing)} style={{marginBottom: '20px'}}>
                 <br />
                 <Divider />
                 <br />
                 <Typography variant="h2">{current}</Typography>
                 <br />
+                {current === 'billing' &&
+                // @ts-ignore
+                <AddressForm countries={countries} data={billingData} setData={setBillingData} dataError={billingError} setDataError={setBillingError} {...vatProps} />
+                }
                 {current === 'shipping' && (
                     // @ts-ignore
                     <AddressForm countries={countries} data={shippingData} setData={setShippingData} dataError={shippingError} setDataError={setShippingError} />
                 )}
-                {current === 'billing' &&
-                // @ts-ignore
-                <AddressForm countries={countries} data={billingData} setData={setBillingData} dataError={billingError} setDataError={setBillingError} />}
                 <FormControl component="fieldset" style={{width: '100%', padding: '10px 3px'}}>
                     <FormGroup aria-label="position" style={{flexDirection: 'row-reverse'}}>
-                        {editBilling && (
+                        {editShipping && (
                             <FormControlLabel
-                                style={{marginLeft: '20px', marginRight: 0}}
-                                value="billing"
+                                style={{marginRight: 0}}
+                                value="shipping"
                                 control={
                                     <Checkbox
                                         edge="end"
-                                        checked={current === 'billing'}
+                                        checked={current === 'shipping'}
                                         inputProps={{ 'aria-label': 'primary checkbox' }}
-                                        onChange={() => setCurrent('billing')}
+                                        onChange={() => setCurrent('shipping')}
+
                                     />}
-                                label="billing"
+                                label="shipping"
                                 labelPlacement="start"
                             />
                         )}
                         <FormControlLabel
-                            style={{marginRight: 0}}
-                            value="shipping"
+                            style={{marginLeft: '20px', marginRight: 0}}
+                            value="billing"
                             control={
                                 <Checkbox
                                     edge="end"
-                                    checked={current === 'shipping'}
+                                    checked={current === 'billing'}
                                     inputProps={{ 'aria-label': 'primary checkbox' }}
-                                    onChange={() => setCurrent('shipping')}
-
+                                    onChange={() => setCurrent('billing')}
                                 />}
-                            label="shipping"
+                            label="billing"
                             labelPlacement="start"
                         />
                     </FormGroup>
@@ -333,30 +349,30 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
                         fullWidth
                         disableGutters
                         onClick={() => {
-                            setData({...data, isBilling: !data.isBilling})
-                            if (data.isBilling) {
-                                setEditBilling(false)
-                                setBillingData(emptyAddress)
-                                setCurrent('shipping')
+                            setData({...data, isShipping: !data.isShipping})
+                            if (data.isShipping) {
+                                setEditShipping(false)
+                                setShippingData(emptyAddress)
+                                setCurrent('billing')
                             }
                             else {
-                                setCurrent('billing')
-                                setEditShipping(true)
+                                setCurrent('shipping')
                                 setEditBilling(true)
+                                setEditShipping(true)
                             }
                         }}
                     >
-                        {data.isBilling ? `Same as shipping${isMobile ? '' : ' Address'}`: `Different billing${isMobile ? '' : ' Address'}`}
+                        {data.isShipping ? `Same as billing${isMobile ? '' : ' Address'}`: `Different shipping${isMobile ? '' : ' Address'}`}
                     </Button>
                 </Grid>
                 <Grid item xs={6}>
-                    {editShipping ?
-                        <Button disabled={!!address.shipping} fullWidth variant="contained" color="secondary" onClick={handleSave}><b>Save</b></Button> :
-                        <Button disabled={!!address.shipping} fullWidth variant="contained" color="secondary"  onClick={() => setEditShipping(true)}><b>Edit</b></Button>
+                    {editBilling ?
+                        <Button disabled={!!address.billing} fullWidth variant="contained" color="secondary" onClick={handleSave}><b>Save</b></Button> :
+                        <Button disabled={!!address.billing} fullWidth variant="contained" color="secondary"  onClick={() => setEditBilling(true)}><b>Edit</b></Button>
                     }
                 </Grid>
             </Grid>
-            <Button disabled={!!address.shipping || editShipping} variant="contained" color="secondary" fullWidth onClick={handleProceed}>{creatingUser ? <CircularProgress size={15} /> : 'proceed'}</Button>
+            <Button disabled={!!address.billing || editBilling} variant="contained" color="secondary" fullWidth onClick={handleProceed}>{creatingUser ? <CircularProgress size={15} /> : 'proceed'}</Button>
         </form>
     )
 }
