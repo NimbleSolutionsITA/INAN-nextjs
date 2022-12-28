@@ -194,16 +194,17 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
     const handleProceed = async () => {
         setCreatingUser(true)
         let shippingCost
-        if (shippingData.country === 'Italy') shippingCost = shippingITcost
+        const country = shippingData.country ?? billingData.country
+        if (country === 'Italy') shippingCost = shippingITcost
         else {
-            const continent = continents?.filter(cont => cont.countries.filter(c => c.name === shippingData.country).length > 0)[0]
-            if (shippingEU.filter(zone => zone.code === continent.code || zone.code === shippingData.country).length > 0)
+            const continent = continents?.find(cont => cont.countries.find(c => c.name === country))
+            if (shippingEU.filter(zone => zone.code === continent?.code || zone.code === country).length > 0)
                 shippingCost = shippingEUcost
-            else if (shippingW.filter(zone => zone.code === continent.code || zone.code === shippingData.country).length > 0)
+            else if (shippingW.filter(zone => zone.code === continent?.code || zone.code === country).length > 0)
                 shippingCost = shippingWcost
             else shippingCost = shippingRcost
         }
-        const savedShipping = saveData(shippingData)
+        const savedShipping = saveData(shippingData ?? billingData)
         if (isGuest) {
             // @ts-ignore
             setGuestEmailError((!guestEmail.match(regExpEmail) || !guestEmail) && 'PLEASE ENTER A VALID EMAIL')
