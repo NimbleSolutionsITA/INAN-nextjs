@@ -34,7 +34,7 @@ const Shop: NextPage<ShopProps> = ({
                 name: productCategory.name,
                 url: `/shop/${productCategory.slug}`
             }))}
-            activeLink={router.query.category?.toString() || 'view-all'}
+            activeLink={router.query.category?.toString() || productCategories[0].slug}
             news={news}
         >
             <GridView products={products} productCategories={productCategories} />
