@@ -118,7 +118,7 @@ const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, curre
                     <Divider />
                 </>
             )}
-            {colorOptions && (
+            {colorOptions && availableColorOptions && (
                 <>
                     <ExpansionPanel title={<Typography><b>Color :</b> {colorType || colorOptions[0]}</Typography>}>
                         <CheckboxFromControl colors={colors} options={colorOptions} type={colorType} setType={setColor} availableOptions={availableColorOptions} />
