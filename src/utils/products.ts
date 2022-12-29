@@ -31,7 +31,7 @@ export type Variation = WooVariation & {
     stock_status: 'instock' | 'outofstock' | 'onbackorder'
 }
 
-export type ProductsProps = { products: Product[] }
+export type ProductsProps = { products: ShopProduct[] }
 
 const WooCommerceRestApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
@@ -49,6 +49,7 @@ export type ShopProduct = Prod & {
         size: string
         video: string
         video_cover: false | ACFMedia
+        color_variations?: number[]
     }
 }
 

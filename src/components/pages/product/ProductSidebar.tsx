@@ -14,6 +14,7 @@ import AddToBag from "./AddToBag";
 import GetNotified from "./GetNotified";
 import {useDispatch} from "react-redux";
 import {addWishlistItem} from "../../../redux/wishlistSlice";
+import {useRouter} from "next/router";
 
 type ProductSidebarProps = {
     variations: Variation[]
@@ -23,6 +24,7 @@ type ProductSidebarProps = {
     sizeGuide: ProductPageProps['sizeGuide']
     currentProduct: ShopProduct | Variation
     setCurrentProduct: Dispatch<SetStateAction<ShopProduct | Variation>>
+    colorVariations: ShopProduct[]
 }
 
 const Sale = styled.span`
@@ -32,16 +34,23 @@ const AddToBagWrapper = styled.div`
   margin: 40px 0;
 `
 
-const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, currentProduct, setCurrentProduct}: ProductSidebarProps) => {
+const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, currentProduct, setCurrentProduct, colorVariations}: ProductSidebarProps) => {
     const dispatch = useDispatch()
-    const leatherOptions = product?.attributes.filter(attribute => attribute.id === 3)[0]?.options
-    const colorOptions = product?.attributes.filter(attribute => attribute.id === 4)[0]?.options
-    const sizeOptions = product?.attributes.filter(attribute => attribute.id === 2)[0]?.options
+    const router = useRouter()
+    const leatherOptions = product?.attributes.find(attribute => attribute.id === 3)?.options
+    const colorOptions = colorVariations.length > 0 && [
+        ...(product?.attributes.find(attribute => attribute.id === 4)?.options ?? []),
+        ...(colorVariations
+            .map(p => p.attributes.find(a => a.id === 4)?.options)
+            .reduce((a,c) => a && c && a.concat(c)) ?? [])
+    ]
+    const sizeOptions = product?.attributes.find(attribute => attribute.id === 2)?.options
     const isPreOrder = currentProduct?.stock_status === 'onbackorder'
     const isOutOfStock = currentProduct?.stock_status === 'outofstock'
-    const isVeganOption = !!leatherOptions?.filter(opt => opt === 'Vegan')[0]
+    const isVeganOption = !!leatherOptions?.find(opt => opt === 'Vegan')
 
-    const [colorType, setColorType] = useState<string | null>(null)
+    const colorType =  product.attributes.find(a => a.id === 4)?.options[0] ?? ''
+
     const [leatherType, setLeatherType] = useState<string | null>(leatherOptions ? leatherOptions[0] : null)
     const [sizeType, setSizeType] = useState<string | null>( sizeOptions ? sizeOptions[0] : null)
     const [openDetails, setOpenDetails] = useState(false)
@@ -53,14 +62,10 @@ const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, curre
     const availableColorOptions = product.type === 'variable' ? variations.filter(v => v.stock_status !== 'outofstock').map(v => v.attributes.find(attribute => attribute.id === 4)?.option) : colorOptions
 
     const setColor = (color: string) => {
-        setCurrentProduct(variations?.length ?
-            variations.filter(variation => {
-                return ((!leatherType || variation.attributes?.filter(attr => attr.id === 3 && attr.option === leatherType).length > 0) &&
-                    (!sizeType || variation.attributes?.filter(attr => attr.id === 2 && attr.option === sizeType).length > 0) &&
-                    (variation.attributes?.filter(attr => attr.id === 4 && attr.option === color).length > 0))
-            })[0] :
-            product)
-        setColorType(color)
+        if (color !== colorType) {
+            const colorVariation = colorVariations.find(p => p.attributes.find(a => a.id === 4)?.options[0] === color)
+            colorVariation && router.push(`/product/${colorVariation.slug}`)
+        }
     }
 
     const setLeather = (leather: string) => {
@@ -105,7 +110,7 @@ const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, curre
                     <Divider style={{marginTop: '5px'}} />
                 </>
             )}
-            {isVeganOption && (
+            {isVeganOption && leatherOptions && (
                 <>
                     <ExpansionPanel title={<Typography><b>Leather type :</b> {leatherType || leatherOptions[0]}</Typography>}>
                         <CheckboxFromControl options={leatherOptions} type={leatherType} setType={setLeather} availableOptions={availableLeatherOptions} />
