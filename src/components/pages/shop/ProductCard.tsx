@@ -83,7 +83,7 @@ const ProductCard = ({product}: {product: ShopProduct}) => {
             <ContentWrapper>
                 <Typography style={{paddingBottom: 0}} component="p" variant="body1"><b>{product.name}</b></Typography>
                 <Typography style={{padding: 0}} component="p" variant="body1">
-                    { product.type === 'variable' && product.attributes.filter(attribute => attribute.id === 3)[0]?.options.filter(opt => opt === 'Vegan')[0] && (
+                    { product.type === 'variable' && product.attributes.find(attribute => attribute.id === 3)?.options.find(opt => opt === 'Vegan') && (
                         isMobile ? 'Vegan option' : 'Vegan leather option'
                     )}
                 </Typography>
@@ -92,26 +92,15 @@ const ProductCard = ({product}: {product: ShopProduct}) => {
                         <><Sale>€ {product.regular_price}</Sale> € {product.sale_price}</> :
                         `€ ${product.price}`
                     }
-                    {isMobile ? (
-                        <>
-                            <br />
-                            {product.stock_status === 'outofstock' && ' out of stock'}
-                            {product.stock_status === 'onbackorder' && ' pre order'}
-                            {product.stock_quantity && product.stock_quantity <= 3 && product.stock_quantity > 0 && ` only ${product.stock_quantity} in stock`}
-                            {product.featured && (
-                                <> <span style={{color: 'red'}}>new</span></>
-                            )}
-                        </>
-                    ) : (
-                        <>
-                            {product.stock_status === 'outofstock' && ' - out of stock'}
-                            {product.stock_status === 'onbackorder' && ' - pre order'}
-                            {product.stock_quantity && product.stock_quantity <= 3 && product.stock_quantity > 0 && ` - only ${product.stock_quantity} in stock`}
-                            {product.featured && (
-                                <> - <span style={{color: 'red'}}>new</span></>
-                            )}
-                        </>
-                    ) }
+                    <>
+                        {isMobile && <br/>}
+                        {product.stock_status === 'outofstock' && ` ${!isMobile && ' -'} out of stock`}
+                        {product.stock_status === 'onbackorder' && ` ${!isMobile && ' -'} pre order`}
+                        {!!product.stock_quantity && product.stock_quantity < 4 && product.stock_quantity > 0 && `${!isMobile && ' -'} only ${product.stock_quantity} in stock`}
+                        {product.featured && (
+                            <>{isMobile && ' -'} <span style={{color: 'red'}}>new</span></>
+                        )}
+                    </>
                 </Typography>
             </ContentWrapper>
         </CardWrapper>

@@ -108,11 +108,11 @@ const AddressForm = ({data, setData, dataError, setDataError, countries, vat, se
                     <Grid item xs={12}>
                         <FormControl fullWidth>
                             <TextField
-                                placeholder="ENTER YOUR VAT ID"
-                                required
+                                placeholder={data.country === 'Italy' ? 'ENTER YOUR CODICE FISCALE OR PARTITA IVA' : 'ENTER YOUR VAT ID'}
+                                required={data.country === 'Italy'}
                                 autoComplete="vat"
                                 error={!!errorVat}
-                                label="VAT ID"
+                                label={data.country === 'Italy' ? 'CODICE FISCALE / P.IVA' : 'VAT ID'}
                                 helperText={errorVat}
                                 fullWidth
                                 type="text"

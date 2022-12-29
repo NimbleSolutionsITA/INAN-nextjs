@@ -157,13 +157,13 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
             setShippingError(getErrors(shippingData))
         }
 
-        !vat && setErrorVat('VAT ID IS REQUIRED')
+        !(billingData.country !== 'Italy' || vat) && setErrorVat('VAT ID IS REQUIRED')
 
-        if (checkAddress(getErrors(billingData)) && (!editShipping || checkAddress(getErrors(shippingData))) && vat) {
-            let data: {shipping?: Partial<Shipping>, billing: Partial<Billing>, meta_data: {id: number, key: string, value: string}[]} = {
+        if (checkAddress(getErrors(billingData)) && (!editShipping || checkAddress(getErrors(shippingData))) && (billingData.country !== 'Italy' || vat)) {
+            let data: {shipping?: Partial<Shipping>, billing: Partial<Billing>, meta_data: {key: string, value: string}[]} = {
                 billing: saveData(billingData),
                 shipping: saveData(billingData),
-                meta_data: [{id: 1, key: 'vat', value: vat}]
+                meta_data: [{key: 'vat', value: vat}]
             }
             if (editShipping) {
                 data = {...data, shipping: saveData(shippingData)}
@@ -183,7 +183,7 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
                 }))
                 .finally(() => setCreatingUser(false))
             setEditBilling(false)
-        } else if (current === 'billing' && !checkAddress(getErrors(billingData)) && vat) {
+        } else if (current === 'billing' && !checkAddress(getErrors(billingData)) && (billingData.country !== 'Italy' || vat)) {
             setCurrent('shipping')
         } else if (current === 'shipping' && !checkAddress(getErrors(shippingData))) {
             setCurrent('billing')

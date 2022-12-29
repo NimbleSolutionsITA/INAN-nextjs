@@ -57,10 +57,6 @@ const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, curre
 
     const itemId = currentProduct.id
 
-    const availableSizeOptions = product.type === 'variable' ? variations.filter(v => v.stock_status !== 'outofstock').map(v => v.attributes.find(attribute => attribute.id === 2)?.option) : sizeOptions
-    const availableLeatherOptions = product.type === 'variable' ? variations.filter(v => v.stock_status !== 'outofstock').map(v => v.attributes.find(attribute => attribute.id === 3)?.option) : leatherOptions
-    const availableColorOptions = product.type === 'variable' ? variations.filter(v => v.stock_status !== 'outofstock').map(v => v.attributes.find(attribute => attribute.id === 4)?.option) : colorOptions
-
     const setColor = (color: string) => {
         if (color !== colorType) {
             const colorVariation = colorVariations.find(p => p.attributes.find(a => a.id === 4)?.options[0] === color)
@@ -113,22 +109,22 @@ const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, curre
             {isVeganOption && leatherOptions && (
                 <>
                     <ExpansionPanel title={<Typography><b>Leather type :</b> {leatherType || leatherOptions[0]}</Typography>}>
-                        <CheckboxFromControl options={leatherOptions} type={leatherType} setType={setLeather} availableOptions={availableLeatherOptions} />
+                        <CheckboxFromControl options={leatherOptions} type={leatherType} setType={setLeather} />
                     </ExpansionPanel>
                     <Divider />
                 </>
             )}
-            {colorOptions && availableColorOptions && (
+            {colorOptions && (
                 <>
                     <ExpansionPanel title={<Typography><b>Color :</b> {colorType || colorOptions[0]}</Typography>}>
-                        <CheckboxFromControl colors={colors} options={colorOptions} type={colorType} setType={setColor} availableOptions={availableColorOptions} />
+                        <CheckboxFromControl colors={colors} options={colorOptions} type={colorType} setType={setColor} />
                     </ExpansionPanel>
                     <Divider />
                 </>
             )}
             <ExpansionPanel title={<Typography><b>Size :</b> {sizeType || (sizeOptions ? sizeOptions[0] : 'one size')}</Typography>}>
                 {sizeOptions && (
-                    <CheckboxFromControl options={sizeOptions} type={sizeType} setType={setSize} availableOptions={availableSizeOptions} />
+                    <CheckboxFromControl options={sizeOptions} type={sizeType} setType={setSize} />
                 )}
                 <div>
                     {product.acf.size && (

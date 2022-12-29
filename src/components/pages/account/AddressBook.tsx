@@ -49,6 +49,8 @@ const AddressBook = ({ countries }: {countries: AddressBookPageProps['countries'
     const billingWP = customer?.billing as Customer['billing']
     const [userUpdated, setUserUpdated] = useState(false)
     const [updatingUser, setUpdatingUser] = useState(false)
+    const [vat, setVat] = useState(customer?.meta_data.find(m => m.key === 'vat')?.value ?? '')
+    const [errorVat, setErrorVat] = useState<false | string>(false)
     const [error, setError] = useState<boolean | string>(false)
     const dispatch = useDispatch()
     const initialState = (address: Customer['shipping'] | Customer['billing']) => {
@@ -119,6 +121,8 @@ const AddressBook = ({ countries }: {countries: AddressBookPageProps['countries'
         setUpdatingUser(true)
         setShippingError(getErrors(shippingData))
         setBillingError(getErrors(billingData))
+        
+        !(billingData.country !== 'Italy' || vat) && setErrorVat('VAT ID IS REQUIRED')
 
         if (customer?.id && checkAddress(getErrors(shippingData)) && (!data.isBilling || checkAddress(getErrors(billingData))) ) {
             const shipping = saveData(shippingData)
@@ -128,7 +132,8 @@ const AddressBook = ({ countries }: {countries: AddressBookPageProps['countries'
                 headers: [["Content-Type", 'application/json']],
                 body: JSON.stringify({
                     shipping,
-                    billing
+                    billing,
+                    meta_data: [{key: 'vat', value: vat}]
                 })
             })
                 .then(r => r.json())
@@ -190,7 +195,17 @@ const AddressBook = ({ countries }: {countries: AddressBookPageProps['countries'
             {data.isBilling && current === 'billing' && (
                 <>
                     <Typography style={{marginTop: '20px'}} variant="h2" component="h2">Billing address</Typography>
-                    <AddressForm countries={countries} data={billingData} setData={setBillingData} dataError={billingError} setDataError={setBillingError} />
+                    <AddressForm
+                        countries={countries}
+                        data={billingData}
+                        setData={setBillingData}
+                        dataError={billingError}
+                        setDataError={setBillingError}
+                        vat={vat}
+                        setVat={setVat}
+                        errorVat={errorVat}
+                        setErrorVat={setErrorVat}
+                    />
                 </>
             )}
 
