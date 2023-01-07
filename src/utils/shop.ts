@@ -7,7 +7,8 @@ import {
     ShippingMethod
 } from "../../@types/woocommerce";
 import {SizeGuidePost} from "./layout";
-import {API_ORDER_ENDPOINT, WORDPRESS_API_ENDPOINT} from "./endpoints";
+import {WORDPRESS_API_ENDPOINT} from "./endpoints";
+import {WordpressPage} from "../../@types";
 
 export type ProductProps = {
     productCategories: Category[]
@@ -63,6 +64,15 @@ export const getProductColorsProps = async (): Promise<ProductAttribute[]> => {
 export const getCountries = async (): Promise<Country[]> => {
     const { data: countries } = await api.get('data/countries')
     return countries
+}
+
+export const getAllPagesIds = async () => {
+    const pages: WordpressPage[] = await fetch(`${WORDPRESS_API_ENDPOINT}/wp/v2/pages`).then(response => response.json())
+    return pages.map(page => ({
+        params: {
+            page: page.slug,
+        }
+    }))
 }
 
 export const getAllProductCategoriesIds = async () => {

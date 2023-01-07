@@ -3,6 +3,7 @@ import Layout from "../../src/components/layout";
 import {getLayoutProps, getPageProps, PageProps} from "../../src/utils/layout";
 import {BasePageProps} from "../../@types";
 import CustomerServiceLayout from "../../src/components/pages/customer-service/CustomerServiceLayout";
+import {getAllProductsIds} from "../../src/utils/shop";
 
 export type ContactPageProps = BasePageProps & { page: PageProps['page'] & { acf: { }}}
 
@@ -14,11 +15,11 @@ const pageSettings = {
 }
 
 const ContactPage: NextPage<ContactPageProps> = ({
-                                       layoutProps,
-                                       news,
-                                       page: content,
-                                       links
-                                   }) => {
+   layoutProps,
+   news,
+   page: content,
+   links
+}) => {
     return (
         <Layout {...layoutProps} pageSettings={pageSettings} yoast={content.yoast_head} links={links} news={news}>
             <CustomerServiceLayout content={content} />

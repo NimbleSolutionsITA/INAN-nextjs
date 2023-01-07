@@ -14,13 +14,14 @@ const pageSettings = {
 }
 
 const FourOFourPage: NextPage<BasePageProps> = ({
-                                                             layoutProps,
-                                                             news,
-                                                             links
-                                                         }) => {
+    layoutProps,
+    news,
+    links,
+    page
+}) => {
     const router = useRouter()
     return (
-        <Layout pageSettings={pageSettings} {...layoutProps} links={links} news={news}>
+        <Layout pageSettings={pageSettings} {...layoutProps} yoast={page.yoast_head} links={links} news={news}>
             <Container headerPadding>
                 <Typography style={{color: 'red'}} variant="h1">ERROR 404</Typography>
                 <Divider />
@@ -36,14 +37,16 @@ export default FourOFourPage
 export async function getStaticProps() {
     const [
         {layoutProps, news},
+        {page}
     ] = await Promise.all([
         getLayoutProps(),
-        getPageProps('product-care')
+        getPageProps('home')
     ]);
     return {
         props: {
             layoutProps,
-            news
+            news,
+            page
         },
         revalidate: 10
     }
