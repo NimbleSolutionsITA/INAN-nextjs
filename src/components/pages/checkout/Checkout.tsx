@@ -29,6 +29,7 @@ const Checkout = ({woocommerce}: CheckoutProps) => {
            router.back()
         }
     }, [])
+
     return (
         <Container headerPadding>
             {!isMobile  && <br/>}

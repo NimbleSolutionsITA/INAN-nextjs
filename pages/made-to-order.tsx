@@ -25,12 +25,12 @@ const pageSettings = {
 const MadeToOrderPage: NextPage<MadeToOrderPageProps> = ({
    layoutProps,
    news,
-   page: {acf: {gallery, body1, body2, email}},
+   page: {acf: {gallery, body1, body2, email}, yoast_head, title: {rendered: pageTitle}},
    links
 }) => {
     const body = _.template(body1)
     return (
-        <Layout {...layoutProps} pageSettings={pageSettings} links={links} news={news}>
+        <Layout {...layoutProps} yoast={yoast_head} pageSettings={{...pageSettings, pageTitle}} links={links} news={news}>
             <Container headerPadding>
                 {gallery && (
                     <Grid container justifyContent="center">

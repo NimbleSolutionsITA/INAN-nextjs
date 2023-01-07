@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
 import Layout from "../src/components/layout";
-import {getLayoutProps} from "../src/utils/layout";
+import {getLayoutProps, getPageProps} from "../src/utils/layout";
 import {BasePageProps} from "../@types";
 import Container from "../src/components/Container"
 import ResetPassword from "../src/components/pages/reset-password/ResetPassword";
@@ -15,10 +15,11 @@ const pageSettings = {
 }
 
 const ResetPasswordPage: NextPage<ResetPasswordPageProps> = ({
-                                                layoutProps,
-                                                news,
-                                            }) => (
-    <Layout {...layoutProps} pageSettings={pageSettings} news={news}>
+    layoutProps,
+    news,
+    page
+}) => (
+    <Layout {...layoutProps} yoast={page.yoast_head} pageSettings={{...pageSettings, pageTitle: page.title.rendered}} news={news}>
         <Container headerPadding >
             <ResetPassword />
         </Container>
@@ -30,13 +31,16 @@ export default ResetPasswordPage
 export async function getStaticProps() {
     const [
         {layoutProps, news},
+        {page}
     ] = await Promise.all([
         getLayoutProps(),
+        getPageProps('account')
     ]);
     return {
         props: {
             layoutProps,
-            news
+            news,
+            page
         },
         revalidate: 10
     }

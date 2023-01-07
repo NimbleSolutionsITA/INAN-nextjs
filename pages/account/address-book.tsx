@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
 import Layout from "../../src/components/layout";
-import {getLayoutProps} from "../../src/utils/layout";
+import {getLayoutProps, getPageProps} from "../../src/utils/layout";
 import {BasePageProps} from "../../@types";
 import AccountLayout from "../../src/components/pages/account/AccountLayout";
 import AddressBook from "../../src/components/pages/account/AddressBook";
@@ -19,10 +19,11 @@ export type AddressBookPageProps = BasePageProps & { countries: Country[]}
 const AddressBookPage: NextPage<AddressBookPageProps> = ({
     layoutProps,
     news,
-    countries
+    countries,
+    page
 }) => {
     return (
-        <Layout {...layoutProps} pageSettings={pageSettings} news={news}>
+        <Layout {...layoutProps} yoast={page.yoast_head} pageSettings={{...pageSettings, pageTitle: page.title.rendered}} news={news}>
            <AccountLayout>
                <AddressBook countries={countries} />
            </AccountLayout>
@@ -35,16 +36,19 @@ export default AddressBookPage
 export async function getStaticProps() {
     const [
         {layoutProps, news},
-        countries
+        countries,
+        {page}
     ] = await Promise.all([
         getLayoutProps(),
-        getCountries()
+        getCountries(),
+        getPageProps('account')
     ]);
     return {
         props: {
             layoutProps,
             news,
-            countries
+            countries,
+            page
         },
         revalidate: 10
     }

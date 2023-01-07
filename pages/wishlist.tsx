@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
 import Layout from "../src/components/layout";
-import {getLayoutProps} from "../src/utils/layout";
+import {getLayoutProps, getPageProps} from "../src/utils/layout";
 import {BasePageProps} from "../@types";
 import Wishlist from "../src/components/pages/wishlist/Wishlist";
 
@@ -10,14 +10,15 @@ const pageSettings = {
     bgColor: '#fff',
     headerColor: '#000',
     headerColorMobile: '#000',
-    pageTitle: 'shopping bag'
+    pageTitle: 'whishlist'
 }
 
 const WishlistPage: NextPage<WishlistPageProps> = ({
-                                       layoutProps,
-                                       news,
-                                   }) => (
-    <Layout {...layoutProps} pageSettings={pageSettings} news={news}>
+    layoutProps,
+    news,
+    page
+}) => (
+    <Layout {...layoutProps} yoast={page.yoast_head} pageSettings={{...pageSettings, pageTitle: page.title.rendered}} news={news}>
         <Wishlist />
     </Layout>
 )
@@ -27,13 +28,16 @@ export default WishlistPage
 export async function getStaticProps() {
     const [
         {layoutProps, news},
+        {page}
     ] = await Promise.all([
         getLayoutProps(),
+        getPageProps('wishlist')
     ]);
     return {
         props: {
             layoutProps,
-            news
+            news,
+            page
         },
         revalidate: 10
     }

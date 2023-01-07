@@ -20,7 +20,7 @@ const ContactPage: NextPage<ContactPageProps> = ({
                                        links
                                    }) => {
     return (
-        <Layout {...layoutProps} pageSettings={pageSettings} links={links} news={news}>
+        <Layout {...layoutProps} pageSettings={pageSettings} yoast={content.yoast_head} links={links} news={news}>
             <CustomerServiceLayout content={content} />
         </Layout>
     )

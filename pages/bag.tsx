@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
 import Layout from "../src/components/layout";
-import {getLayoutProps} from "../src/utils/layout";
+import {getLayoutProps, getPageProps} from "../src/utils/layout";
 import {BasePageProps} from "../@types";
 import Bag from "../src/components/pages/bag/Bag";
 
@@ -18,8 +18,9 @@ const pageSettings = {
 const BagPage: NextPage<BagPageProps> = ({
                                        layoutProps,
                                        news,
+                                       page
                                    }) => (
-    <Layout {...layoutProps} pageSettings={pageSettings} news={news}>
+    <Layout {...layoutProps} yoast={page.yoast_head} pageSettings={{...pageSettings, pageTitle: page.title.rendered}} news={news}>
         <Bag />
     </Layout>
 )
@@ -29,13 +30,16 @@ export default BagPage
 export async function getStaticProps() {
     const [
         {layoutProps, news},
+        { page }
     ] = await Promise.all([
         getLayoutProps(),
+        getPageProps('shopping-bag')
     ]);
     return {
         props: {
             layoutProps,
-            news
+            news,
+            page
         },
         revalidate: 10
     }

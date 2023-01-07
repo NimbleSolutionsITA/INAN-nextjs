@@ -1,7 +1,7 @@
 import { useState} from "react";
 import type { NextPage } from 'next'
 import Layout from "../src/components/layout";
-import {getLayoutProps, getStockistsProps, StockistsPostACF} from "../src/utils/layout";
+import {getLayoutProps, getPageProps, getStockistsProps, StockistsPostACF} from "../src/utils/layout";
 import {BasePageProps} from "../@types";
 import {Collapse, Divider, Grid, Typography} from '@mui/material';
 import Container from '../src/components/Container';
@@ -20,14 +20,15 @@ const StockistsPage: NextPage<StockistsPageProps> = ({
    layoutProps,
    news,
    stockists: shops,
-   links
+   links,
+   page
 }) => {
     const [current, setCurrent] = useState('')
     const cities = shops?.map(s => {
         return s.acf.city
     }).filter((v, i, a) => a.indexOf(v) === i)
     return (
-        <Layout {...layoutProps} pageSettings={pageSettings} links={links} news={news}>
+        <Layout {...layoutProps} yoast={page.yoast_head} pageSettings={{...pageSettings, pageTitle: page.title.rendered}} links={links} news={news}>
             <Container headerPadding>
                 {shops && (
                     <>
@@ -69,16 +70,19 @@ export default StockistsPage
 export async function getStaticProps() {
     const [
         {layoutProps, news},
-        { stockists }
+        { stockists },
+        { page }
     ] = await Promise.all([
         getLayoutProps(),
-        getStockistsProps()
+        getStockistsProps(),
+        getPageProps('stockists')
     ]);
     return {
         props: {
             layoutProps,
             stockists,
-            news
+            news,
+            page
         },
         revalidate: 10
     }

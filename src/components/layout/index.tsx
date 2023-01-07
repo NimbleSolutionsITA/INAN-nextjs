@@ -11,6 +11,8 @@ import {initCart} from "../../redux/cartSlice";
 import {initWishlist} from "../../redux/wishlistSlice";
 import {useTheme} from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import parse from "html-react-parser";
+import * as React from "react";
 
 type MenuItem = {
     ID: number
@@ -26,11 +28,12 @@ type PageLayoutProps = BasePageProps['layoutProps'] & {
     news: BasePageProps['news'],
     links?: LinkItem[],
     activeLink?: string
-    pageSettings: PageSettings
+    pageSettings: PageSettings,
+    yoast: string | undefined
 }
 
 
-export default function Layout({ header: { siteTitle, favicon, headerMenuItems }, footer, news, children, links, activeLink, pageSettings }: PageLayoutProps) {
+export default function Layout({ header: { favicon, headerMenuItems }, footer, news, children, links, activeLink, pageSettings, yoast }: PageLayoutProps) {
     const router = useRouter()
     const dispatch = useDispatch()
 
@@ -62,12 +65,11 @@ export default function Layout({ header: { siteTitle, favicon, headerMenuItems }
     useEffect(() => {
         dispatch(setHeader({isMobile, height: isMobile ? (pageSettings.pageTitle || links ? 94 : 74) : (103 + (pageSettings.pageTitle && router.pathname !== '/about' ? 65 : 0) + (links ? 20 : 0))}))
     }, [isMobile]);
-
     return (
         <>
             <Head>
-                <title>{ siteTitle || 'INAN XX Angostura' }</title>
-                <link rel="icon" href={ favicon || '/favicon.ico' }/>
+                <link rel="shortcut icon" href={favicon} />
+                {yoast && parse(yoast)}
             </Head>
             <main>
                 <Header pageTitle={pageSettings.pageTitle} headerMenuItems={headerMenuItems} links={links} activeLink={activeLink} news={news} />

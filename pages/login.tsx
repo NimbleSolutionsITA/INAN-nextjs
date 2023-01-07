@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
 import Layout from "../src/components/layout";
-import {getLayoutProps} from "../src/utils/layout";
+import {getLayoutProps, getPageProps} from "../src/utils/layout";
 import {BasePageProps} from "../@types";
 import Login from "../src/components/pages/login/Login";
 import Container from "../src/components/Container"
@@ -17,8 +17,9 @@ const pageSettings = {
 const LoginPage: NextPage<NextPageProps> = ({
    layoutProps,
    news,
+   page
 }) => (
-    <Layout {...layoutProps} pageSettings={pageSettings} news={news}>
+    <Layout {...layoutProps} yoast={page.yoast_head} pageSettings={{...pageSettings, pageTitle: page.title.rendered}} news={news}>
         <Container headerPadding >
             <Login />
         </Container>
@@ -30,13 +31,16 @@ export default LoginPage
 export async function getStaticProps() {
     const [
         {layoutProps, news},
+        { page }
     ] = await Promise.all([
         getLayoutProps(),
+        getPageProps('account')
     ]);
     return {
         props: {
             layoutProps,
             news,
+            page
         },
         revalidate: 10
     }

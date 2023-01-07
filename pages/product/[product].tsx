@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
 import Layout from "../../src/components/layout";
-import {getLayoutProps, ProductPageProps} from "../../src/utils/layout";
+import {getLayoutProps, getPageProps, getProductPageProps, ProductPageProps} from "../../src/utils/layout";
 import {BasePageProps} from "../../@types";
 import {getProducts, getProductVariations} from "../../src/utils/products";
 import {getAllProductsIds, getCategoriesProps, getProductColorsProps, getSizeGuideProps} from "../../src/utils/shop";
@@ -24,13 +24,15 @@ const Product: NextPage<ProductProps> = ({
     relatedProducts,
     colors,
     sizeGuide,
-    variations
+    variations,
+    page: { yoast_head }
 }) => {
     const router = useRouter()
     return (
         <Layout
             key={router.asPath}
             pageSettings={pageSettings}
+            yoast={yoast_head}
             {...layoutProps}
             links={productCategories.map(productCategory => ({
                 id: productCategory.id,
@@ -54,13 +56,15 @@ export async function getStaticProps({ params: {product} }: { params: {product: 
         productCategories,
         colors,
         sizeGuide,
-        {products}
+        {products},
+        { page }
     ] = await Promise.all([
         getLayoutProps(),
         getCategoriesProps(),
         getProductColorsProps(),
         getSizeGuideProps(),
-        getProducts({slug: product})
+        getProducts({slug: product}),
+        getProductPageProps(product)
     ]);
     const currentProduct = products[0]
     const { products: relatedProducts} = await getProducts({include: [
@@ -78,7 +82,8 @@ export async function getStaticProps({ params: {product} }: { params: {product: 
             product: currentProduct,
             relatedProducts,
             variations,
-            sizeGuide
+            sizeGuide,
+            page
         },
         revalidate: 10
     }

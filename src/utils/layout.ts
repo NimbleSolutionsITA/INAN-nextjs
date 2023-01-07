@@ -4,6 +4,7 @@ import {WP_REST_API_Posts, WP_REST_API_Post} from "wp-types/index";
 import {ShopProduct, Variation} from "./products";
 import {CategoryProps} from "./shop";
 import {ProductAttribute} from "../../@types/woocommerce";
+import {WordpressPage} from "../../@types";
 
 export type Cover = {
     id: number
@@ -106,13 +107,13 @@ export type CollectionACFProduct = {
     }
 }
 
-export type StockistsPostACF = WP_REST_API_Post & { acf: {
+export type StockistsPostACF = WordpressPage & { acf: {
         city: string
         website: string
         contacts: string
     }}
 
-export type CollectionPostACF = WP_REST_API_Post & { acf: {
+export type CollectionPostACF = WordpressPage & { acf: {
         gallery: ACFMedia[]
         products: CollectionACFProduct[]
         lookbook: CollectionACFProduct[]
@@ -133,7 +134,7 @@ export type CollectionPostACF = WP_REST_API_Post & { acf: {
 
     }}
 
-export type SizeGuidePost = WP_REST_API_Post & { acf: {
+export type SizeGuidePost = WordpressPage & { acf: {
         adj_measures: string
         wearability: string
         matching_size: string
@@ -151,9 +152,14 @@ export type ShopPageProps = { products:  ShopProduct[], productCategories: Categ
 export type CollectionPageProps = { collections:  CollectionPostACF[] }
 export type ProductPageProps = { product:  ShopProduct, relatedProducts: ShopProduct[], productCategories: CategoryProps[], colors: ProductAttribute[], sizeGuide: SizeGuidePost[], variations: Variation[] }
 
-export const getLayoutProps = async ( ): Promise<LayoutProps> => {
-    const news: WP_REST_API_Posts = await fetch(NEWS_FEED_ENDPOINT).then(response => response.json())
-    const { data: layoutProps }: HcmsResponse = await fetch(HEADER_FOOTER_ENDPOINT).then(response => response.json())
+export const getLayoutProps = async (): Promise<LayoutProps> => {
+    const [
+        news,
+        { data: layoutProps }
+    ]: [ WP_REST_API_Posts, HcmsResponse ] = await Promise.all([
+        fetch(NEWS_FEED_ENDPOINT).then(response => response.json()),
+        fetch(HEADER_FOOTER_ENDPOINT).then(response => response.json())
+    ])
     return ({
         layoutProps,
         news: news.map((n) => ({ title: n.title.rendered, id: n.id }))
@@ -181,7 +187,12 @@ export const getHomeProps = async (): Promise<HomePageProps> => {
 }
 
 export const getPageProps = async<T> (slug: string): Promise<PageProps> => {
-    const page: WP_REST_API_Post = (await fetch(`${ WORDPRESS_API_ENDPOINT}/wp/v2/pages?slug=${slug}`).then(response => response.json()))[0]
+    const page: WordpressPage = (await fetch(`${ WORDPRESS_API_ENDPOINT}/wp/v2/pages?slug=${slug}`).then(response => response.json()))[0]
+    return { page }
+}
+
+export const getProductPageProps = async<T> (slug: string): Promise<PageProps> => {
+    const page: WordpressPage = (await fetch(`${ WORDPRESS_API_ENDPOINT}/wp/v2/product?slug=${slug}`).then(response => response.json()))[0]
     return { page }
 }
 

@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
 import Layout from "../src/components/layout";
-import {getHomeProps, getLayoutProps, HomePageProps} from "../src/utils/layout";
+import {getHomeProps, getLayoutProps, getPageProps, HomePageProps} from "../src/utils/layout";
 import {BasePageProps} from "../@types";
 import {useState} from "react";
 import CoverContent from "../src/components/pages/home/CoverContent";
@@ -19,13 +19,14 @@ const Home: NextPage<HomeProps> = ({
    layoutProps,
    news,
    covers,
-   links
+   links,
+   page
 }) => {
     const [showContent, setShowContent] = useState(true);
     const [currentCoverIndex, setCurrentCoverIndex] = useState(0);
     const currentCover = covers[currentCoverIndex]
     return (
-        <Layout {...layoutProps} pageSettings={pageSettings} links={links} news={news}>
+        <Layout {...layoutProps} yoast={page.yoast_head} pageSettings={pageSettings} links={links} news={news}>
             <div style={{position: 'relative'}}>
                 {showContent && (
                     <CoverContent
@@ -52,16 +53,19 @@ export default Home
 export async function getStaticProps() {
   const [
       {layoutProps, news},
-      { covers }
+      { covers },
+      { page }
   ] = await Promise.all([
       getLayoutProps(),
-      getHomeProps()
+      getHomeProps(),
+      getPageProps('home')
   ]);
   return {
     props: {
         layoutProps,
         covers,
         news,
+        page
     },
     revalidate: 10
   }
