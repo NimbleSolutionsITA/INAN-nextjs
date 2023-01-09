@@ -49,7 +49,7 @@ const Collection = ({collection}: CollectionProps) => {
                     />
                 </div>
             )}
-            {Array.isArray(lookbook) && lookbook && (
+            {Array.isArray(lookbook) && (
                 <>
                     <div style={{height: '48px', width: '100%'}} />
                     <Container disableGutters={!isMobile}>

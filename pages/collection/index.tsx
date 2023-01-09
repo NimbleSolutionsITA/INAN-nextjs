@@ -22,19 +22,16 @@ const CollectionPage: NextPage<CollectionProps> = ({
    layoutProps,
    news,
    links,
-   collections
+   collection
 }) => {
     const { isMobile } = useSelector((state: RootState) => state.header);
     const [hideLoader, setHideLoader] = useState(false)
-    const router = useRouter()
-    const slug = router.query.cslug ?? (links && links[links.length - 1]?.slug)
-
-    const collection = collections.find((c) => c.slug === slug)
 
     useEffect(() => {
         let timer = setTimeout(() => setHideLoader(true), 500)
         return () => clearTimeout(timer)
     })
+
     return (
         <Layout {...layoutProps} yoast={collection?.yoast_head} pageSettings={pageSettings} links={links} news={news} activeLink={collection?.slug}>
             <>
@@ -63,12 +60,16 @@ export async function getStaticProps(context: {params?: {cslug?: string}}) {
       name: collection.title.rendered,
       url: `/collection/${collection.slug}`
   }))
-  return {
+  const slug = context.params?.cslug ?? (links && links[links.length - 1]?.slug)
+  const collection = collections.find((c) => c.slug === slug)
+  return collection ? {
     props: {
         layoutProps,
-        collections,
+        collection,
         links
     },
     revalidate: 10
+  } : {
+      notFound: true,
   }
 }

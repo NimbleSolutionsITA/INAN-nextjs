@@ -149,7 +149,7 @@ export type LayoutProps = { layoutProps: HcmsResponse['data'], news: NewsFeed[] 
 export type HomePageProps = { covers: Cover[] }
 export type PageProps = { page: WP_REST_API_Post }
 export type ShopPageProps = { products:  ShopProduct[], productCategories: CategoryProps[] }
-export type CollectionPageProps = { collections:  CollectionPostACF[] }
+export type CollectionPageProps = { collection:  CollectionPostACF }
 export type ProductPageProps = { product:  ShopProduct, relatedProducts: ShopProduct[], productCategories: CategoryProps[], colors: ProductAttribute[], sizeGuide: SizeGuidePost[], variations: Variation[] }
 
 export const getLayoutProps = async (): Promise<LayoutProps> => {
