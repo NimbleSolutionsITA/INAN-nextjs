@@ -12,8 +12,7 @@ type PaypalButtonProps = {
     setPaypalSuccess: Dispatch<SetStateAction<false | Partial<Order>>>
 }
 
-const CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_SANDBOX
-    // process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_PAYPAL_PRODUCTION : process.env.NEXT_PUBLIC_PAYPAL_SANDBOX;
+const CLIENT_ID = process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_PAYPAL_PRODUCTION : process.env.NEXT_PUBLIC_PAYPAL_SANDBOX;
 
 const PaypalButton = ({order, setOrder, setPaypalError, setPaypalSuccess}: PaypalButtonProps) => {
     return CLIENT_ID ? (
