@@ -47,6 +47,16 @@ export async function getStaticProps({ params: { page: slug } }: { params: {page
         getLayoutProps(),
         getPageProps(slug)
     ]);
+    const redirect = REDIRECTS.find(r => r.page === slug)
+    if (redirect) {
+        return {
+            redirect: {
+                destination: redirect.destination,
+                permanent: true,
+                // statusCode: 301
+            },
+        }
+    }
     return page ? {
         props: {
             layoutProps,
@@ -66,3 +76,42 @@ export async function getStaticPaths() {
         fallback: 'blocking',
     };
 }
+
+const REDIRECTS = [
+    {
+        page: 'product',
+        destination: '/shop',
+    },
+    {
+        page: 'customer_service',
+        destination: '/customer_service/contact',
+    },
+    {
+        page: 'customer-service',
+        destination: '/customer_service/contact',
+    },
+    {
+        page: 'contact',
+        destination: '/customer_service/contact',
+    },
+    {
+        page: 'shipping',
+        destination: '/customer_service/shipping',
+    },
+    {
+        page: 'returns',
+        destination: '/customer_service/returns',
+    },
+    {
+        page: 'legal_area',
+        destination: '/legal_area/terms-and-conditions',
+    },
+    {
+        page: 'legal-area',
+        destination: '/legal_area/terms-and-conditions',
+    },
+    {
+        page: 'terms-and-conditions',
+        destination: '/legal_area/terms-and-conditions',
+    }
+]

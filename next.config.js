@@ -1,7 +1,7 @@
-const {REDIRECTS} = require("./src/utils/endpoints");
 /** @type {import('next').NextConfig} */
 // const path = require("node:path");
 const allowedImageWordPressDomain = new URL( process.env.NEXT_PUBLIC_WORDPRESS_SITE_URL ).hostname;
+export const redirectsd = ['pd'];
 module.exports = {
   reactStrictMode: true,
   trailingSlash: true,
@@ -28,17 +28,61 @@ module.exports = {
   },
   async redirects() {
       return [
-        ...REDIRECTS.map(r => ({...r, permanent: true})),
-        {
-          source: '/customer-service/:slug',
-          destination: '/customer_service/:slug',
-          permanent: true,
-        },
-        {
-          source: '/legal-area/:slug',
-          destination: '/legal_area/:slug',
-          permanent: true,
-        }
+          {
+              source: '/product',
+              destination: '/shop',
+              permanent: true,
+          },
+          {
+              source: '/customer_service',
+              destination: '/customer_service/contact',
+              permanent: true,
+          },
+          {
+              source: '/customer-service',
+              destination: '/customer_service/contact',
+              permanent: true,
+          },
+          {
+              source: '/customer-service/:slug',
+              destination: '/customer_service/:slug',
+              permanent: true,
+          },
+          {
+              source: '/contact',
+              destination: '/customer_service/contact',
+              permanent: true,
+          },
+          {
+              source: '/shipping',
+              destination: '/customer_service/shipping',
+              permanent: true,
+          },
+          {
+              source: '/returns',
+              destination: '/customer_service/returns',
+              permanent: true,
+          },
+          {
+              source: '/legal_area',
+              destination: '/legal_area/terms-and-conditions',
+              permanent: true,
+          },
+          {
+              source: '/legal-area',
+              destination: '/legal_area/terms-and-conditions',
+              permanent: true,
+          },
+          {
+              source: '/terms-and-conditions',
+              destination: '/legal_area/terms-and-conditions',
+              permanent: true,
+          },
+          {
+              source: '/legal-area/:slug',
+              destination: '/legal_area/:slug',
+              permanent: true,
+          }
       ]
   }
 }
