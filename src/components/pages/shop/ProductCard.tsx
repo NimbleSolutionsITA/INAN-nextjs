@@ -94,11 +94,11 @@ const ProductCard = ({product}: {product: ShopProduct}) => {
                     }
                     <>
                         {isMobile && <br/>}
-                        {product.stock_status === 'outofstock' && ` ${!isMobile && ' -'} out of stock`}
-                        {product.stock_status === 'onbackorder' && ` ${!isMobile && ' -'} pre order`}
-                        {!!product.stock_quantity && product.stock_quantity < 4 && product.stock_quantity > 0 && `${!isMobile && ' -'} only ${product.stock_quantity} in stock`}
+                        {product.stock_status === 'outofstock' && ` ${isMobile ? '' : ' -'} out of stock`}
+                        {product.stock_status === 'onbackorder' && ` ${isMobile ? '' : ' -'} pre order`}
+                        {!!product.stock_quantity && product.stock_quantity < 4 && product.stock_quantity > 0 && `${isMobile ? '' : ' -'} only ${product.stock_quantity} in stock`}
                         {product.featured && (
-                            <>{isMobile && ' -'} <span style={{color: 'red'}}>new</span></>
+                            <>{!isMobile ? '' : ' -'} <span style={{color: 'red'}}>new</span></>
                         )}
                     </>
                 </Typography>
