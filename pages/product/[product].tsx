@@ -67,11 +67,13 @@ export async function getStaticProps({ params: {product} }: { params: {product: 
         getProductPageProps(product)
     ]);
     const currentProduct = products[0]
+    const color_variations = currentProduct.acf.color_variations ?
+        currentProduct.acf.color_variations.filter(id => id !== currentProduct.id) : []
     const { products: relatedProducts} = await getProducts({include: [
         ...currentProduct.related_ids,
         ...currentProduct.cross_sell_ids,
         ...currentProduct.upsell_ids,
-        ...(currentProduct.acf.color_variations ?? [])
+        ...color_variations
     ]})
     const { products: variations } = await getProductVariations(currentProduct.id)
     return {

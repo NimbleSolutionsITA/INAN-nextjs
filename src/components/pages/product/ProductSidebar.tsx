@@ -38,12 +38,12 @@ const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, curre
     const dispatch = useDispatch()
     const router = useRouter()
     const leatherOptions = product?.attributes.find(attribute => attribute.id === 3)?.options
-    const colorOptions = colorVariations.length > 0 && [
-        ...(product?.attributes.find(attribute => attribute.id === 4)?.options ?? []),
-        ...(colorVariations
-            .map(p => p.attributes.find(a => a.id === 4)?.options)
-            .reduce((a,c) => a && c && a.concat(c)) ?? [])
-    ]
+    const colorOptions = product.type === 'variable' ?
+        product.attributes.find(a => a.id === 4)?.options :
+        [
+            product.attributes.find(a => a.id === 4)?.options[0],
+            ...colorVariations.map(p => p.attributes.find(a => a.id === 4)?.options[0])
+        ]
     const sizeOptions = product?.attributes.find(attribute => attribute.id === 2)?.options
     const isPreOrder = currentProduct?.stock_status === 'onbackorder'
     const isOutOfStock = currentProduct?.stock_status === 'outofstock'

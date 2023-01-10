@@ -4,7 +4,7 @@ import {FormControl, FormControlLabel, FormGroup, Grid} from "@mui/material";
 import {ProductAttribute} from "../../../../@types/woocommerce";
 
 type CheckboxFromControl = {
-    options: string[]
+    options: (string | undefined)[]
     type: string | null
     setType: Function
     colors?: ProductAttribute[]
@@ -16,7 +16,7 @@ const CheckboxFromControl = ({options, type, setType, colors}: CheckboxFromContr
         <FormControl component="fieldset" style={{width: '100%', padding: '0 3px'}}>
             <FormGroup aria-label="position" row>
                 <Grid container>
-                    {options.map((option, index) => (
+                    {options.map((option, index) => option && (
                         <Grid key={option} item xs={6}>
                             <FormControlLabel
                                 value={checked(option, index)}
