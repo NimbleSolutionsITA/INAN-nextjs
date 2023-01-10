@@ -15,5 +15,17 @@ export const CUSTOM_PAGES = [
     'wishlist',
     'about',
     'checkout',
-    'collection'
+    'collection',
+    'shopping-bag',
+    'home',
+    'account',
+    'made-to-order',
+    'contact',
+    'product-care',
+    'shop',
+    'shipping',
+    'cookie-policy',
+    'privacy-policy',
+    'terms-and-conditions',
+    'returns',
 ]
