@@ -9,3 +9,11 @@ export const WORDPRESS_LOGIN_ENDPOINT = `${WORDPRESS_API_ENDPOINT}/jwt-auth/v1/t
 export const WORDPRESS_RESET_PASSWORD_ENDPOINT = `${WORDPRESS_API_ENDPOINT}/bdpwr/v1/reset-password`
 export const WORDPRESS_SET_NEW_PASSWORD_ENDPOINT = `${WORDPRESS_API_ENDPOINT}/bdpwr/v1/set-password`
 export const WORDPRESS_RESET_PASSWORD_VALIDATE_CODE_ENDPOINT = `${WORDPRESS_API_ENDPOINT}/bdpwr/v1/validate-code`
+
+export const CUSTOM_PAGES = [
+    'stockists',
+    'wishlist',
+    'about',
+    'checkout',
+    'collection'
+]

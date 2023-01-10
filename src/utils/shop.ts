@@ -7,7 +7,7 @@ import {
     ShippingMethod
 } from "../../@types/woocommerce";
 import {SizeGuidePost} from "./layout";
-import {WORDPRESS_API_ENDPOINT} from "./endpoints";
+import {CUSTOM_PAGES, WORDPRESS_API_ENDPOINT} from "./endpoints";
 import {WordpressPage} from "../../@types";
 
 export type ProductProps = {
@@ -67,8 +67,8 @@ export const getCountries = async (): Promise<Country[]> => {
 }
 
 export const getAllPagesIds = async () => {
-    const pages: WordpressPage[] = await fetch(`${WORDPRESS_API_ENDPOINT}/wp/v2/pages`).then(response => response.json())
-    return pages.map(page => ({
+    const pages = await getCategoriesProps()
+    return pages.filter(({slug}) => !CUSTOM_PAGES.includes(slug)).map(page => ({
         params: {
             page: page.slug,
         }
