@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 // const path = require("node:path");
 const allowedImageWordPressDomain = new URL( process.env.NEXT_PUBLIC_WORDPRESS_SITE_URL ).hostname;
-export const redirectsd = ['pd'];
 module.exports = {
   reactStrictMode: true,
   trailingSlash: true,
