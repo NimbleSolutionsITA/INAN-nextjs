@@ -1,12 +1,13 @@
 import React, {ChangeEvent, useState} from 'react'
 import {useDispatch, useSelector} from "react-redux";
 import {Typography, TextField, FormControl, CircularProgress} from "@mui/material"
-import {regExpEmail} from "../../../utils/helpers";
+import {regExpEmail, sanitize} from "../../../utils/helpers";
 import Link from "../../Link";
 import Button from "../../Button";
 import {RootState} from "../../../redux/store";
 import {checkLoginUser, loginUser} from "../../../utils/auth";
 import {setAuth} from "../../../redux/authSlice";
+import parse from "html-react-parser";
 
 const LoginForm = () => {
     const [email, setEmail] = React.useState('')
@@ -58,7 +59,7 @@ const LoginForm = () => {
     }
     return (
         <form>
-            {error && <Typography color="error" variant="body1">{error}</Typography> }
+            {error && <Typography color="error" variant="body1">{parse(sanitize(error))}</Typography> }
             <FormControl fullWidth style={{marginTop: '10px'}}>
                 <TextField
                     placeholder="ENTER YOUR EMAIL"
