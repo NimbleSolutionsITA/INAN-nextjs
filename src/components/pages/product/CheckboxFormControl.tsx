@@ -4,7 +4,7 @@ import {FormControl, FormControlLabel, FormGroup, Grid} from "@mui/material";
 import {ProductAttribute} from "../../../../@types/woocommerce";
 
 type CheckboxFromControl = {
-    options: (string | undefined)[]
+    options: string[]
     type: string | null
     setType: Function
     colors?: ProductAttribute[]

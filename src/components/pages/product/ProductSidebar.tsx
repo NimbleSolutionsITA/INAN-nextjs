@@ -37,19 +37,26 @@ const AddToBagWrapper = styled.div`
 const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, currentProduct, setCurrentProduct, colorVariations}: ProductSidebarProps) => {
     const dispatch = useDispatch()
     const router = useRouter()
+    const getColorOptions = () => {
+        const productColorOptions = product.attributes.find(a => a.id === 4)?.options
+        const productVariationColorOptions = colorVariations.map(p => p.attributes.find(a => a.id === 4)?.options[0]).filter(c => typeof c === 'string') as string[]
+        if (product.type === 'variable' && !productVariationColorOptions.length)
+            return productColorOptions ?? null
+        if (productColorOptions?.length && productVariationColorOptions.length)
+            return [
+                productColorOptions[0],
+                ...productVariationColorOptions
+            ]
+        return null
+    }
     const leatherOptions = product?.attributes.find(attribute => attribute.id === 3)?.options
-    const colorOptions = product.type === 'variable' ?
-        product.attributes.find(a => a.id === 4)?.options :
-        [
-            product.attributes.find(a => a.id === 4)?.options[0],
-            ...colorVariations.map(p => p.attributes.find(a => a.id === 4)?.options[0])
-        ]
+    const colorOptions = getColorOptions()
     const sizeOptions = product?.attributes.find(attribute => attribute.id === 2)?.options
     const isPreOrder = currentProduct?.stock_status === 'onbackorder'
     const isOutOfStock = currentProduct?.stock_status === 'outofstock'
     const isVeganOption = !!leatherOptions?.find(opt => opt === 'Vegan')
 
-    const colorType =  product.attributes.find(a => a.id === 4)?.options[0] ?? ''
+    const [colorType, setColorType] = useState<string | null>(colorOptions ? colorOptions[0] ?? null : null)
 
     const [leatherType, setLeatherType] = useState<string | null>(leatherOptions ? leatherOptions[0] : null)
     const [sizeType, setSizeType] = useState<string | null>( sizeOptions ? sizeOptions[0] : null)
@@ -57,31 +64,38 @@ const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, curre
 
     const itemId = currentProduct.id
 
+    const getVariation = (colorType: string | null, sizeType: string | null, leatherType: string | null) => variations.filter(variation => (
+        (!leatherType || variation.attributes?.filter(attr => attr.id === 3 && attr.option === leatherType).length > 0) &&
+        (!sizeType || variation.attributes?.filter(attr => attr.id === 2 && attr.option === sizeType).length > 0) &&
+        (!colorType || (colorOptions?.length ?? 0) > 1 || variation.attributes?.filter(attr => attr.id === 4 && attr.option === colorType).length > 0))
+    )[0] ?? null
+
     const setColor = (color: string) => {
         if (color !== colorType) {
             const colorVariation = colorVariations.find(p => p.attributes.find(a => a.id === 4)?.options[0] === color)
-            colorVariation && router.push(`/product/${colorVariation.slug}`)
+            if (colorVariation)
+                router.push(`/product/${colorVariation.slug}`)
+            else {
+                setCurrentProduct(variations?.length ?
+                    getVariation(color, sizeType, leatherType) :
+                    product)
+                setColorType(color)
+            }
+
         }
     }
 
     const setLeather = (leather: string) => {
         setCurrentProduct(variations?.length ?
-            variations.filter(variation => {
-                return (variation.attributes?.filter(attr => attr.id === 3 && attr.option === leather).length > 0 &&
-                    (!sizeType || variation.attributes?.filter(attr => attr.id === 2 && attr.option === sizeType).length > 0) &&
-                    (!colorType || variation.attributes?.filter(attr => attr.id === 4 && attr.option === colorType).length > 0))
-            })[0] :
+            getVariation(colorType, sizeType, leather) :
             product)
         setLeatherType(leather)
     }
 
     const setSize = (size: string) => {
+        console.log(variations, {colorType, size, leatherType, colorOptions}, getVariation(colorType, size, leatherType))
         setCurrentProduct(variations?.length ?
-            variations.filter(variation => {
-                return ((!leatherType || variation.attributes?.filter(attr => attr.id === 3 && attr.option === leatherType).length > 0) &&
-                    (variation.attributes?.filter(attr => attr.id === 2 && attr.option === size).length > 0) &&
-                    (!colorType || variation.attributes?.filter(attr => attr.id === 4 && attr.option === colorType).length > 0))
-            })[0] :
+            getVariation(colorType, size, leatherType) :
             product)
         setSizeType(size)
     }
@@ -116,7 +130,7 @@ const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, curre
             )}
             {colorOptions && (
                 <>
-                    <ExpansionPanel title={<Typography><b>Color :</b> {colorType || colorOptions[0]}</Typography>}>
+                    <ExpansionPanel title={<Typography><b>Color :</b> {colorType}</Typography>}>
                         <CheckboxFromControl colors={colors} options={colorOptions} type={colorType} setType={setColor} />
                     </ExpansionPanel>
                     <Divider />
