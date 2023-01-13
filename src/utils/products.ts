@@ -68,7 +68,7 @@ export const getProductsProps = async ( category: number, perPage = 100, page = 
             category,
         },
     );
-    return { products: products.map(mapProduct) };
+        return { products: await Promise.all(products.map(mapProduct)) };
 };
 
 type GetProductsParams = Partial<{
@@ -90,7 +90,7 @@ export const getProducts = async (params: GetProductsParams): Promise<ProductsPr
             ...params,
         },
     );
-    return { products: products.map(mapProduct) };
+    return { products: await Promise.all(products.map(mapProduct)) };
 };
 
 export const getProductVariations = async (id: number): Promise<ProductsProps> => {
@@ -105,7 +105,31 @@ export const getProductVariations = async (id: number): Promise<ProductsProps> =
     return { products };
 };
 
-export const mapProduct = (product: ShopProduct) => ({
+export const mapProduct = async (product: ShopProduct) => {
+    let stockStatus: {
+        manage_stock: ShopProduct['manage_stock'],
+        stock_quantity: ShopProduct['stock_quantity'],
+        stock_status: ShopProduct['stock_status'],
+    } = {
+        manage_stock: product.manage_stock,
+        stock_quantity: product.stock_quantity || 0,
+        stock_status: product.stock_status,
+    }
+    if (product.type === 'variable' && !product.manage_stock) {
+        const {products} = await getProductVariations(product.id)
+        if (products.length > 0) {
+            const variation = products.find(p => p.manage_stock && p.stock_status === 'instock') ?? products[0]
+            stockStatus = {
+                manage_stock: variation.manage_stock,
+                stock_quantity: variation.stock_quantity,
+                stock_status: variation.stock_status,
+            }
+        }
+    }
+    return mapProd({...product, ...stockStatus})
+}
+
+export const mapProd = (product: ShopProduct) => ({
     attributes: product.attributes,
     id: product.id,
     acf: product.acf,
@@ -124,10 +148,10 @@ export const mapProduct = (product: ShopProduct) => ({
     short_description: product.short_description,
     sku: product.sku,
     slug: product.slug,
-    manage_stock: product.manage_stock,
-    stock_quantity: product.stock_quantity || 0,
-    stock_status: product.stock_status,
     upsell_ids: product.upsell_ids,
     variations: product.variations,
-    type: product.type
+    type: product.type,
+    manage_stock: product.manage_stock,
+    stock_quantity: product.stock_quantity,
+    stock_status: product.stock_status,
 })

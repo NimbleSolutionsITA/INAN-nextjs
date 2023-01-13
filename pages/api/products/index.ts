@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import {Product} from "../../../@types/woocommerce";
-import {mapProduct} from "../../../src/utils/products";
+import {Product, Variation} from "../../../@types/woocommerce";
+import {getProductVariations, mapProd, ShopProduct} from "../../../src/utils/products";
 
 
 type Data = {
@@ -40,7 +40,7 @@ export default async function handler(
         }
     )
     responseData.success = true
-    responseData.products = data.map(mapProduct)
+    responseData.products = await Promise.all(data.map(mapProduct))
     res.json(responseData)
   }
   catch ( error ) {
@@ -51,4 +51,30 @@ export default async function handler(
     }
     res.status(500).json(responseData)
   }
+}
+
+const mapProduct = async (product: ShopProduct) => {
+    let stockStatus: {
+        manage_stock: ShopProduct['manage_stock'],
+        stock_quantity: ShopProduct['stock_quantity'],
+        stock_status: ShopProduct['stock_status'],
+    } = {
+        manage_stock: product.manage_stock,
+        stock_quantity: product.stock_quantity || 0,
+        stock_status: product.stock_status,
+    }
+    if (product.type === 'variable' && !product.manage_stock) {
+        const {data}: {data: Variation[]} =  await api.get(`products/${product.id}/variations`)
+        if (data.length > 0) {
+            const variation = data.find(p => p.manage_stock && p.stock_status === 'instock') ?? data[0] ?? false
+            if (variation) {
+                stockStatus = {
+                    manage_stock: variation.manage_stock,
+                    stock_quantity: variation.stock_quantity,
+                    stock_status: variation.stock_status,
+                }
+            }
+        }
+    }
+    return mapProd({...product, ...stockStatus})
 }

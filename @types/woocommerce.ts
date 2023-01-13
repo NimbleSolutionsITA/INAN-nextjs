@@ -144,7 +144,7 @@ export interface Product {
     tax_status: string;
     tax_class: string;
     manage_stock: boolean;
-    stock_quantity: null;
+    stock_quantity: number;
     in_stock: boolean;
     backorders: string;
     backorders_allowed: boolean;
@@ -382,7 +382,8 @@ export interface Variation {
     tax_status: string;
     tax_class: string;
     manage_stock: boolean;
-    stock_quantity?: any;
+    stock_quantity: number;
+    stock_status: 'instock' | 'outofstock' | 'onbackorder';
     in_stock: boolean;
     backorders: string;
     backorders_allowed: boolean;
