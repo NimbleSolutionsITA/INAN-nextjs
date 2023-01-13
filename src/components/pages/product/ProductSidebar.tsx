@@ -52,14 +52,14 @@ const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, curre
     const leatherOptions = product?.attributes.find(attribute => attribute.id === 3)?.options
     const colorOptions = getColorOptions()
     const sizeOptions = product?.attributes.find(attribute => attribute.id === 2)?.options
-    const isPreOrder = currentProduct?.stock_status === 'onbackorder'
-    const isOutOfStock = currentProduct?.stock_status === 'outofstock'
+    const stockStatus = currentProduct.manage_stock ? currentProduct?.stock_status : product.stock_status
+    const isPreOrder = stockStatus === 'onbackorder'
+    const isOutOfStock = stockStatus === 'outofstock'
     const isVeganOption = !!leatherOptions?.find(opt => opt === 'Vegan')
 
-    const [colorType, setColorType] = useState<string | null>(colorOptions ? colorOptions[0] ?? null : null)
-
-    const [leatherType, setLeatherType] = useState<string | null>(leatherOptions ? leatherOptions[0] : null)
-    const [sizeType, setSizeType] = useState<string | null>( sizeOptions ? sizeOptions[0] : null)
+    const [colorType, setColorType] = useState<string | null>(currentProduct.attributes.find(a => a.id === 4)?.option ?? (colorOptions && colorOptions[0]) ?? null)
+    const [leatherType, setLeatherType] = useState<string | null>(currentProduct.attributes.find(a => a.id === 3)?.option ?? (leatherOptions && leatherOptions[0]) ?? null)
+    const [sizeType, setSizeType] = useState<string | null>( currentProduct.attributes.find(a => a.id === 2)?.option ?? (sizeOptions && sizeOptions[0]) ?? null)
     const [openDetails, setOpenDetails] = useState(false)
 
     const itemId = currentProduct.id

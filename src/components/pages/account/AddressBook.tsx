@@ -23,7 +23,8 @@ export type ShippingType = {
     postcode: string,
     company?: string,
     state: string
-    vat?: string
+    vat?: string,
+    phone: string
 }
 
 export type ShippingErrors = {
@@ -36,6 +37,7 @@ export type ShippingErrors = {
     country: false | string
     state: false | string
     vat?: false | string
+    phone: false | string
 }
 
 export type ShippingData = {
@@ -63,6 +65,7 @@ const AddressBook = ({ countries }: {countries: AddressBookPageProps['countries'
             postcode: address.postcode,
             country: address.country,
             state: address.state,
+            phone: address.phone
         }
     }
     const errorInitialState: ShippingErrors = {
@@ -74,6 +77,7 @@ const AddressBook = ({ countries }: {countries: AddressBookPageProps['countries'
         postcode: false,
         country: false,
         state: false,
+        phone: false
     }
 
     const [shippingData, setShippingData] = useState<ShippingType>(initialState(shippingWP))
@@ -95,6 +99,7 @@ const AddressBook = ({ countries }: {countries: AddressBookPageProps['countries'
             city: !address.city && 'CITY IS REQUIRED',
             postcode: !address.postcode && 'POST CODE IS REQUIRED',
             country: !address.country && 'COUNTRY IS REQUIRED',
+            phone: false,
             company: false,
             state: false
         }
@@ -169,6 +174,7 @@ const AddressBook = ({ countries }: {countries: AddressBookPageProps['countries'
                 postcode: '',
                 country: '',
                 state: '',
+                phone: ''
             })
             setCurrent('shipping')
         }
@@ -205,6 +211,7 @@ const AddressBook = ({ countries }: {countries: AddressBookPageProps['countries'
                         setVat={setVat}
                         errorVat={errorVat}
                         setErrorVat={setErrorVat}
+                        isBilling
                     />
                 </>
             )}

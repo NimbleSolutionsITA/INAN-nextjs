@@ -21,7 +21,7 @@ const CollectionCard = ({product, isMobile, isLookbook}: CollectionCardProps) =>
 
     return (
         <>
-            <img onClick={handleOpen} style={{width: '100%', marginBottom: '-3px', cursor: 'pointer'}} src={product?.image.sizes?.woocommerce_thumbnail} alt="inan collection" />
+            <img onClick={handleOpen} style={{width: '100%', marginBottom: '-3px', cursor: 'pointer'}} src={product?.image.sizes?.large} alt="inan collection" />
             <Divider />
             <Container disableGutters={!isMobile || isLookbook}>
                 <div style={{display: 'flex', padding: '2px 0'}}>

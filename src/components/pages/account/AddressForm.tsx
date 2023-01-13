@@ -14,9 +14,10 @@ type AddressFormProps = {
     setVat?: Dispatch<SetStateAction<string>>
     errorVat?: false | string
     setErrorVat?: Dispatch<SetStateAction<false | string>>
+    isBilling?: boolean
 }
 
-const AddressForm = ({data, setData, dataError, setDataError, countries, vat, setVat, errorVat, setErrorVat}: AddressFormProps) => {
+const AddressForm = ({data, setData, dataError, setDataError, countries, vat, setVat, errorVat, setErrorVat, isBilling = false}: AddressFormProps) => {
     const countryList = countries?.map(c => {
         return {name: c.name, code: c.code, states: c.states}
     })
@@ -28,7 +29,7 @@ const AddressForm = ({data, setData, dataError, setDataError, countries, vat, se
             event.target.value && setData((data) => ({
                 ...data,
                 country: event.target.value,
-                state: countries.filter(c => c.name === event.target.value)[0].states[0]?.name || ''
+                state: ''
             }))
         }
         else {
@@ -254,6 +255,28 @@ const AddressForm = ({data, setData, dataError, setDataError, countries, vat, se
                         />
                     </FormControl>
                 </Grid>
+                {isBilling && (
+                    <Grid item xs={12}>
+                        <FormControl fullWidth>
+                            <TextField
+                                placeholder="ENTER YOUR PHONE NUMBER"
+                                autoComplete="phone"
+                                error={!!dataError.phone}
+                                label="PHONE NUMBER"
+                                helperText={dataError.phone}
+                                fullWidth
+                                type="text"
+                                value={data.phone}
+                                onChange={(event) => handleChange(event, 'phone')}
+                                InputLabelProps={{
+                                    disableAnimation: true,
+                                    focused: false,
+                                    shrink: true,
+                                }}
+                            />
+                        </FormControl>
+                    </Grid>
+                )}
             </Grid>
         </>
     )

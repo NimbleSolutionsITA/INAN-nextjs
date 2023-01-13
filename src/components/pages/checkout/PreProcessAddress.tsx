@@ -55,6 +55,7 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
         postcode: '',
         country: '',
         state: '',
+        phone: ''
     }
     // @ts-ignore
     const shippingWP = isGuest ? emptyAddress : userInfo.shipping
@@ -71,6 +72,7 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
             postcode: address.postcode,
             country: address.country,
             state: address.state,
+            phone: address.phone
         }
     }
     const errorInitialState = {
@@ -82,6 +84,7 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
         postcode: false,
         country: false,
         state: false,
+        phone: false
     }
     const [shippingData, setShippingData] = useState(initialState(shippingWP))
     // @ts-ignore
@@ -144,6 +147,7 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
             state: address.state,
             // @ts-ignore
             email: guestEmail || user.email,
+            phone: address.phone
         }
     }
 
@@ -298,7 +302,7 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
                 <br />
                 {current === 'billing' &&
                 // @ts-ignore
-                <AddressForm countries={countries} data={billingData} setData={setBillingData} dataError={billingError} setDataError={setBillingError} {...vatProps} />
+                <AddressForm countries={countries} data={billingData} setData={setBillingData} dataError={billingError} setDataError={setBillingError} isBilling {...vatProps} />
                 }
                 {current === 'shipping' && (
                     // @ts-ignore

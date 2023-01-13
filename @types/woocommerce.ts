@@ -261,6 +261,7 @@ export interface Customer {
     date_created_gmt: Date;
     date_modified: Date;
     date_modified_gmt: Date;
+    phone: string;
     email: string;
     first_name: string;
     last_name: string;
@@ -351,6 +352,7 @@ export interface Shipping {
     postcode: string;
     country: string;
     email: string;
+    phone: string;
 }
 
 export interface Variation {

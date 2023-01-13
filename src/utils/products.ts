@@ -124,6 +124,7 @@ export const mapProduct = (product: ShopProduct) => ({
     short_description: product.short_description,
     sku: product.sku,
     slug: product.slug,
+    manage_stock: product.manage_stock,
     stock_quantity: product.stock_quantity || 0,
     stock_status: product.stock_status,
     upsell_ids: product.upsell_ids,
