@@ -100,7 +100,6 @@ const NewsletterForm = ({isMobile, isModal, sendFeedback}: NewsletterFormProps) 
                                             <FormControlLabel
                                                 control={
                                                     <Checkbox
-                                                        onBlack={isMobile || isModal}
                                                         checked={consent}
                                                         inputProps={{ 'aria-label': 'primary checkbox' }}
                                                         onChange={() => setConsent(!consent)}
