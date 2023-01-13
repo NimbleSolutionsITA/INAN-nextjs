@@ -24,7 +24,8 @@ const ProductView = ({product, relatedProducts, variations, colors, sizeGuide}: 
     const [currentProduct, setCurrentProduct] = useState<ShopProduct | Variation>(product.type === 'variable' ? variations.find(v => v.stock_status !== 'outofstock') ?? variations[0] : product)
     const {video, video_cover: videoCover} = product.acf
     const colorVariations = relatedProducts.filter(p => product.acf.color_variations?.includes(p.id))
-    const images = (product.type === 'variable' && currentProduct && currentProduct.image) ? [currentProduct.image, ...product.images.slice(1)] : product.images
+    const variationImage = {image: null, ...currentProduct}.image
+    const images = (product.type === 'variable' && variationImage) ? [variationImage, ...product.images.slice(1)] : product.images
     const slides =  video ? [
         ...images.map((image) =>  <ModalImage url={image} alt={image.alt} />),
         <VimeoPlayer video={video} autoplay={!videoCover && !isMobile} cover={videoCover} color="#fff" />
