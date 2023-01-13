@@ -93,7 +93,6 @@ const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, curre
     }
 
     const setSize = (size: string) => {
-        console.log(variations, {colorType, size, leatherType, colorOptions}, getVariation(colorType, size, leatherType))
         setCurrentProduct(variations?.length ?
             getVariation(colorType, size, leatherType) :
             product)
@@ -131,7 +130,7 @@ const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, curre
             {colorOptions && (
                 <>
                     <ExpansionPanel title={<Typography><b>Color :</b> {colorType}</Typography>}>
-                        <CheckboxFromControl colors={colors} options={colorOptions} type={colorType} setType={setColor} />
+                        <CheckboxFromControl colors={colors} options={colorOptions} type={colorType} setType={setColor} isCrossed />
                     </ExpansionPanel>
                     <Divider />
                 </>

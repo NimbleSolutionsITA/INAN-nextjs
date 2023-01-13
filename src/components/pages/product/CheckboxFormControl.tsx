@@ -8,9 +8,10 @@ type CheckboxFromControl = {
     type: string | null
     setType: Function
     colors?: ProductAttribute[]
+    isCrossed?: boolean
 }
 
-const CheckboxFromControl = ({options, type, setType, colors}: CheckboxFromControl) => {
+const CheckboxFromControl = ({options, type, setType, colors, isCrossed}: CheckboxFromControl) => {
     const checked = (option: string, index: number) => type ? type === option : index === 0
     return (
         <FormControl component="fieldset" style={{width: '100%', padding: '0 3px'}}>
@@ -26,6 +27,7 @@ const CheckboxFromControl = ({options, type, setType, colors}: CheckboxFromContr
                                         inputProps={{ 'aria-label': 'primary checkbox' }}
                                         onChange={() => setType(option)}
                                         color={colors?.filter(cl => cl.name === option)[0].description}
+                                        isCrossed={isCrossed}
                                     />}
                                 label={option}
                                 labelPlacement="end"
