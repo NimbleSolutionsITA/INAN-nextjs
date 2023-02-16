@@ -198,7 +198,7 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
     const handleProceed = async () => {
         setCreatingUser(true)
         let shippingCost
-        const country = shippingData.country ?? billingData.country
+        const country = data.isShipping ? shippingData.country : billingData.country
         if (country === 'Italy') shippingCost = shippingITcost
         else {
             const continent = continents?.find(cont => cont.countries.find(c => c.name === country))
