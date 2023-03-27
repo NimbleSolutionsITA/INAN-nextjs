@@ -45,7 +45,7 @@ const PreProcessPay = ({order, setIsCheckoutReady}: PreProcessPayProps) => {
         // @ts-ignore
         updateOrder({coupon_lines: [{code: coupon}]}, order.id)
             .catch(error => setError(error.message))
-            .finally(() => setIsCheckoutReady(true))
+            .finally(() => setIsCheckoutReady(false))
     }
     return order ? (
         <>
