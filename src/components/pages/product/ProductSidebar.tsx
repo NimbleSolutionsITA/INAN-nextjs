@@ -62,13 +62,23 @@ const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, curre
     const [sizeType, setSizeType] = useState<string | null>( currentProduct.attributes.find(a => a.id === 2)?.option ?? (sizeOptions && sizeOptions[0]) ?? null)
     const [openDetails, setOpenDetails] = useState(false)
 
+    const hasLeatherVariations = variations.length && variations[0].attributes.some(attribute => attribute.id === 3)
+    const hasSizeVariations = variations.length && variations[0].attributes.some(attribute => attribute.id === 2)
+    const hasColorVariations = variations.length && variations[0].attributes.some(attribute => attribute.id === 1)
+
     const itemId = currentProduct.id
 
-    const getVariation = (colorType: string | null, sizeType: string | null, leatherType: string | null) => variations.filter(variation => (
-        (!leatherType || variation.attributes?.filter(attr => attr.id === 3 && attr.option === leatherType).length > 0) &&
-        (!sizeType || variation.attributes?.filter(attr => attr.id === 2 && attr.option === sizeType).length > 0) &&
-        (!colorType || (colorOptions?.length ?? 0) > 1 || variation.attributes?.filter(attr => attr.id === 4 && attr.option === colorType).length > 0))
-    )[0] ?? null
+    const getVariation = (colorType: string | null, sizeType: string | null, leatherType: string | null) => {
+        const vars = variations.filter(variation => {
+                const hasLeatherType = !hasLeatherVariations || (leatherType ? variation.attributes.some(attribute => attribute.id === 3 && attribute.option === leatherType) : true)
+                const hasSizeType = !hasSizeVariations || (sizeType ? variation.attributes.some(attribute => attribute.id === 2 && attribute.option === sizeType) : true)
+                const hasColorType = !hasColorVariations || (colorType ? variation.attributes.some(attribute => attribute.id === 1 && attribute.option === leatherType) : true)
+                return hasLeatherType && hasColorType && hasSizeType
+            }
+        )
+        return vars[0] ?? null
+
+    }
 
     const setColor = (color: string) => {
         if (color !== colorType) {
@@ -88,14 +98,16 @@ const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, curre
     const setLeather = (leather: string) => {
         setCurrentProduct(variations?.length ?
             getVariation(colorType, sizeType, leather) :
-            product)
+            product
+        )
         setLeatherType(leather)
     }
 
     const setSize = (size: string) => {
         setCurrentProduct(variations?.length ?
             getVariation(colorType, size, leatherType) :
-            product)
+            product
+        )
         setSizeType(size)
     }
 
