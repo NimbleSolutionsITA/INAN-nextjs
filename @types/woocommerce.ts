@@ -402,3 +402,11 @@ export interface Variation {
 export interface Self {
     href: string;
 }
+
+export interface ApiErrorResponse {
+    code: string,
+    message: string,
+    data: {
+        status: number
+    }
+}
