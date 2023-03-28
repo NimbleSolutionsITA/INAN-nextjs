@@ -66,7 +66,7 @@ const PreProcess = ({currentOrder, setCurrentOrder, isGuest, setPaypalSuccess, s
                     setPaypalSuccess={setPaypalSuccess}
                     setPaypalError={setPaypalError}
                 />) :
-                <PreProcessPay setIsCheckoutReady={setIsCheckoutReady} order={currentOrder} />
+                <PreProcessPay setIsCheckoutReady={setIsCheckoutReady} order={currentOrder} setOrder={setCurrentOrder} />
 
             }
         />

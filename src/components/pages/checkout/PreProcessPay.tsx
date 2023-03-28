@@ -16,10 +16,11 @@ import {Order} from "../../../../@types/woocommerce";
 
 type PreProcessPayProps = {
     order: Partial<Order>
+    setOrder: Dispatch<SetStateAction<Partial<Order>>>
     setIsCheckoutReady: Dispatch<SetStateAction<boolean>>
 }
 
-const PreProcessPay = ({order, setIsCheckoutReady}: PreProcessPayProps) => {
+const PreProcessPay = ({order, setOrder, setIsCheckoutReady}: PreProcessPayProps) => {
     const [coupon, setCoupon] = useState('')
     const [isGift, setIsGift] = useState(false)
     const [error, setError] = useState<false | string>(false)
@@ -43,10 +44,11 @@ const PreProcessPay = ({order, setIsCheckoutReady}: PreProcessPayProps) => {
     const handleApplyCoupon = async () => {
         setLoading(true)
         // @ts-ignore
-        const { error } = await updateOrder({coupon_lines: [{code: coupon}]}, order.id).catch(console.log)
-        if (error){
-            setError(error)
-        }
+        const { success, ...response } = await updateOrder({coupon_lines: [{code: coupon}]}, order.id).catch(console.log)
+        success ?
+            setOrder(response.order) :
+            setError(response.error)
+
         setLoading(false)
         setIsCheckoutReady(false)
     }
