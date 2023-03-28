@@ -43,9 +43,12 @@ const PreProcessPay = ({order, setIsCheckoutReady}: PreProcessPayProps) => {
     const handleApplyCoupon = async () => {
         setLoading(true)
         // @ts-ignore
-        updateOrder({coupon_lines: [{code: coupon}]}, order.id)
-            .catch(error => setError(error.message))
-            .finally(() => setIsCheckoutReady(false))
+        const { error } = await updateOrder({coupon_lines: [{code: coupon}]}, order.id).catch(console.log)
+        if (error){
+            setError(error)
+        }
+        setLoading(false)
+        setIsCheckoutReady(false)
     }
     return order ? (
         <>

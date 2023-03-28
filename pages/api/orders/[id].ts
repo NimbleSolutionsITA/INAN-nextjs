@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { Order} from "../../../@types/woocommerce";
+import {Order} from "../../../@types/woocommerce";
 
 
 type Data = {
@@ -25,25 +25,29 @@ export default async function handler(
   const responseData: Data = {
     success: false,
   }
+  // const data = req.body
   const endpoint = `orders/${req.query.id}`
+  let resp;
   try {
-    const {data} = req.method === 'PUT' ?
-        await api.post(
+    switch (req.method) {
+      case 'PUT':
+        resp = await api.post(
             endpoint,
             req.body
-        ) :
-        req.method === 'DELETE' &&
-          await api.delete(endpoint)
-
-    responseData.order = data
+        )
+        break;
+      case 'DELETE':
+        resp = await api.delete(endpoint)
+        break;
+    }
+    responseData.order = resp.data
     responseData.success = true
     res.json(responseData)
   } catch (error) {
-    if (typeof error === "string") {
-      responseData.error = error
-    } else if (error instanceof Error) {
-      responseData.error = error.message
-    }
-    res.status(500).json(responseData)
+    responseData.success = false
+    // @ts-ignore
+    responseData.error = error.response.data.message ?? error.message ?? 'bad request'
+    // @ts-ignore
+    res.status(error.response.data.data.status ?? 500).json(responseData)
   }
 }

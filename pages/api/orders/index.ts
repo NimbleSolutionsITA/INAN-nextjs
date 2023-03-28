@@ -36,7 +36,6 @@ export default async function handler(
       res.json(responseData)
     }
     catch ( error ) {
-      console.log(error)
       if (typeof error === "string") {
         responseData.error = error
       } else if (error instanceof Error) {
