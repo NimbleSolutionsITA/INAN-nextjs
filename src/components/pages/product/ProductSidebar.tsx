@@ -127,7 +127,7 @@ const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, curre
                     <Collapse in={openDetails}>
                         <RichText style={{padding: '0 0 1rem'}}>{product.description}</RichText>
                     </Collapse>
-                    <Link color="inherit" onClick={() => setOpenDetails(!openDetails)}><b>{openDetails ? 'less details' : 'more details'}</b></Link>
+                    <Button sx={{padding: 0}} variant="text" color="inherit" onClick={() => setOpenDetails(!openDetails)}><b>{openDetails ? 'less details' : 'more details'}</b></Button>
                     <Divider style={{marginTop: '5px'}} />
                 </>
             )}
@@ -168,7 +168,7 @@ const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, curre
                     <Collapse in={openDetails}>
                         <RichText style={{padding: '0 0 1rem'}}>{product.description}</RichText>
                     </Collapse>
-                    <Link style={{paddingBottom: '5px'}} color="inherit" onClick={() => setOpenDetails(!openDetails)}><b>{openDetails ? 'less details' : 'more details'}</b></Link>
+                    <Button style={{padding: '0 0 5px'}} variant="text" color="inherit" onClick={() => setOpenDetails(!openDetails)}><b>{openDetails ? 'less details' : 'more details'}</b></Button>
                 </>
             )}
             <AddToBagWrapper>
