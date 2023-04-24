@@ -192,7 +192,7 @@ export const getPageProps = async<T> (slug: string): Promise<PageProps> => {
 }
 
 export const getProductPageProps = async<T> (slug: string): Promise<PageProps> => {
-    const page: WordpressPage = (await fetch(`${ WORDPRESS_API_ENDPOINT}/wp/v2/product?slug=${slug}`).then(response => response.json()))[0]
+    const page: WordpressPage = (await fetch(`${ WORDPRESS_API_ENDPOINT}/wp/v3/product?slug=${slug}`).then(response => response.json()))[0]
     return { page }
 }
 
