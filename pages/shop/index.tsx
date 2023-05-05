@@ -19,6 +19,7 @@ const pageSettings = {
 const Shop: NextPage<ShopProps> = ({
    layoutProps,
    productCategories,
+   currentCategoryId,
    news,
    products,
    page
@@ -39,7 +40,7 @@ const Shop: NextPage<ShopProps> = ({
             news={news}
             yoast={page.yoast_head}
         >
-            <GridView products={products} productCategories={productCategories} />
+            <GridView key={currentCategoryId} products={products} productCategories={productCategories} />
         </Layout>
     )
 }
@@ -69,6 +70,7 @@ export async function getStaticProps(context: {params?: {category?: string}}) {
         props: {
             layoutProps,
             productCategories,
+            currentCategoryId,
             products,
             news,
             page
