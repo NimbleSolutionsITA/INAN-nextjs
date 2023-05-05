@@ -1,6 +1,6 @@
 import {HcmsResponse} from "../../@types/wordpress";
 import {HEADER_FOOTER_ENDPOINT, NEWS_FEED_ENDPOINT, WORDPRESS_API_ENDPOINT} from "./endpoints";
-import {WP_REST_API_Posts, WP_REST_API_Post} from "wp-types/index";
+import {WP_REST_API_Posts, WP_REST_API_Post} from "wp-types";
 import {ShopProduct, Variation} from "./products";
 import {CategoryProps} from "./shop";
 import {ProductAttribute} from "../../@types/woocommerce";
@@ -148,7 +148,7 @@ export type NewsFeed = {
 export type LayoutProps = { layoutProps: HcmsResponse['data'], news: NewsFeed[] }
 export type HomePageProps = { covers: Cover[] }
 export type PageProps = { page: WP_REST_API_Post }
-export type ShopPageProps = { products:  ShopProduct[], productCategories: CategoryProps[] }
+export type ShopPageProps = { products:  ShopProduct[], productCategories: CategoryProps[], currentCategoryId: number }
 export type CollectionPageProps = { collection:  CollectionPostACF }
 export type ProductPageProps = { product:  ShopProduct, relatedProducts: ShopProduct[], productCategories: CategoryProps[], colors: ProductAttribute[], sizeGuide: SizeGuidePost[], variations: Variation[] }
 
