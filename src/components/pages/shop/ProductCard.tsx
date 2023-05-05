@@ -76,7 +76,7 @@ const ProductCard = ({product}: {product: ShopProduct}) => {
                 >
                     {!isMobile && <Button disableHover disableGutters disableRipple onClick={handleClick}>add to wishlist</Button>}
                     <Link href={`/product/${product.slug}`}>
-                        <img src={product.images[0]?.woocommerce_thumbnail} alt={product.images[0].alt}/>
+                        <img key={product.images[0].id} src={product.images[0]?.woocommerce_thumbnail} alt={product.images[0].alt}/>
                     </Link>
                 </ImageWrapper>
             )}
