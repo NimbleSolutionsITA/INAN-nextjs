@@ -68,7 +68,7 @@ const ProductCard = ({product}: {product: ShopProduct}) => {
     }
 
     return (
-        <CardWrapper>
+        <CardWrapper key={product.id}>
             {product.images[0] && (
                 <ImageWrapper
                     bg={product.images[0]?.woocommerce_thumbnail}
