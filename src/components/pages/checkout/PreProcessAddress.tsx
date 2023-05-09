@@ -272,7 +272,6 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
                 line_items: cartItems,
                 customer_id: user.id,
                 shipping_lines: [{
-                    id: shippingClass?.id,
                     method_id: shippingClass?.method_id ?? "flat_rate",
                     method_title: shippingClass?.method_id ?? "Flat Rate",
                     total: shippingClass?.settings.cost.value
