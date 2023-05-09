@@ -26,7 +26,8 @@ const Checkout = ({woocommerce}: CheckoutProps) => {
 
     useEffect(() => {
         if (!cart.length && !paypalSuccess) {
-           router.back()
+           // router.back()
+            console.log('no cart')
         }
     }, [])
 

@@ -40,7 +40,8 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
     shippingIT: shippingITcost,
     shippingEU: shippingEUcost,
     shippingW: shippingWcost,
-    shippingR: shippingRcost
+    shippingR: shippingRcost,
+    shippingUK: shippingUKcost
 }}: PreProcessAddressProps) => {
     const { header: {isMobile}, cart: {items: cart}, auth: {user} } = useSelector((state: RootState) => state);
 
@@ -195,11 +196,43 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
         setCreatingUser(false)
     }
 
+    const getCountries = (code: string) => continents.find((c) => c.code === code)?.countries ?? []
+
+
+    function getShippingMethodByCountryCode(countryCode: string | undefined) {
+
+        // Find the country object based on the countryCode
+        const country = countries.find((c) => c.code === countryCode);
+
+        if (!country) {
+            return null; // Country not found, handle this case as needed
+        }
+
+        const countriesEU = getCountries('EU');
+        const countriesW = [...getCountries('A'), ...getCountries('NA')];
+
+        // Check for the shipping method based on the country code
+        if (countryCode === 'IT') {
+            return shippingITcost;
+        } else if (countryCode === 'GB') {
+            return shippingUKcost;
+        } else if (countriesEU.some((location) => location.code === countryCode)) {
+            return shippingEUcost;
+        } else if (countriesW.some((location) => location.code === countryCode)) {
+            return shippingWcost;
+        } else {
+            return shippingRcost; // Default shipping method
+        }
+    }
+
     const handleProceed = async () => {
         setCreatingUser(true)
         let shippingCost
         const country = data.isShipping ? shippingData.country : billingData.country
-        if (country === 'Italy') shippingCost = shippingITcost
+        const countryCode = countries.find(c => c.name === country)?.code
+        const shippingClass = getShippingMethodByCountryCode(countryCode)
+
+        /*if (country === 'Italy') shippingCost = shippingITcost
         else {
             const continent = continents?.find(cont => cont.countries.find(c => c.name === country))
             if (shippingEU.filter(zone => zone.code === continent?.code || zone.code === country).length > 0)
@@ -207,7 +240,7 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
             else if (shippingW.filter(zone => zone.code === continent?.code || zone.code === country).length > 0)
                 shippingCost = shippingWcost
             else shippingCost = shippingRcost
-        }
+        }*/
         const savedShipping = saveData(shippingData ?? billingData)
         if (isGuest) {
             // @ts-ignore
@@ -220,9 +253,9 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
                 billing: saveData(billingData),
                 line_items: cartItems,
                 shipping_lines: [{
-                    method_id: "flat_rate",
-                    method_title: "Flat Rate",
-                    total: shippingCost.settings.cost.value
+                    method_id: shippingClass?.method_id ?? "flat_rate",
+                    method_title: shippingClass?.method_id ?? "Flat Rate",
+                    total: shippingClass?.settings.cost.value
                 }],
                 // @ts-ignore
                 meta_data: [{key: 'vat', value: vat}]
@@ -239,9 +272,10 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
                 line_items: cartItems,
                 customer_id: user.id,
                 shipping_lines: [{
-                    method_id: "flat_rate",
-                    method_title: "Flat Rate",
-                    total: shippingCost.settings.cost.value
+                    id: shippingClass?.id,
+                    method_id: shippingClass?.method_id ?? "flat_rate",
+                    method_title: shippingClass?.method_id ?? "Flat Rate",
+                    total: shippingClass?.settings.cost.value
                 }],
                 // @ts-ignore
                 meta_data: [{key: 'vat', value: vat}]

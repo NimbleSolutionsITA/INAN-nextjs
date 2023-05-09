@@ -27,6 +27,7 @@ export type ShippingProps = {
     shippingIT: ShippingMethod,
     shippingW: ShippingMethod,
     shippingGIFT: ShippingMethod,
+    shippingUK: ShippingMethod,
 }
 
 export type CategoryProps = {
@@ -136,6 +137,16 @@ export const getProductProps = async ( ): Promise<ProductProps> => {
     return props as ProductProps;
 };
 
+/**
+ * shipping zones
+ * 0: Rest of the World
+ * 1: EU
+ * 2: Italy
+ * 3: World
+ * 5: All
+ * 6: UK
+ *
+ */
 export const getCheckoutProps = async ( ): Promise<ShippingProps> => {
     const woocommerceEndpoints: Array<{ name: keyof ShippingProps, endpoint: string }> = [
         { name: 'countries', endpoint: 'data/countries'},
@@ -147,6 +158,7 @@ export const getCheckoutProps = async ( ): Promise<ShippingProps> => {
         { name: 'shippingIT', endpoint: 'shipping/zones/2/methods/5'},
         { name: 'shippingW', endpoint: 'shipping/zones/3/methods/6'},
         { name: 'shippingGIFT', endpoint: 'shipping/zones/5/methods/13'},
+        { name: 'shippingUK', endpoint: 'shipping/zones/6/methods/17'},
     ]
     let props: Partial<ShippingProps> = {}
     const promises = woocommerceEndpoints.map(async entity => {
