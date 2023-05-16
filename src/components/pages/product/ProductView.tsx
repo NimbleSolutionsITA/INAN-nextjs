@@ -21,7 +21,7 @@ type ProductViewProps = {
 }
 const ProductView = ({product, relatedProducts, variations, colors, sizeGuide}: ProductViewProps) => {
     const { isMobile } = useSelector((state: RootState) => state.header);
-    const [currentProduct, setCurrentProduct] = useState<ShopProduct | Variation>(product.type === 'variable' ? variations.find(v => v.stock_status !== 'outofstock') ?? variations[0] : product)
+    const [currentProduct, setCurrentProduct] = useState<ShopProduct | Variation>(product.type === 'variable' ? variations.find(v => v.stock_status === 'instock') ?? variations[0] : product)
     const {video, video_cover: videoCover} = product.acf
     const colorVariations = relatedProducts.filter(p => product.acf.color_variations?.includes(p.id))
     const variationImage = {image: null, ...currentProduct}.image
