@@ -33,6 +33,8 @@ const Home: NextPage<HomeProps> = ({
                         title={currentCover.title}
                         ctaLink={currentCover.ctaLink}
                         ctaText={currentCover.ctaText}
+                        color={currentCover.color}
+                        colorMobile={currentCover.colorMobile}
                     />
                 )}
                 <HomeCovers

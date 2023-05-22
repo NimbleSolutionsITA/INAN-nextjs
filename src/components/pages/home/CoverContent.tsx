@@ -10,6 +10,8 @@ type CoverContentProps = {
     title?: string
     ctaLink?: string | undefined
     ctaText?: string | undefined
+    color: string | undefined
+    colorMobile: string | undefined
 }
 
 const CoverWrapper = styled.div`
@@ -35,11 +37,12 @@ const Cta = styled.div`
   }
 `;
 
-const CoverContent = ({title, ctaLink, ctaText}: CoverContentProps) => {
+const CoverContent = ({title, ctaLink, ctaText, color, colorMobile}: CoverContentProps) => {
     const { headerColor, headerColorMobile, isMobile } = useSelector((state: RootState) => state.header);
+    console.log(color, colorMobile)
     return (
         <CoverWrapper>
-            <Container sx={{color: {xs: headerColorMobile, md: headerColor}}}>
+            <Container sx={{color: {xs: colorMobile ?? headerColorMobile, md: color ?? headerColor}}}>
                 <TitleWrapper>
                     {title && (
                         <Typography
