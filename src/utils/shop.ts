@@ -111,7 +111,7 @@ export const getAllProductsIds = async () => {
 }
 
 export const getSizeGuideProps = async (): Promise<SizeGuidePost[]> => {
-    return await fetch(`${WORDPRESS_API_ENDPOINT}/wp/v2/size_guide`).then(response => response.json())
+    return await fetch(`${WORDPRESS_API_ENDPOINT}/wp/v2/size_guide?per_page=99`).then(response => response.json())
 }
 
 /**
