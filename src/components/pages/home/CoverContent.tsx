@@ -14,9 +14,10 @@ type CoverContentProps = {
     colorMobile: string | undefined
 }
 
-const CoverWrapper = styled.div`
+const CoverWrapper = styled.div<{isMobile: boolean}>`
   width: 100%;
-  position: fixed;
+  position: ${({isMobile}) => isMobile ? 'relative' : 'fixed'};
+  top: 0;  
   z-index: 1;
   overflow: hidden;
   -ms-overflow: hidden;
@@ -39,15 +40,14 @@ const Cta = styled.div`
 
 const CoverContent = ({title, ctaLink, ctaText, color, colorMobile}: CoverContentProps) => {
     const { headerColor, headerColorMobile, isMobile } = useSelector((state: RootState) => state.header);
-    console.log(color, colorMobile)
     return (
-        <CoverWrapper>
+        <CoverWrapper isMobile={isMobile}>
             <Container sx={{color: {xs: colorMobile ?? headerColorMobile, md: color ?? headerColor}}}>
                 <TitleWrapper>
                     {title && (
                         <Typography
                             sx={{
-                                marginTop: {xs: '10px%', md: '5px'},
+                                marginTop: {xs: '10px', md: '103px'},
                                 textTransform: 'uppercase',
                                 minHeight: '75px',
                                 width: {xs: '100%', md: 'calc(100% - 80px)'},

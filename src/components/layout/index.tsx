@@ -40,6 +40,24 @@ export default function Layout({ header: { favicon, headerMenuItems }, footer, n
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
+    useEffect( () => {
+        let settings;
+        if (router.pathname === '/')
+            settings = {
+                pageTitle: pageSettings.pageTitle
+            }
+        else
+            settings = pageSettings
+        dispatch(setHeader(settings))
+    }, [router.pathname] );
+
+    useEffect(() => {
+        dispatch(setHeader({
+            isMobile,
+            height: isMobile ? (pageSettings.pageTitle || links ? 94 : 74) : (103 + (pageSettings.pageTitle && router.pathname !== '/about' ? 65 : 0) + (links ? 20 : 0))
+        }))
+    }, [isMobile]);
+
     useEffect(() => {
         Router.events.on('routeChangeStart', () => dispatch(setHeader({loading: true})));
         Router.events.on('routeChangeComplete', () => dispatch(setHeader({loading: false})));
@@ -52,19 +70,11 @@ export default function Layout({ header: { favicon, headerMenuItems }, footer, n
     }, [Router.events]);
 
     useEffect( () => {
-        dispatch(setHeader(pageSettings))
-    }, [router.pathname] );
-
-    useEffect( () => {
         if ( typeof window !== "undefined" ) {
             dispatch(initCart())
             dispatch(initWishlist())
         }
     }, [] );
-
-    useEffect(() => {
-        dispatch(setHeader({isMobile, height: isMobile ? (pageSettings.pageTitle || links ? 94 : 74) : (103 + (pageSettings.pageTitle && router.pathname !== '/about' ? 65 : 0) + (links ? 20 : 0))}))
-    }, [isMobile]);
     return (
         <>
             <Head>

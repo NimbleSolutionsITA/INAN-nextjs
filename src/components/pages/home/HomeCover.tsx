@@ -21,7 +21,7 @@ type HomeCoverProps = {
     setShowContent: Dispatch<SetStateAction<boolean>>
 }
 
-const CoverWrapper = styled.div<{hasBgImage: boolean, hasVideo: boolean, bg: string | undefined}>`
+const CoverWrapper = styled.div<{hasBgImage: boolean, hasVideo: boolean, bg: string | undefined, isCoverMobile: boolean, isCover: boolean, isMobile: boolean}>`
   min-height:  auto;
   width: 100%;
   text-transform: uppercase;
@@ -30,6 +30,7 @@ const CoverWrapper = styled.div<{hasBgImage: boolean, hasVideo: boolean, bg: str
   background-position: center;
   background-color: ${({hasVideo}) => hasVideo ? '#000' : '#fff'};
   overflow: hidden;
+  margin-top: ${({isCover, isMobile}) => isCover ? (isMobile ? '-84px' : '-103px') : undefined}};  
 `;
 
 const PortraitImageWrapper = styled.div<{ isMobile: boolean }>`
@@ -47,6 +48,9 @@ const HomeCover = ({bg, bgMobile, title, isCover, isCoverMobile, color, colorMob
             hasBgImage={(isMobile ? isCoverMobile : isCover) || (!!video && showContent)}
             hasVideo={!!video}
             bg={!video ? (isMobile ? bgMobile || bg : bg) : undefined}
+            isCover={isCover}
+            isCoverMobile={isCoverMobile}
+            isMobile={isMobile}
         >
             {!video && isMobile && isCoverMobile && <img src={bgMobile || bg} alt="" style={{width: '100%', opacity: 0}} />}
             {!video && !isMobile && isCover && <img src={bg} alt="" style={{width: '100%', opacity: 0}} />}

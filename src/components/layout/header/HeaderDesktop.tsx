@@ -1,5 +1,4 @@
 import styled from "@emotion/styled";
-import {forwardRef, RefObject} from "react";
 import Container from "../../Container";
 import NewsFeed from "./NewsFeed";
 import {BasePageProps, LinkItem} from "../../../../@types";
@@ -29,6 +28,7 @@ const HeaderWrapper = styled.div<{color: string, bgColor: string}>`
 
 const HeaderDesktop = ({ links, news, headerMenuItems, activeLink, pageTitle }: HeaderDesktopProps) => {
     const { headerColor, sizeGuideOpen, open, bgColor, height } = useSelector((state: RootState) => state.header);
+    console.log('HeaderDesktop', bgColor)
     return (
         <div style={{height, width: '100%'}}>
             <HeaderWrapper color={headerColor} bgColor={bgColor}>

@@ -29,15 +29,15 @@ const HomeCovers = ({covers, showContent, setShowContent, currentCoverIndex, set
 
     useEffect(() => {
         if(covers && window.scrollY === 0) {
-            dispatch(setHeader({ headerColor: covers[0].color, headerColorMobile: covers[0].colorMobile}))
+            console.log('setHeader',{ headerColor: covers[0].color, headerColorMobile: covers[0].colorMobile, bgColor: 'transparent'})
+            dispatch(setHeader({ headerColor: covers[0].color, headerColorMobile: covers[0].colorMobile, bgColor: 'transparent'}))
             setCurrentCoverIndex(0)
         }
     }, [currentCoverIndex]);
 
 
     useBrowserLayoutEffect(() => {
-
-        let throttleTimeout: NodeJS.Timeout | null
+        let throttleTimeout: NodeJS.Timeout | null = null
         const wait = 250
         const callBack = () => {
             if (elRefs.current[0].current) {
@@ -75,7 +75,7 @@ const HomeCovers = ({covers, showContent, setShowContent, currentCoverIndex, set
             return isMobile ? window.innerHeight - 520 : window.innerHeight - 150
         }
         return undefined
-    } : (index: number) => 500
+    } : () => 500
 
     return (
         <>
