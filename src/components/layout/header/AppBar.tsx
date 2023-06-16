@@ -80,7 +80,7 @@ const AppBar = ({children, navLinks, height = 94}: AppBarProps) => {
     return (
         <Box sx={{...styles.root, height}}>
             <MuiAppBar position="fixed" square elevation={0} sx={{
-                backgroundColor: open ? 'transparent' : bgColor,
+                backgroundColor: open ? 'transparent' : (bgColor === 'transparent' ? '#fff' : bgColor),
                 zIndex: (theme) => theme.zIndex.modal+2,
             }}>
                 <>
