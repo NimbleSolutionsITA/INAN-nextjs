@@ -15,10 +15,11 @@ import Button from "../../Button";
 import {regExpEmail} from "../../../utils/helpers";
 import Checkbox from "../../Checkbox";
 import Link from "../../Link";
-import {ChangeEvent, useEffect, useRef, useState} from "react";
+import {ChangeEvent, useEffect, useState} from "react";
 import {API_CUSTOMER_ENDPOINT} from "../../../utils/endpoints";
 import {useRouter} from "next/router";
 import {setCustomer} from "../../../redux/customerSlice";
+import {setAuth} from "../../../redux/authSlice";
 
 const Register = () => {
     const { 
@@ -35,7 +36,6 @@ const Register = () => {
         confirmPassword: null | string;
         showPassword: boolean;
         showConfirmPassword: boolean;
-        honeypot: boolean;
     }>({
         firstName: null,
         lastName: null,
@@ -45,7 +45,6 @@ const Register = () => {
         confirmPassword: null,
         showPassword: false,
         showConfirmPassword: false,
-        honeypot: false,
     })
     const [dataError, setDataError] = useState<{
         firstName: false | string;
@@ -63,7 +62,6 @@ const Register = () => {
     const [error, setError] = useState<false | string>(false)
     const [userCreated, setUserCreated] = useState(false)
     const [creatingUser, setCreatingUser] = useState(false)
-    const honeyRef = useRef<HTMLInputElement>(null)
     const dispatch = useDispatch()
     const noUppercase = {
         '& .MuiInputBase-input': {
@@ -90,7 +88,7 @@ const Register = () => {
             password: !data.password && 'PASSWORD IS REQUIRED',
             confirmPassword: data.password !== data.confirmPassword && 'PASSWORD DOES NOT MATCH',
         })
-        if (data.email && data.firstName && data.lastName && regExpEmail.test(data.email) && data.password && data.password === data.confirmPassword && !honeyRef.current?.value) {
+        if (data.email && data.firstName && data.lastName && regExpEmail.test(data.email) && data.password && data.password === data.confirmPassword) {
             const response = await fetch(API_CUSTOMER_ENDPOINT, {
                 method: 'POST',
                 headers: [["Content-Type", 'application/json']],
@@ -103,6 +101,10 @@ const Register = () => {
             }).then(r => r.json())
             if (response.success) {
                 dispatch(setCustomer(response.customer))
+                dispatch(setAuth({
+                    authenticated: true,
+                    user: response.customer
+                }))
             }
             else {
                 setError(response.message)
@@ -113,7 +115,7 @@ const Register = () => {
     }
     useEffect(() => {
         if (authenticated) {
-            router.push({ pathname: '/account' });
+            router.push({ pathname: router.query.origin === 'checkout' ? '/checkout' : '/account' });
         }
     }, [authenticated]);
 
@@ -284,8 +286,6 @@ const Register = () => {
                                 labelPlacement="end"
                             />
                         </FormControl>
-                        <label className="ohnohoney" htmlFor="name" />
-                        <input className="ohnohoney" autoComplete="off" type="name" id="name" name="name" placeholder="Your name here" ref={honeyRef} />
                         <Button variant="contained" color="secondary" fullWidth onClick={handleRegister}>{creatingUser ? <CircularProgress size={15} /> : 'register'}</Button>
                         <Typography style={{marginTop: '5px'}} variant="body1" component="p">
                             BY CLICKING 'REGISTER', YOU AGREE TO OUR <Link color="inherit" href="/legal-area/terms-and-conditions" target="_blank" >TERMS & CONDITIONS AND PRIVACY & COOKIES POLICY.</Link>

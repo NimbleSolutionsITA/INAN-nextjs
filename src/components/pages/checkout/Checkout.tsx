@@ -5,7 +5,6 @@ import Container from "../../../components/Container";
 import Button from "../../../components/Button";
 import LoginForm from "../login/LoginForm";
 import {RootState} from "../../../redux/store";
-import { useRouter} from "next/router";
 import PreProcess from "./PreProcess";
 import PaymentError from "./PaymentError";
 import PaymentSuccess from "./PaymentSuccess";
@@ -22,7 +21,6 @@ const Checkout = ({woocommerce}: CheckoutProps) => {
     const [paypalSuccess, setPaypalSuccess] = useState<false | Partial<Order>>(false);
     const [paypalError, setPaypalError] = useState<false | string>(false);
     const [currentOrder, setCurrentOrder] = useState<Partial<Order>>({});
-    const router = useRouter()
 
     useEffect(() => {
         if (!cart.length && !paypalSuccess) {
@@ -68,7 +66,7 @@ const Checkout = ({woocommerce}: CheckoutProps) => {
                         <br />
                         <Typography>REGISTER TO COMPLETE CHECKOUT MORE QUICKLY, REVIEW ORDER INFORMATION and much more.</Typography>
                         <div style={{flexGrow: 1, minHeight: '10px'}}/>
-                        <Button fullWidth variant="contained" color="secondary" href="/account/register?origin=checkout">register</Button>
+                        <Button fullWidth variant="contained" color="secondary" href="/register?origin=checkout">register</Button>
                     </Grid>
                 </Grid> :
                 <>
