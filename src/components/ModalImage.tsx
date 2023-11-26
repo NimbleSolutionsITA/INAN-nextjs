@@ -1,6 +1,7 @@
 import {forwardRef, MouseEventHandler, useState} from "react"
 import {IconButton, Dialog} from "@mui/material";
 import CloseIcon from "./icons/CloseIcon";
+import Image from "next/image";
 
 type ModalImageProps = {
     url: { src: string, woocommerce_single?: string }
@@ -13,8 +14,12 @@ const ModalImage = forwardRef(({url, alt}: ModalImageProps, disabled) => {
     const handleClose = () => setOpen(false)
     return (
         <>
-            <div onClick={handleOpen}>
-                <img src={url.woocommerce_single || url.src} alt={alt} style={{width: '100%'}} />
+            <div onClick={handleOpen} style={{position: 'relative', width: '100%', paddingBottom: '150%'}}>
+                <Image
+                    src={url.src}
+                    alt={alt}
+                    fill
+                />
             </div>
             <Dialog
                 // @ts-ignore

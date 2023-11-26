@@ -6,6 +6,7 @@ import {ShopProduct} from "../../../utils/products";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../../redux/store";
 import {addWishlistItem} from "../../../redux/wishlistSlice";
+import Image from "next/image";
 
 const CardWrapper = styled.div`
     height: 100%;
@@ -20,6 +21,7 @@ const ImageWrapper = styled.div<{bg: string, bgHover?: string}>`
     background-position: center;
     background-color: #e9e9e9;
     position: relative;
+    width: 100%;
       &:hover {
         background-image: ${({bgHover}) => bgHover && `url(${bgHover})`};
       }
@@ -78,7 +80,9 @@ const ProductCard = ({product, isPrivate = false}: {product: ShopProduct, isPriv
                 >
                     {!isMobile && <Button disableHover disableGutters disableRipple onClick={handleClick}>add to wishlist</Button>}
                     <Link href={`${subPath}/${product.slug}`}>
-                        <img key={product.images[0].id} src={product.images[0]?.woocommerce_thumbnail} alt={product.images[0].alt}/>
+                        <div style={{paddingBottom: '150%'}}>
+                            <Image key={product.images[0].id} src={product.images[0]?.woocommerce_thumbnail} alt={product.images[0].alt} fill />
+                        </div>
                     </Link>
                 </ImageWrapper>
             )}
