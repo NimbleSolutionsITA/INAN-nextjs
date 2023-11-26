@@ -200,7 +200,6 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
 
 
     function getShippingMethodByCountryCode(countryCode: string | undefined) {
-
         // Find the country object based on the countryCode
         const country = countries.find((c) => c.code === countryCode);
 
@@ -224,13 +223,15 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
             return shippingRcost; // Default shipping method
         }
     }
-
+    const cartTotal = cart.map(i => i.qty * i.price).reduce((i, sum) =>  i + sum)
     const handleProceed = async () => {
         setCreatingUser(true)
         let shippingCost
         const country = data.isShipping ? shippingData.country : billingData.country
         const countryCode = countries.find(c => c.name === country)?.code
-        const shippingClass = getShippingMethodByCountryCode(countryCode)
+        const shippingClass = cartTotal >= 1000 ?
+            { settings: { cost: { value: '0' } }, method_id: 'free_shipping' } :
+            getShippingMethodByCountryCode(countryCode)
 
         /*if (country === 'Italy') shippingCost = shippingITcost
         else {

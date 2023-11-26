@@ -26,6 +26,7 @@ const CollectionPage: NextPage<CollectionProps> = ({
 }) => {
     const { isMobile } = useSelector((state: RootState) => state.header);
     const [hideLoader, setHideLoader] = useState(false)
+    const router = useRouter()
 
     useEffect(() => {
         let timer = setTimeout(() => setHideLoader(true), 500)
@@ -33,7 +34,7 @@ const CollectionPage: NextPage<CollectionProps> = ({
     })
 
     return (
-        <Layout {...layoutProps} yoast={collection?.yoast_head} pageSettings={pageSettings} links={links} news={news} activeLink={collection?.slug}>
+        <Layout key={router.asPath} {...layoutProps} yoast={collection?.yoast_head} pageSettings={pageSettings} links={links} news={news} activeLink={collection?.slug}>
             <>
                 {!hideLoader && <div style={{zIndex: 9999, width: '100vw', height: '100vh', position: 'fixed', top: 0, backgroundImage: 'url("/loaders/loader-collection.gif")', backgroundSize: 'cover', backgroundPosition: 'center'}} />}
                 <Container disableGutters={isMobile} headerPadding>

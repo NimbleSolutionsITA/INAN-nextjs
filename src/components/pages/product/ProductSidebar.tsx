@@ -25,6 +25,7 @@ type ProductSidebarProps = {
     currentProduct: ShopProduct | Variation
     setCurrentProduct: Dispatch<SetStateAction<ShopProduct | Variation>>
     colorVariations: ShopProduct[]
+    isPrivate?: boolean
 }
 
 const Sale = styled.span`
@@ -34,7 +35,7 @@ const AddToBagWrapper = styled.div`
   margin: 40px 0;
 `
 
-const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, currentProduct, setCurrentProduct, colorVariations}: ProductSidebarProps) => {
+const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, currentProduct, setCurrentProduct, colorVariations, isPrivate}: ProductSidebarProps) => {
     const dispatch = useDispatch()
     const router = useRouter()
     const getColorOptions = () => {
@@ -182,7 +183,7 @@ const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, curre
                     <GetNotified isMobile={isMobile} colorType={colorType} leatherType={leatherType} sizeType={sizeType} product={product} itemId={itemId} />
                 )}
                 {!isPreOrder && !isOutOfStock && (
-                    <AddToBag name={product.name} itemId={itemId} leather={leatherType} size={sizeType} color={colorType} image={product.images[0].src} slug={product.slug} price={Number(product.price)} />
+                    <AddToBag name={product.name} itemId={itemId} leather={leatherType} size={sizeType} color={colorType} image={product.images[0].src} slug={product.slug} price={Number(product.price)} isPrivate={isPrivate} />
                 )}
                 <Button disableGutters disableRipple onClick={() => dispatch(addWishlistItem({
                     id: itemId,
@@ -193,7 +194,8 @@ const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, curre
                     color: colorType,
                     image: product.images[0].src,
                     slug: product.slug,
-                    qty: 1
+                    qty: 1,
+                    private: isPrivate
                 }))}>add to whishlist</Button>
             </AddToBagWrapper>
             {!isMobile && <Divider />}

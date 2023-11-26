@@ -57,15 +57,24 @@ export async function getStaticProps(context: {params?: {category?: string}}) {
         getCategoriesProps(),
         getPageProps('shop')
     ]);
+
+
     const currentCategoryId = context.params?.category ?
-        (productCategories.find(productCategory => productCategory.slug === context?.params?.category)?.id || 15) :
+        productCategories.find(productCategory => productCategory.slug === context?.params?.category)?.id :
         productCategories[0].id
-    const stockStatus: {stock_status?: 'instock'} = (!context.params?.category || context.params?.category === 'in-stock') ? {stock_status: 'instock'} : {}
+
+    if (!currentCategoryId) {
+        return {
+            notFound: true
+        }
+    }
+
     const {products} = await getProducts({
-        category: context.params?.category !== 'in-stock' ? currentCategoryId : 15,
+        category: currentCategoryId,
         per_page: 9,
-        ...stockStatus
+        stock_status: 'instock'
     })
+
     return {
         props: {
             layoutProps,

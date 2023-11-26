@@ -18,14 +18,32 @@ type ProductViewProps = {
     colors: ProductAttribute[],
     sizeGuide: ProductPageProps['sizeGuide'],
     variations: ProductPageProps['variations']
+    isPrivate?: boolean
 }
-const ProductView = ({product, relatedProducts, variations, colors, sizeGuide}: ProductViewProps) => {
+
+const getDefaultCurrent = (product: ShopProduct, variations: ProductPageProps['variations']) => {
+    if (product.type === 'variable') {
+        if (product.default_attributes.length > 0) {
+            console.log(variations.find(v => v.attributes.every(a => product.default_attributes.find(da => da.id === a.id)?.option === a.option)))
+            const defaultVariation = variations.find(v => v.attributes.every(a => product.default_attributes.find(da => da.id === a.id)?.option.toLowerCase() === a.option.toLowerCase()))
+            if (defaultVariation) {
+                return defaultVariation
+            }
+        }
+        const inStock = variations.find(v => v.stock_status === 'instock')
+        return inStock ?? variations[0]
+    }
+    return product
+}
+
+const ProductView = ({product, relatedProducts, variations, colors, sizeGuide, isPrivate}: ProductViewProps) => {
     const { isMobile } = useSelector((state: RootState) => state.header);
-    const [currentProduct, setCurrentProduct] = useState<ShopProduct | Variation>(product.type === 'variable' ? variations.find(v => v.stock_status === 'instock') ?? variations[0] : product)
+    const [currentProduct, setCurrentProduct] = useState<ShopProduct | Variation>(getDefaultCurrent(product, variations))
     const {video, video_cover: videoCover} = product.acf
     const colorVariations = relatedProducts.filter(p => product.acf.color_variations?.includes(p.id))
     const variationImage = {image: null, ...currentProduct}.image
     const images = (product.type === 'variable' && variationImage) ? [variationImage, ...product.images.slice(1)] : product.images
+    console.log(images)
     const slides =  video ? [
         ...images.map((image) =>  <ModalImage url={image} alt={image.alt} />),
         <VimeoPlayer video={video} autoplay={!videoCover && !isMobile} cover={videoCover} color="#fff" />
@@ -59,6 +77,7 @@ const ProductView = ({product, relatedProducts, variations, colors, sizeGuide}: 
                                 colors={colors}
                                 isMobile={isMobile}
                                 sizeGuide={sizeGuide}
+                                isPrivate={isPrivate}
                             />
                         </Grid>
                     </Grid>

@@ -26,17 +26,17 @@ export default async function handler(
   const responseData: Data = {
     success: false,
   }
-  const { per_page, page, category, include, stock_status } = req?.query ?? {};
+  const { per_page, page, category, include, stock_status, status = 'publish' } = req?.query ?? {};
   try {
     const { data } = await api.get(
         'products',
         {
-          status: 'publish',
+          status,
           per_page: per_page || 10,
           page: page || 1,
           include,
           category,
-          stock_status
+          stock_status,
         }
     )
     responseData.success = true

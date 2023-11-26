@@ -49,9 +49,10 @@ const Sale = styled.span`
   text-decoration: line-through;
 `
 
-const ProductCard = ({product}: {product: ShopProduct}) => {
+const ProductCard = ({product, isPrivate = false}: {product: ShopProduct, isPrivate?: boolean}) => {
     const { isMobile} = useSelector((state: RootState) => state.header);
     const dispatch = useDispatch()
+    const subPath = isPrivate ? '/private-sales' : '/product'
 
     const handleClick = () => {
         dispatch(addWishlistItem({
@@ -63,7 +64,8 @@ const ProductCard = ({product}: {product: ShopProduct}) => {
             color: product.attributes.filter(attribute => attribute.id === 4)[0]?.options[0],
             image: product.images[0].src,
             slug: product.slug,
-            qty: 1
+            qty: 1,
+            private: isPrivate
         }))
     }
 
@@ -75,7 +77,7 @@ const ProductCard = ({product}: {product: ShopProduct}) => {
                     bgHover={product.images[1]?.woocommerce_thumbnail}
                 >
                     {!isMobile && <Button disableHover disableGutters disableRipple onClick={handleClick}>add to wishlist</Button>}
-                    <Link href={`/product/${product.slug}`}>
+                    <Link href={`${subPath}/${product.slug}`}>
                         <img key={product.images[0].id} src={product.images[0]?.woocommerce_thumbnail} alt={product.images[0].alt}/>
                     </Link>
                 </ImageWrapper>

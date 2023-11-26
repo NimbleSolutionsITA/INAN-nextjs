@@ -1,20 +1,15 @@
 import type { NextPage } from 'next'
 import Layout from "../../src/components/layout";
-import {getLayoutProps, getPageProps, getProductPageProps, ProductPageProps} from "../../src/utils/layout";
+import {getLayoutProps, getProductPageProps, ProductPageProps} from "../../src/utils/layout";
 import {BasePageProps} from "../../@types";
 import {getProducts, getProductVariations} from "../../src/utils/products";
 import {getAllProductsIds, getCategoriesProps, getProductColorsProps, getSizeGuideProps} from "../../src/utils/shop";
 import {useRouter} from "next/router";
 import ProductView from "../../src/components/pages/product/ProductView";
+import PrivateLayout from "../../src/components/layout/private";
 
 export type ProductProps = BasePageProps & ProductPageProps
 
-const pageSettings = {
-    bgColor: '#fff',
-    headerColor: '#000',
-    headerColorMobile: '#000',
-    pageTitle: null
-}
 
 const Product: NextPage<ProductProps> = ({
     layoutProps,
@@ -25,14 +20,14 @@ const Product: NextPage<ProductProps> = ({
     colors,
     sizeGuide,
     variations,
-    page: { yoast_head }
+    page
 }) => {
     const router = useRouter()
     return (
-        <Layout
+        <PrivateLayout
             key={router.asPath}
-            pageSettings={pageSettings}
-            yoast={yoast_head}
+            layoutProps={layoutProps}
+            page={page}
             {...layoutProps}
             links={productCategories.map(productCategory => ({
                 id: productCategory.id,
@@ -40,11 +35,10 @@ const Product: NextPage<ProductProps> = ({
                 name: productCategory.name,
                 url: `/shop/${productCategory.slug}`
             }))}
-            activeLink={router.query.category?.toString() || 'view-all'}
             news={news}
         >
-            <ProductView product={product} relatedProducts={relatedProducts} variations={variations} colors={colors} sizeGuide={sizeGuide} />
-        </Layout>
+            <ProductView product={product} relatedProducts={relatedProducts} variations={variations} colors={colors} sizeGuide={sizeGuide} isPrivate />
+        </PrivateLayout>
     )
 }
 
@@ -57,14 +51,12 @@ export async function getStaticProps({ params: {product} }: { params: {product: 
         colors,
         sizeGuide,
         {products},
-        { page }
     ] = await Promise.all([
         getLayoutProps(),
         getCategoriesProps(),
         getProductColorsProps(),
         getSizeGuideProps(),
-        getProducts({slug: product}),
-        getProductPageProps(product)
+        getProducts({slug: product, status: 'private'}),
     ]);
     if (products.length === 0) {
         return {
@@ -72,6 +64,7 @@ export async function getStaticProps({ params: {product} }: { params: {product: 
         }
     }
     const currentProduct = products[0]
+    console.log(currentProduct)
     const color_variations = currentProduct.acf.color_variations ?
         currentProduct.acf.color_variations.filter(id => id !== currentProduct.id) : []
     const { products: relatedProducts} = await getProducts({include: [
@@ -90,14 +83,17 @@ export async function getStaticProps({ params: {product} }: { params: {product: 
             relatedProducts,
             variations,
             sizeGuide,
-            page
+            page: {
+                yoast_head: `<title>${currentProduct.name.toUpperCase()} - Ilaria Norsa XX Angostura</title>`,
+                title: { rendered: currentProduct.name}
+            }
         },
         revalidate: 10
     }
 }
 
 export async function getStaticPaths() {
-    const paths = await getAllProductsIds();
+    const paths = await getAllProductsIds('private');
     return {
         paths,
         fallback: 'blocking',

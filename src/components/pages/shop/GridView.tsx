@@ -13,12 +13,12 @@ import {RootState} from "../../../redux/store";
 type GridViewProps = { products: ShopPageProps['products'], productCategories: ShopPageProps['productCategories']}
 
 const GridView = ({products, productCategories}: GridViewProps) => {
-    const { isMobile} = useSelector((state: RootState) => state.header);
+    const { isMobile, shop: { onlyInStock }} = useSelector((state: RootState) => state.header);
     const router = useRouter()
 
     const category = router.query.category ? productCategories.find(cat => cat.slug === router.query.category) ?? productCategories[0] : productCategories[0]
     const { data, status, fetchNextPage, hasNextPage } = useInfiniteQuery(
-        ["products"],
+        ["products", onlyInStock, category?.id],
         async ({ pageParam = 1}) => {
             if (pageParam === 1) {
                 return products
@@ -27,8 +27,8 @@ const GridView = ({products, productCategories}: GridViewProps) => {
             const {products: fetchedProducts} = await fetch(API_GET_PRODUCTS_ENDPOINT + '?' + new URLSearchParams({
                 page: pageParam,
                 per_page: '9',
-                category: category.slug === 'in-stock' ? '15' : (category?.id.toString() || '15'),
-                ...(category.slug === 'in-stock' ? {stock_status: 'instock'} : {})
+                category: category?.id.toString(),
+                ...(onlyInStock ? {stock_status: 'instock'} : {})
             }), {headers: { 'Accept-Encoding': 'application/json', 'Content-Type': 'application/json' }})
                 .then(response => response.json())
             return fetchedProducts

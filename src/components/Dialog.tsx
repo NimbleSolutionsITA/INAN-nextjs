@@ -6,10 +6,10 @@ interface DialogProps {
     isActive: boolean
     onCancel: () => void
     onConfirm: () => void
-    message: string
+    message: string | React.ReactNode
     title?: string
     confirm?: string
-    cancel?: string
+    cancel?: string,
 }
 
 const Dialog = ({isActive, onCancel, onConfirm, message, title = "ILARIA NORSA XX ANGOSTURA", confirm = 'CONFIRM', cancel = "CANCEL"}: DialogProps) => {
@@ -26,9 +26,7 @@ const Dialog = ({isActive, onCancel, onConfirm, message, title = "ILARIA NORSA X
         >
             <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
             <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                    {message}
-                </DialogContentText>
+                {message instanceof String ? <DialogContentText id="alert-dialog-description">{message}</DialogContentText> : message}
             </DialogContent>
             <DialogActions>
                 <Grid container spacing={2}>

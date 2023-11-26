@@ -8,7 +8,6 @@ import {
 } from "../../@types/woocommerce";
 import {SizeGuidePost} from "./layout";
 import {CUSTOM_PAGES, WORDPRESS_API_ENDPOINT} from "./endpoints";
-import {WordpressPage} from "../../@types";
 
 export type ProductProps = {
     productCategories: Category[]
@@ -85,7 +84,7 @@ export const getAllProductCategoriesIds = async () => {
     }))
 }
 
-export const getAllProductsIds = async () => {
+export const getAllProductsIds = async (status = 'publish') => {
     let page = 1;
     let products: Product[] = [];
     let allProducts: Product[] = [];
@@ -95,7 +94,7 @@ export const getAllProductsIds = async () => {
             {
                 per_page: 100,
                 page,
-                status: 'publish',
+                status,
             },
         )).data;
         allProducts = [...allProducts, ...products]

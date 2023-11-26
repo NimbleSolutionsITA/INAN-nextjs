@@ -34,10 +34,12 @@ const CartItem = ({itemData, isBag}: CartItemProps) => {
         handleRemove()
     }
 
+    const subPath = itemData.private ? '/private-sales' : '/product'
+
     return (
         <Grid container spacing={2}>
             <Grid item xs={4}>
-                <Link href={`/product/${itemData.slug}`}><img src={itemData.image} alt={itemData.name} width="100%" /></Link>
+                <Link href={`${subPath}/${itemData.slug}`}><img src={itemData.image} alt={itemData.name} width="100%" /></Link>
             </Grid>
             <Grid item xs={8} style={{display: "flex", flexDirection: "column", paddingBottom: 0}}>
                 <Typography variant="h2">

@@ -157,8 +157,8 @@ export const getLayoutProps = async (): Promise<LayoutProps> => {
         news,
         { data: layoutProps }
     ]: [ WP_REST_API_Posts, HcmsResponse ] = await Promise.all([
-        fetch(NEWS_FEED_ENDPOINT).then(response => response.json()),
-        fetch(HEADER_FOOTER_ENDPOINT).then(response => response.json())
+        fetch(NEWS_FEED_ENDPOINT, { cache: "force-cache", next: { revalidate: 60 * 60 } }).then(response => response.json()),
+        fetch(HEADER_FOOTER_ENDPOINT, { cache: "force-cache", next: { revalidate: 60 * 60 } }).then(response => response.json())
     ])
     return ({
         layoutProps,
@@ -197,7 +197,7 @@ export const getProductPageProps = async<T> (slug: string): Promise<PageProps> =
 }
 
 export const getCollectionProps = async (): Promise<{ collections:  CollectionPostACF[]}> => {
-    const collections: CollectionPostACF[] = await fetch(`${ WORDPRESS_API_ENDPOINT}/wp/v2/collection`).then(response => response.json())
+    const collections: CollectionPostACF[] = await fetch(`${ WORDPRESS_API_ENDPOINT}/wp/v2/collection`, { cache: "force-cache", next: { revalidate: 60 } }).then(response => response.json())
     return { collections: collections.map(collection => ({
             ...collection
         }))}

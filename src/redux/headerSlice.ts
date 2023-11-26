@@ -13,6 +13,9 @@ const initialState: Header = {
     pageTitle: null,
     isMobile: false,
     loading: false,
+    shop: {
+        onlyInStock: true,
+    }
 }
 
 export const headerSlice = createSlice({
@@ -24,14 +27,22 @@ export const headerSlice = createSlice({
             // doesn't actually mutate the state because it uses the Immer library,
             // which detects changes to a "draft state" and produces a brand new
             // immutable state based off those changes
-            console.log(payload.bgColor)
             state = {...state, ...payload}
             return state
         },
+        toggleOnlyInStock: (state) => {
+            return {
+                ...state,
+                shop: {
+                    ...state.shop,
+                    onlyInStock: !state.shop.onlyInStock
+                }
+            }
+        }
     },
 })
 
 // Action creators are generated for each case reducer function
-export const { setHeader} = headerSlice.actions
+export const { setHeader, toggleOnlyInStock} = headerSlice.actions
 
 export default headerSlice.reducer

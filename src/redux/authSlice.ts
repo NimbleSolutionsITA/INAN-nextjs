@@ -5,7 +5,8 @@ import {Auth} from "../../@types";
 const initialState: Auth = {
     authenticated: false,
     authenticating: false,
-    user: undefined
+    user: undefined,
+    privateSalesAccess: false,
 }
 
 export const authSlice = createSlice({

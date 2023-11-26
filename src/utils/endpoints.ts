@@ -4,6 +4,7 @@ export const NEWS_FEED_ENDPOINT = `${ WORDPRESS_API_ENDPOINT}/wp/v2/news_feed`
 export const API_GET_PRODUCTS_ENDPOINT = `${ process.env.NEXT_PUBLIC_SITE_URL}/api/products`
 export const API_CUSTOMER_ENDPOINT = `${ process.env.NEXT_PUBLIC_SITE_URL}/api/customer`
 export const API_ORDER_ENDPOINT = `${ process.env.NEXT_PUBLIC_SITE_URL}/api/orders`
+export const API_SALES_ENDPOINT = `${ process.env.NEXT_PUBLIC_SITE_URL}/api/private-sales`
 export const WORDPRESS_USER_INFO_ENDPOINT = `${WORDPRESS_API_ENDPOINT}/wp/v2/users/me`
 export const WORDPRESS_LOGIN_ENDPOINT = `${WORDPRESS_API_ENDPOINT}/jwt-auth/v1/token`
 export const WORDPRESS_RESET_PASSWORD_ENDPOINT = `${WORDPRESS_API_ENDPOINT}/bdpwr/v1/reset-password`

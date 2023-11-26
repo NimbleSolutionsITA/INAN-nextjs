@@ -25,7 +25,8 @@ export type CartItem = {
     color: string | false | null
     image: string
     slug: string
-    qty: number
+    qty: number,
+    private?: boolean
 }
 
 export type Cart = CartItem[] | undefined
@@ -41,6 +42,9 @@ export type Header = {
     pageTitle: string | null
     isMobile: boolean
     loading: boolean
+    shop: {
+        onlyInStock: boolean
+    }
 }
 
 export type User = {
@@ -62,6 +66,7 @@ export type Auth = {
     authenticated: boolean
     authenticating: boolean
     user: User | undefined
+    privateSalesAccess: boolean
 }
 
 export type PageSettings = {

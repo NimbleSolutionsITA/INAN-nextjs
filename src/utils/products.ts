@@ -77,7 +77,8 @@ type GetProductsParams = Partial<{
     per_page: number
     slug: string
     include: number | number[]
-    stock_status: 'instock' | 'outofstock' | 'onbackorder'
+    stock_status: 'instock' | 'outofstock' | 'onbackorder',
+    status: 'publish' | 'private' | 'draft' | 'pending'
 }>
 
 export const getProducts = async (params: GetProductsParams): Promise<ProductsProps> => {
@@ -154,4 +155,5 @@ export const mapProd = (product: ShopProduct) => ({
     manage_stock: product.manage_stock,
     stock_quantity: product.stock_quantity,
     stock_status: product.stock_status,
+    default_attributes: product.default_attributes
 })

@@ -17,6 +17,7 @@ type AddToBagProps = {
     image: string
     slug: string
     children?: ReactNode | string
+    isPrivate?: boolean
 }
 
 const TitleWrapper = styled.div`
@@ -25,7 +26,7 @@ const TitleWrapper = styled.div`
   margin-bottom: 2px;
 `
 
-const AddToBag = ({itemId, name, price, leather, size, color, image, slug, children = 'add to bag'}: AddToBagProps) => {
+const AddToBag = ({itemId, name, price, leather, size, color, image, slug, children = 'add to bag', isPrivate}: AddToBagProps) => {
     const cart = useSelector((state: RootState) => state.cart.items);
     const dispatch = useDispatch()
     const [open, setOpen] = useState(false)
@@ -41,7 +42,8 @@ const AddToBag = ({itemId, name, price, leather, size, color, image, slug, child
                 color,
                 image,
                 slug,
-                qty: 1
+                qty: 1,
+                private: isPrivate
             }))
             setOpen(true)
         }

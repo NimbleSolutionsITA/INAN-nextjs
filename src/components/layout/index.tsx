@@ -23,7 +23,7 @@ type MenuItem = {
     url: string
 }
 
-type PageLayoutProps = BasePageProps['layoutProps'] & {
+export type PageLayoutProps = BasePageProps['layoutProps'] & {
     children: JSX.Element,
     news: BasePageProps['news'],
     links?: LinkItem[],
@@ -54,7 +54,7 @@ export default function Layout({ header: { favicon, headerMenuItems }, footer, n
     useEffect(() => {
         dispatch(setHeader({
             isMobile,
-            height: isMobile ? (pageSettings.pageTitle || links ? 94 : 74) : (103 + (pageSettings.pageTitle && router.pathname !== '/about' ? 65 : 0) + (links ? 20 : 0))
+            ...(isMobile ? { height: pageSettings.pageTitle || links ? 94 : 74 } : {})
         }))
     }, [isMobile]);
 

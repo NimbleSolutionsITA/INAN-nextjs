@@ -6,7 +6,7 @@ import {
     FormControl,
     CircularProgress,
 } from "@mui/material";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import {formatPrice} from "../../../utils/helpers";
 import Button from "../../../components/Button";
 import CartItems from "./CartItems";
