@@ -10,9 +10,9 @@ import {ShopPageProps} from "../../../utils/layout";
 import {useSelector} from "react-redux";
 import {RootState} from "../../../redux/store";
 
-type GridViewProps = { products: ShopPageProps['products'], productCategories: ShopPageProps['productCategories']}
+type GridViewProps = {productCategories: ShopPageProps['productCategories']}
 
-const GridView = ({products, productCategories}: GridViewProps) => {
+const GridView = ({productCategories}: GridViewProps) => {
     const { isMobile, shop: { onlyInStock }} = useSelector((state: RootState) => state.header);
     const router = useRouter()
 
@@ -20,10 +20,6 @@ const GridView = ({products, productCategories}: GridViewProps) => {
     const { data, status, fetchNextPage, hasNextPage } = useInfiniteQuery(
         ["products", onlyInStock, category?.id],
         async ({ pageParam = 1}) => {
-            if (pageParam === 1) {
-                return products
-            }
-
             const {products: fetchedProducts} = await fetch(API_GET_PRODUCTS_ENDPOINT + '?' + new URLSearchParams({
                 page: pageParam,
                 per_page: '9',

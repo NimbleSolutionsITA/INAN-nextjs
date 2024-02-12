@@ -21,7 +21,6 @@ const Shop: NextPage<ShopProps> = ({
    productCategories,
    currentCategoryId,
    news,
-   products,
    page
 }) => {
     const router = useRouter()
@@ -40,7 +39,7 @@ const Shop: NextPage<ShopProps> = ({
             news={news}
             yoast={page.yoast_head}
         >
-            <GridView key={currentCategoryId} products={products} productCategories={productCategories} />
+            <GridView key={currentCategoryId} productCategories={productCategories} />
         </Layout>
     )
 }
@@ -69,18 +68,11 @@ export async function getStaticProps(context: {params?: {category?: string}}) {
         }
     }
 
-    const {products} = await getProducts({
-        category: currentCategoryId,
-        per_page: 9,
-        stock_status: 'instock'
-    })
-
     return {
         props: {
             layoutProps,
             productCategories,
             currentCategoryId,
-            products,
             news,
             page
         },

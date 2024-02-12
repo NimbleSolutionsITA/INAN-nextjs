@@ -38,11 +38,20 @@ export const headerSlice = createSlice({
                     onlyInStock: !state.shop.onlyInStock
                 }
             }
-        }
+        },
+        setInStock: (state, event) => {
+            return {
+                ...state,
+                shop: {
+                    ...state.shop,
+                    onlyInStock: event.payload
+                }
+            }
+        },
     },
 })
 
 // Action creators are generated for each case reducer function
-export const { setHeader, toggleOnlyInStock} = headerSlice.actions
+export const { setHeader, toggleOnlyInStock, setInStock} = headerSlice.actions
 
 export default headerSlice.reducer

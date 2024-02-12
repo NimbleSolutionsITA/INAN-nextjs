@@ -1,5 +1,5 @@
 import Shop, {getStaticProps as baseGetStaticProps} from "./index";
-import {getAllProductCategoriesIds, getCategoriesProps} from "../../src/utils/shop";
+import {getAllProductCategoriesIds} from "../../src/utils/shop";
 
 export default Shop
 

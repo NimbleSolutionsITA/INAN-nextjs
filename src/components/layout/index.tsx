@@ -6,7 +6,7 @@ import {Router, useRouter} from "next/router";
 import Loading from "../Loading";
 import {useEffect,} from "react";
 import {useDispatch} from "react-redux";
-import {setHeader} from "../../redux/headerSlice";
+import {setHeader, setInStock} from "../../redux/headerSlice";
 import {initCart} from "../../redux/cartSlice";
 import {initWishlist} from "../../redux/wishlistSlice";
 import {useTheme} from "@mui/material/styles";
@@ -75,6 +75,18 @@ export default function Layout({ header: { favicon, headerMenuItems }, footer, n
             dispatch(initWishlist())
         }
     }, [] );
+
+    useEffect(() => {
+        if (router.query.category === 'in-stock' || router.pathname === '/shop') {
+            console.log('in-stock')
+            dispatch(setInStock(true))
+        }
+        else {
+            console.log('not in-stock')
+            dispatch(setInStock(false))
+        }
+    }, [router.pathname]);
+
     return (
         <>
             <Head>
