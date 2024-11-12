@@ -29,7 +29,7 @@ const ModalImage = forwardRef(({url, alt}: ModalImageProps, disabled) => {
                 fullScreen
                 PaperProps={{
                     sx: {
-                        backgroundSize: 'contain',
+                        backgroundSize: 'cover',
                         backgroundImage: `url(${url.src})`,
                         backgroundPosition: 'center',
                         backgroundRepeat: 'no-repeat',
@@ -37,6 +37,12 @@ const ModalImage = forwardRef(({url, alt}: ModalImageProps, disabled) => {
                     }
                 }}
             >
+                <Image
+                    src={url.src}
+                    alt={alt}
+                    fill
+                    style={{width: '100%', height: '100%'}}
+                />
                 <IconButton disableRipple onClick={() => setOpen(false)} style={{position: 'absolute', right: 0, top: 0}}>
                     <CloseIcon width="21px" />
                 </IconButton>

@@ -37,7 +37,6 @@ const HeaderDesktop = ({ links, news, headerMenuItems, activeLink, pageTitle }: 
 
     useEffect(() => {
         if (ref.current) {
-            console.log('update height')
             dispatch(setHeader({ height: ref.current?.offsetHeight }));
         }
     }, [pathname, dispatch]);

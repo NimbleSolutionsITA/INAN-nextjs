@@ -9,9 +9,11 @@ import {
 import {resetPassword, setNewPassword, validateCode} from "../../../utils/auth";
 import Button from "../../Button";
 import {useRouter} from "next/router";
+import {useIsMobile} from "../../../utils/layout";
 
 const ResetPassword = () => {
-    const { header: {isMobile}, auth: {authenticated} } = useSelector((state: RootState) => state);
+    const { auth: {authenticated} } = useSelector((state: RootState) => state);
+    const isMobile = useIsMobile()
     const honeyRef = useRef<HTMLInputElement>(null)
     const noUppercase = {
         '& .MuiInputBase-input': {

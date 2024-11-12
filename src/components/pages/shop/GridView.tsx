@@ -6,14 +6,15 @@ import {useInfiniteQuery} from "@tanstack/react-query";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {API_GET_PRODUCTS_ENDPOINT} from "../../../utils/endpoints";
 import {useRouter} from "next/router";
-import {ShopPageProps} from "../../../utils/layout";
+import {ShopPageProps, useIsMobile} from "../../../utils/layout";
 import {useSelector} from "react-redux";
 import {RootState} from "../../../redux/store";
 
 type GridViewProps = {productCategories: ShopPageProps['productCategories']}
 
 const GridView = ({productCategories}: GridViewProps) => {
-    const { isMobile, shop: { onlyInStock }} = useSelector((state: RootState) => state.header);
+    const { shop: { onlyInStock }} = useSelector((state: RootState) => state.header);
+    const isMobile = useIsMobile()
     const router = useRouter()
 
     const category = router.query.category ? productCategories.find(cat => cat.slug === router.query.category) ?? productCategories[0] : productCategories[0]

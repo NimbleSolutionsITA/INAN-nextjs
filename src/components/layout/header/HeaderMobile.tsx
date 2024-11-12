@@ -1,4 +1,3 @@
-import {forwardRef} from "react";
 import AppBar from "./AppBar";
 import NewsFeed from "./NewsFeed";
 import {BasePageProps, LinkItem} from "../../../../@types";
@@ -16,11 +15,11 @@ type HeaderMobileProps = {
 }
 
 const HeaderMobile = ({  headerMenuItems, links, news, activeLink, pageTitle }: HeaderMobileProps) => {
-    const { open, sizeGuideOpen, height } = useSelector((state: RootState) => state.header);
+    const { open, sizeGuideOpen, heightMobile } = useSelector((state: RootState) => state.header);
     return (
         <AppBar
             navLinks={headerMenuItems}
-            height={height}
+            height={heightMobile}
         >
             {!open && !sizeGuideOpen && (
                 <>

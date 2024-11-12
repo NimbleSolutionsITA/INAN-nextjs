@@ -5,6 +5,7 @@ import styled from "@emotion/styled";
 import {Typography} from "@mui/material";
 import {useSelector} from "react-redux";
 import {RootState} from "../../../redux/store";
+import {useIsMobile} from "../../../utils/layout";
 
 type CoverContentProps = {
     title?: string
@@ -39,7 +40,8 @@ const Cta = styled.div`
 `;
 
 const CoverContent = ({title, ctaLink, ctaText, color, colorMobile}: CoverContentProps) => {
-    const { headerColor, headerColorMobile, isMobile } = useSelector((state: RootState) => state.header);
+    const { headerColor, headerColorMobile } = useSelector((state: RootState) => state.header);
+    const isMobile = useIsMobile()
     return (
         <CoverWrapper isMobile={isMobile}>
             <Container sx={{color: {xs: colorMobile ?? headerColorMobile, md: color ?? headerColor}}}>

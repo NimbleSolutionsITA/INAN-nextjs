@@ -2,17 +2,15 @@ import VimeoPlayer from "../../VimeoPlayer";
 import CollectionCard from "./CollectionCard";
 import Container from "../../Container";
 import {Divider, Grid, Typography} from "@mui/material";
-import { CollectionPostACF} from "../../../utils/layout";
+import {CollectionPostACF, useIsMobile} from "../../../utils/layout";
 import MultiCarousel from "../../MultiCarousel";
-import {useSelector} from "react-redux";
-import {RootState} from "../../../redux/store";
 
 type CollectionProps = {
     collection: CollectionPostACF
 }
 
 const Collection = ({collection}: CollectionProps) => {
-    const { isMobile } = useSelector((state: RootState) => state.header);
+    const isMobile = useIsMobile()
     const { gallery, products, lookbook} = collection.acf
     return (
         <>

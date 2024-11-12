@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 // const path = require("node:path");
 const allowedImageWordPressDomain = new URL( process.env.NEXT_PUBLIC_WORDPRESS_SITE_URL ).hostname;
+const WORDPRESS_SITE_URL = process.env.NEXT_PUBLIC_WORDPRESS_SITE_URL;
 module.exports = {
   reactStrictMode: true,
   trailingSlash: true,
@@ -81,7 +82,17 @@ module.exports = {
               source: '/legal-area/:slug',
               destination: '/legal_area/:slug',
               permanent: true,
-          }
+          },
+          {
+              source: '/wp-admin/:path*',
+              destination: `${WORDPRESS_SITE_URL}/wp-admin/:path*`,
+              permanent: true,
+          },
+          {
+              source: '/wp-login/:path*',
+              destination: `${WORDPRESS_SITE_URL}/wp-login/:path*`,
+              permanent: true,
+          },
       ]
   }
 }

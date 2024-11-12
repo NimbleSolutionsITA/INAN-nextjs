@@ -3,12 +3,11 @@ import {Grid} from "@mui/material";
 import ProductCard from "./pages/shop/ProductCard";
 import {API_GET_PRODUCTS_ENDPOINT} from "../utils/endpoints";
 import {useEffect, useState} from "react";
-import {useSelector} from "react-redux";
-import {RootState} from "../redux/store";
+import {useIsMobile} from "../utils/layout";
 
 const PrivateProductGrid = () => {
 	const [products, setProducts] = useState([]);
-	const { isMobile } = useSelector((state: RootState) => state.header);
+	const isMobile = useIsMobile()
 
 	useEffect(() => {
 		const fetchProducts = async () => {

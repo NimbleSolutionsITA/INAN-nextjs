@@ -20,12 +20,11 @@ import {API_CUSTOMER_ENDPOINT} from "../../../utils/endpoints";
 import {useRouter} from "next/router";
 import {setCustomer} from "../../../redux/customerSlice";
 import {setAuth} from "../../../redux/authSlice";
+import {useIsMobile} from "../../../utils/layout";
 
 const Register = () => {
-    const { 
-        header: { isMobile },
-        auth: { authenticated }
-    } = useSelector((state: RootState) => state);
+    const authenticated = useSelector((state: RootState) => state.auth.authenticated);
+    const isMobile = useIsMobile()
     const router = useRouter()
     const [data, setData] = useState<{
         firstName: null | string;

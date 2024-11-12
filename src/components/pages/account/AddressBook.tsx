@@ -13,6 +13,7 @@ import {AddressBookPageProps} from "../../../../pages/account/address-book";
 import {Customer} from "../../../../@types/woocommerce";
 import {API_CUSTOMER_ENDPOINT} from "../../../utils/endpoints";
 import {setCustomer} from "../../../redux/customerSlice";
+import {useIsMobile} from "../../../utils/layout";
 
 export type ShippingType = {
     firstName: string,
@@ -46,7 +47,8 @@ export type ShippingData = {
 } & Partial<ShippingType>
 
 const AddressBook = ({ countries }: {countries: AddressBookPageProps['countries']}) => {
-    const { customer: {customer}, header: {isMobile} } = useSelector((state: RootState) => state);
+    const { customer: {customer} } = useSelector((state: RootState) => state);
+    const isMobile = useIsMobile()
     const shippingWP = customer?.shipping as Customer['shipping']
     const billingWP = customer?.billing as Customer['billing']
     const [userUpdated, setUserUpdated] = useState(false)

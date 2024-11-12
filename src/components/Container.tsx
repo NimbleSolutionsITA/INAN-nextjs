@@ -1,7 +1,6 @@
 import {ReactNode} from "react";
 import {Container as MuiContainer, ContainerProps} from "@mui/material";
-import {useSelector} from "react-redux";
-import {RootState} from "../redux/store";
+import {useIsMobile} from "../utils/layout";
 
 type MuiContainerProps = {
     headerPadding?: boolean
@@ -10,7 +9,7 @@ type MuiContainerProps = {
 } & Partial<ContainerProps>
 
 const Container = (props: MuiContainerProps) => {
-    const { isMobile } = useSelector((state: RootState) => state.header);
+    const isMobile = useIsMobile()
     const {headerPadding, children, noPaddingBottom, ...rest} = props
     return (
         <div style={headerPadding ? {

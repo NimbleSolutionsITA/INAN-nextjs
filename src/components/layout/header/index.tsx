@@ -5,6 +5,7 @@ import HeaderDesktop from "./HeaderDesktop";
 import {LinkItem} from "../../../../@types";
 import {useSelector} from "react-redux";
 import {RootState} from "../../../redux/store";
+import {useIsMobile} from "../../../utils/layout";
 
 type HeaderProps = {
     headerMenuItems: HomeProps['layoutProps']['header']['headerMenuItems'],
@@ -15,7 +16,7 @@ type HeaderProps = {
 }
 
 const Header = ({ headerMenuItems, links, news, activeLink, pageTitle }: HeaderProps) => {
-    const { isMobile } =  useSelector((state: RootState) => state.header);
+    const isMobile = useIsMobile()
 
     return isMobile ? (
         <HeaderMobile headerMenuItems={headerMenuItems} activeLink={activeLink} links={links} news={news} pageTitle={pageTitle}/>

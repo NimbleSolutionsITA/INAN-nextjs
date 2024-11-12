@@ -1,9 +1,8 @@
 import {Divider, Typography} from "@mui/material";
 import React from "react";
 import Button from "./Button";
-import {useSelector} from "react-redux";
 import {useRouter} from "next/router";
-import {RootState} from "../redux/store";
+import {useIsMobile} from "../utils/layout";
 
 
 type NavButtonProps = {
@@ -12,7 +11,7 @@ type NavButtonProps = {
 }
 
 const NavButton = ({path, title}: NavButtonProps) => {
-    const { isMobile } = useSelector((state: RootState) => state.header);
+    const isMobile = useIsMobile()
     const router = useRouter()
     return (
         <>

@@ -5,9 +5,11 @@ import Button from "../../Button";
 import LoginForm from "./LoginForm";
 import {useEffect} from "react";
 import {useRouter} from "next/router";
+import {useIsMobile} from "../../../utils/layout";
 
 const Login = () => {
-    const { header: {isMobile}, auth: {authenticated} } = useSelector((state: RootState) => state);
+    const { auth: {authenticated} } = useSelector((state: RootState) => state);
+    const isMobile = useIsMobile()
     const router = useRouter()
     useEffect(() => {
         if (authenticated) {

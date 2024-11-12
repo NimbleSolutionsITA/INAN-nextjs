@@ -11,7 +11,6 @@ const initialState: Header = {
     height: 168,
     heightMobile: 94,
     pageTitle: null,
-    isMobile: false,
     loading: false,
     shop: {
         onlyInStock: true,

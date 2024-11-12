@@ -1,14 +1,12 @@
 import type { NextPage } from 'next'
 import Layout from "../src/components/layout";
-import {getLayoutProps, getPageProps, PageProps} from "../src/utils/layout";
+import {getLayoutProps, getPageProps, PageProps, useIsMobile} from "../src/utils/layout";
 import {BasePageProps} from "../@types";
 import {Divider, Grid, Typography} from '@mui/material';
 import Container from '../src/components/Container';
-import { useEffect, useState} from "react";
 import InLogo from "../src/components/icons/InLogo";
 import AnLogo from "../src/components/icons/AnLogo";
-import {useSelector} from "react-redux";
-import {RootState} from "../src/redux/store";
+import Loader from "../src/components/Loader";
 
 export type AboutPageProps = BasePageProps & { page: PageProps['page'] & { acf: {
     body1: string
@@ -31,17 +29,11 @@ const AboutPage: NextPage<AboutPageProps> = ({
                                        page: content,
                                        links
                                    }) => {
-    const { isMobile } = useSelector((state: RootState) => state.header);
-    const [hideLoader, setHideLoader] = useState(false)
-
-    useEffect(() => {
-        let timer = setTimeout(() => setHideLoader(true), 500)
-        return () => clearTimeout(timer)
-    })
+    const isMobile = useIsMobile()
     return (
-        <Layout pageSettings={pageSettings} yoast={content.yoast_head} {...layoutProps} links={links} news={news}>
+        <Layout key="about" pageSettings={pageSettings} yoast={content.yoast_head} {...layoutProps} links={links} news={news}>
             <div style={{backgroundColor: '#000'}}>
-                {!hideLoader && <div style={{zIndex: 9999, width: '100vw', height: '100vh', position: 'fixed', top: 0, backgroundImage: 'url("/loaders/loader-about.gif")', backgroundSize: 'cover', backgroundPosition: 'center'}} />}
+                <Loader image="about" />
                 {content && (
                     <Container headerPadding>
                         <Typography style={{color: '#fff'}} variant="h1">{content.title.rendered}</Typography>

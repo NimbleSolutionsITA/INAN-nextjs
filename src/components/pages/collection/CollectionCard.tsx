@@ -3,6 +3,7 @@ import Button from "../../Button";
 import {CloseOutlined} from "@mui/icons-material";
 import {useState} from "react";
 import {CollectionACFProduct} from "../../../utils/layout";
+import CloseIcon from "../../icons/CloseIcon";
 
 type CollectionCardProps = {
     product: CollectionACFProduct
@@ -22,14 +23,16 @@ const CollectionCard = ({product, isMobile, isLookbook}: CollectionCardProps) =>
     return (
         <>
             <img onClick={handleOpen} style={{width: '100%', marginBottom: '-3px', cursor: 'pointer'}} src={product?.image.sizes?.large} alt="inan collection" />
-            <Divider />
-            <Container disableGutters={!isMobile || isLookbook}>
-                <div style={{display: 'flex', padding: '2px 0'}}>
-                    <Typography variant="h3" component="div" style={{lineHeight: '21px'}}>{product.product.post_title === 'BAG BELT 4' ? 'bag belt' : product.product.post_title}</Typography>
-                    <div style={{flexGrow: 1}} />
-                    {product.product.post_name && <Button color="secondary" style={{padding: 0}} disablePadding disableHover disableGutters lineThrough href={`/product/${product.product.post_name}`}>{isMobile ? 'View' : 'View Product'}</Button>}
-                </div>
-            </Container>
+            {product.product.post_name && (
+                <>
+                    <Divider />
+                    <Container disableGutters={!isMobile || isLookbook}>
+                        <div style={{display: 'flex', padding: '2px 0'}}>
+                            <Typography variant="h3" component="div" style={{lineHeight: '21px'}}>{product.product.post_title === 'BAG BELT 4' ? 'bag belt' : product.product.post_title}</Typography>
+                        </div>
+                    </Container>
+                </>
+            )}
             <Dialog
                 open={open}
                 onClose={handleClose}
@@ -38,15 +41,19 @@ const CollectionCard = ({product, isMobile, isLookbook}: CollectionCardProps) =>
             >
                 <div style={{maxWidth: '100%', maxHeight: '100vh', margin: 'auto'}}>
                     <img style={{objectFit: 'cover', marginBottom: '-2px', maxHeight: 'calc(100vh - 28px)', maxWidth: '100%'}} src={product.image.url} alt="inan collection" />
-                    <Divider />
-                    <div style={{display: 'flex', padding: '2px 0'}}>
-                        <Typography variant="h3" component="div" style={{lineHeight: '21px'}}>{product.product.post_title === 'BAG BELT 4' ? 'bag belt' : product.product.post_title}</Typography>
-                        <div style={{flexGrow: 1}} />
-                        {product.product.post_name && <Button style={{padding: 0}} disablePadding disableHover disableGutters lineThrough href={`/product/${product.product.post_name}`}>{isMobile ? 'View' : 'View Product'}</Button>}
-                    </div>
-                    <Divider />
+                    {product.product.post_name && (
+                        <>
+                            <Divider />
+                            <div style={{display: 'flex', padding: '2px 0'}}>
+                                <Typography variant="h3" component="div" style={{lineHeight: '21px'}}>{product.product.post_title === 'BAG BELT 4' ? 'bag belt' : product.product.post_title}</Typography>
+                            </div>
+                            <Divider />
+                        </>
+                    )}
                 </div>
-                <IconButton disableRipple onClick={() => setOpen(false)} style={{position: 'absolute', right: 0, top: 0}}><CloseOutlined style={{fontSize: '5rem'}} /></IconButton>
+                <IconButton disableRipple onClick={() => setOpen(false)} style={{position: 'absolute', right: 0, top: 0}}>
+                    <CloseIcon width="21px" />
+                </IconButton>
             </Dialog>
         </>
     )

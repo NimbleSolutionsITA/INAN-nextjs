@@ -14,9 +14,11 @@ import Button from "../../../components/Button"
 import {RootState} from "../../../redux/store";
 import { API_CUSTOMER_ENDPOINT } from "../../../utils/endpoints";
 import {setCustomer} from "../../../redux/customerSlice";
+import {useIsMobile} from "../../../utils/layout";
 
 const PersonalInfo = () => {
-    const { customer: {customer}, header: {isMobile} } = useSelector((state: RootState) => state);
+    const customer = useSelector((state: RootState) => state.customer.customer);
+    const isMobile = useIsMobile()
     const firstName = customer?.first_name
     const lastName = customer?.last_name
     const email = customer?.email

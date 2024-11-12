@@ -6,9 +6,7 @@ import Container from "../../Container";
 import Link from "../../Link";
 import RightDrawer from "../../RightDrawer";
 import {useRouter} from "next/router";
-import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../../../redux/store";
-import {toggleOnlyInStock} from "../../../redux/headerSlice";
+import {useIsMobile} from "../../../utils/layout";
 
 
 type FiltersProps = {
@@ -28,9 +26,8 @@ const FilterMobileWrapper = styled.div<{isMobile: boolean}>`
 `
 
 const Filters = ({links, activeLink}: FiltersProps) => {
-    const { isMobile, shop: {  onlyInStock } } = useSelector((state: RootState) => state.header);
+    const isMobile = useIsMobile()
     const router = useRouter()
-    const dispatch = useDispatch()
     const isCollection = router.route.startsWith('/collection')
 
     const [open, setOpen] = useState(false)
@@ -111,22 +108,6 @@ const Filters = ({links, activeLink}: FiltersProps) => {
                         <div style={{display: 'flex'}}>
                             {FilterLinks}
                         </div>
-                        <Link
-                            color="inherit"
-                            style={{
-                                marginLeft: '20px',
-                                padding: '2px 0',
-                                float: 'right',
-                                textDecoration: onlyInStock ? 'line-through' : 'none'
-                            }}
-                            href="#"
-                            onClick={event => {
-                                event.preventDefault()
-                                dispatch(toggleOnlyInStock())
-                            }}
-                        >
-                            ONLY IN STOCK
-                        </Link>
                     </div>
                 )}
             </NavWrapper>

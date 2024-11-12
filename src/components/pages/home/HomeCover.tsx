@@ -75,7 +75,7 @@ const HomeCover = ({bg, bgMobile, title, isCover, isCoverMobile, color, colorMob
                                     marginLeft: '-3px',
                                     opacity: 0,
                                     width: {xs: '100%', md: 'calc(100% - 80px)'},
-                                    paddingBottom: {xs: '16px', md: '9px'},
+                                    paddingBottom: {xs: '16px', md: '3px'},
                                     lineHeight: '60px'
 
                                 }}

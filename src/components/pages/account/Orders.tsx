@@ -8,9 +8,11 @@ import {Order} from "../../../../@types/woocommerce";
 import {API_GET_PRODUCTS_ENDPOINT} from "../../../utils/endpoints";
 import ItemCard from "./ItemCard";
 import {ShopProduct} from "../../../utils/products";
+import {useIsMobile} from "../../../utils/layout";
 
 const Orders = () => {
-    const { header: {isMobile}, auth: {user} } = useSelector((state: RootState) => state);
+    const { auth: {user} } = useSelector((state: RootState) => state);
+    const isMobile = useIsMobile()
     const [orders, setOrders] = useState<Order[]>([]);
     const [products, setProducts] = useState<ShopProduct[]>([]);
     const [currentOrder, setCurrentOrder] = useState<number | null>(null)

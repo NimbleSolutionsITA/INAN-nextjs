@@ -9,6 +9,7 @@ import Newsletter from "./Newsletter";
 import NewsletterForm from "./NewsletterForm";
 import {useSelector} from "react-redux";
 import {RootState} from "../../../redux/store";
+import {useIsMobile} from "../../../utils/layout";
 
 type FooterProps = HcmsResponse['data']['footer']
 
@@ -32,7 +33,7 @@ const FooterWrapper = styled.div<{isMobile: boolean}>`
 `
 
 const Footer = ({ footerMenuItems }: FooterProps) => {
-    const { isMobile } = useSelector((state: RootState) => state.header);
+    const isMobile = useIsMobile()
     return(
         <>
             <CookieConsent  isMobile={isMobile}/>
@@ -54,15 +55,15 @@ const Footer = ({ footerMenuItems }: FooterProps) => {
                                     Instagram
                                 </Link>
                             </div>
-                            <NewsletterForm isMobile={isMobile} />
+                            <NewsletterForm />
                             <div style={{position: 'relative'}}>
-                                <div>© 2020 INAN. All Rights Reserved</div>
-                                <div style={{width: '100%', marginTop: '16px', justifyContent: 'center', color: '#9a9a9a', display: 'flex'}}>
+                                <div>© {new Date().getFullYear()} INAN. All Rights Reserved</div>
+                                <div style={{marginTop: "16px", display: 'flex'}}>
                                     Made with
                                     <svg style={{transform: 'scale(0.5) translate(0px, -9px)'}} width="24" height="24" xmlns="http://www.w3.org/2000/svg" fill='#9a9a9a' stroke='#9a9a9a'>
                                         <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402m5.726-20.583c-2.203 0-4.446 1.042-5.726 3.238-1.285-2.206-3.522-3.248-5.719-3.248-3.183 0-6.281 2.187-6.281 6.191 0 4.661 5.571 9.429 12 15.809 6.43-6.38 12-11.148 12-15.809 0-4.011-3.095-6.181-6.274-6.181"/>
                                     </svg>
-                                    by <a style={{textDecoration: 'none', color: '#9a9a9a'}} href="http://www.nimble-solutions.com" target="_blank" rel="noopener noreferrer">Nimble Solutions</a>
+                                    by <a style={{textDecoration: 'none', paddingLeft: '5px'}} href="http://www.nimble-lab.com" target="_blank" rel="noopener noreferrer">Nimble Lab</a>
                                 </div>
                             </div>
                         </>
@@ -87,13 +88,13 @@ const Footer = ({ footerMenuItems }: FooterProps) => {
                                     ))}
                                 </NavWrapper>
                                 <div style={{position: 'relative', padding: '3px 0'}}>
-                                    <div>© 2020 INAN. All Rights Reserved</div>
-                                    <div style={{position: 'absolute', right: 0, top: '3px', color: '#9a9a9a', height: 0, display: 'flex'}}>
+                                    <div>© {new Date().getFullYear()} INAN. All Rights Reserved</div>
+                                    <div style={{display: 'flex'}}>
                                         Made with
-                                        <svg style={{transform: 'scale(0.5) translate(0px, -9px)'}} width="24" height="24" xmlns="http://www.w3.org/2000/svg" fill='#9a9a9a' stroke='#9a9a9a'>
+                                        <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" fill='#9a9a9a' stroke='#9a9a9a'>
                                             <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402m5.726-20.583c-2.203 0-4.446 1.042-5.726 3.238-1.285-2.206-3.522-3.248-5.719-3.248-3.183 0-6.281 2.187-6.281 6.191 0 4.661 5.571 9.429 12 15.809 6.43-6.38 12-11.148 12-15.809 0-4.011-3.095-6.181-6.274-6.181"/>
                                         </svg>
-                                        by <a style={{textDecoration: 'none', color: '#9a9a9a'}} href="http://www.nimble-solutions.com" target="_blank" rel="noopener noreferrer">Nimble Solutions</a>
+                                        by <a style={{textDecoration: 'none', color: '#9a9a9a'}} href="http://www.nimble-lab.com" target="_blank" rel="noopener noreferrer">Nimble Lab</a>
                                     </div>
                                 </div>
                             </Grid>

@@ -4,14 +4,15 @@ import Link from "../../Link";
 import {Divider, FormControl, FormControlLabel, TextField, Typography} from "@mui/material";
 import {regExpEmail} from "../../../utils/helpers";
 import Checkbox from "../../Checkbox";
+import {useIsMobile} from "../../../utils/layout";
 
 type NewsletterFormProps = {
-    isMobile?: boolean
     isModal?: boolean
     sendFeedback?: Dispatch<SetStateAction<boolean>>
 }
 
-const NewsletterForm = ({isMobile, isModal, sendFeedback}: NewsletterFormProps) => {
+const NewsletterForm = ({isModal, sendFeedback}: NewsletterFormProps) => {
+    const isMobile = useIsMobile()
     const [email, setEmail] = useState('')
     const [consent, setConsent] = useState(false)
     const [subscribed, setSubscribed] = useState(false)

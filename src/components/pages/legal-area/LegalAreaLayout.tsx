@@ -4,11 +4,10 @@ import NavButton from "../../../components/NavButton"
 import WpBlock from "../../../components/WpBlock";
 import Container from "../../../components/Container";
 import {WP_REST_API_Post} from "wp-types/index";
-import {useSelector} from "react-redux";
-import {RootState} from "../../../redux/store";
+import {useIsMobile} from "../../../utils/layout";
 
 const LegalAreaLayout = ({content}: {content: WP_REST_API_Post}) => {
-    const { isMobile } = useSelector((state: RootState) => state.header);
+    const isMobile = useIsMobile()
     return (
         <Container headerPadding>
             <Grid container spacing={4} style={{paddingTop: '30px'}}>

@@ -1,9 +1,8 @@
 import HomeCover from "./HomeCover";
 import {createRef, Dispatch, RefObject, SetStateAction, useEffect, useRef} from "react";
-import {Cover} from "../../../utils/layout";
+import {Cover, useIsMobile} from "../../../utils/layout";
 import {useBrowserLayoutEffect} from "../../../utils/helpers";
-import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../../../redux/store";
+import {useDispatch} from "react-redux";
 import {setHeader} from "../../../redux/headerSlice";
 
 type HomeCoversProps = {
@@ -16,7 +15,7 @@ type HomeCoversProps = {
 }
 
 const HomeCovers = ({covers, showContent, setShowContent, currentCoverIndex, setCurrentCoverIndex, currentCover }: HomeCoversProps) => {
-    const { isMobile } = useSelector((state: RootState) => state.header);
+    const isMobile = useIsMobile()
     const dispatch = useDispatch()
     const arrLength = covers?.length;
     const elRefs = useRef<RefObject<HTMLDivElement>[]>([]);

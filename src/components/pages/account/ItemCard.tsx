@@ -3,8 +3,7 @@ import {Grid, Typography} from "@mui/material"
 import Link from "../../../components/Link"
 import {formatPrice} from "../../../utils/helpers";
 import {LineItem, Product} from "../../../../@types/woocommerce";
-import {useSelector} from "react-redux";
-import {RootState} from "../../../redux/store";
+import {useIsMobile} from "../../../utils/layout";
 
 type ItemCardProps = {
     item: LineItem
@@ -47,7 +46,7 @@ const ContentWrapper = styled.div`
 `
 
 const ItemCard = ({product, item}: ItemCardProps) => {
-    const { isMobile } = useSelector((state: RootState) => state.header);
+    const isMobile = useIsMobile()
     const leatherType = item.meta_data.filter(attr => attr.key === 'pa_leather-type')[0]?.value
     const color = item.meta_data.filter(attr => attr.key === 'pa_color')[0]?.value
     const size = item.meta_data.filter(attr => attr.key === 'pa_size')[0]?.value

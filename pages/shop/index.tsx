@@ -2,7 +2,6 @@ import type { NextPage } from 'next'
 import Layout from "../../src/components/layout";
 import {getLayoutProps, getPageProps, ShopPageProps} from "../../src/utils/layout";
 import {BasePageProps} from "../../@types";
-import {getProducts} from "../../src/utils/products";
 import {getCategoriesProps} from "../../src/utils/shop";
 import GridView from "../../src/components/pages/shop/GridView"
 import {useRouter} from "next/router";

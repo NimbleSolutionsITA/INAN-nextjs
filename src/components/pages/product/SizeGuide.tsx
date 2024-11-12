@@ -15,13 +15,15 @@ import CloseIcon from "../../icons/CloseIcon";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../../redux/store";
 import {setHeader} from "../../../redux/headerSlice";
+import {useIsMobile} from "../../../utils/layout";
 
 type SizeGuideProps = {
     sizes: Array<any>
 }
 
 const SizeGuide = ({sizes}: SizeGuideProps) => {
-    const { sizeGuideOpen, isMobile} = useSelector((state: RootState) => state.header);
+    const sizeGuideOpen = useSelector((state: RootState) => state.header.sizeGuideOpen);
+    const isMobile = useIsMobile()
     const dispatch = useDispatch()
     const handleOpen = () => {
         dispatch(setHeader({sizeGuideOpen: true}))

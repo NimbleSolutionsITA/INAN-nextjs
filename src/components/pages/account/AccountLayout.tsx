@@ -7,9 +7,11 @@ import Container from "../../Container";
 import {API_CUSTOMER_ENDPOINT} from "../../../utils/endpoints";
 import {setCustomer} from "../../../redux/customerSlice";
 import {setHeader} from "../../../redux/headerSlice";
+import {useIsMobile} from "../../../utils/layout";
 
 const AccountLayout = ({children}: {children: ReactNode}) => {
-    const { header: {isMobile}, auth: {user}, customer: {customer} } = useSelector((state: RootState) => state);
+    const { auth: {user}, customer: {customer} } = useSelector((state: RootState) => state);
+    const isMobile = useIsMobile()
     const dispatch = useDispatch()
     useEffect(() => {
         if (user?.id) {

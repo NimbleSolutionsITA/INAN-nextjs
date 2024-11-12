@@ -19,6 +19,7 @@ import Logo from "../../Logo";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../../redux/store";
 import {setHeader} from "../../../redux/headerSlice";
+import {useIsMobile} from "../../../utils/layout";
 
 type AppBarProps = {
     children: ReactNode,
@@ -60,12 +61,12 @@ const styles: {
 
 const AppBar = ({children, navLinks, height = 94}: AppBarProps) => {
     const router = useRouter()
-    const {
-        header: { open, bgColor },
-        auth: { authenticated },
-        cart: {items: cartItems},
-        wishlist: {items: wishlistItems}
-    } = useSelector((state: RootState) => state);
+    const authenticated = useSelector((state: RootState) => state.auth.authenticated);
+    const cartItems = useSelector((state: RootState) => state.cart.items);
+    const wishlistItems = useSelector((state: RootState) => state.wishlist.items);
+    const {open, bgColor, headerColor, headerColorMobile} = useSelector((state: RootState) => state.header);
+    const isMobile = useIsMobile()
+    const color = isMobile ? headerColorMobile : headerColor
     const dispatch = useDispatch()
 
     const handleOpenDrawer = (open: boolean) => {
@@ -80,20 +81,20 @@ const AppBar = ({children, navLinks, height = 94}: AppBarProps) => {
     return (
         <Box sx={{...styles.root, height}}>
             <MuiAppBar position="fixed" square elevation={0} sx={{
-                backgroundColor: open ? 'transparent' : (bgColor === 'transparent' ? '#fff' : bgColor),
+                backgroundColor: open ? bgColor : (bgColor === 'transparent' ? '#fff' : bgColor),
                 zIndex: (theme) => theme.zIndex.modal+2,
             }}>
                 <>
                     <Toolbar component={Container}>
-                        <IconButton edge="start" sx={styles.title} color="inherit">
-                            <Link onClick={() => handleOpenDrawer(false)} href="/"><Logo height={30} color={open ? '#fff' : '#000'} /></Link>
+                        <IconButton edge="start" sx={styles.title} color="inherit" component={Link} onClick={() => handleOpenDrawer(false)} href="/">
+                            <Logo height={30} color={open ? '#fff' : color} />
                         </IconButton>
                         <div style={{flex: 1}} />
                         <IconButton onClick={handleBagClick} sx={styles.toolbarIcons} color="inherit" aria-label="menu">
-                            <CartIcon color={open ? '#fff' : '#000'} height={20} open={open} items={cartItems.length} />
+                            <CartIcon color={open ? '#fff' : color} height={20} open={open} items={cartItems.length} />
                         </IconButton>
                         <IconButton onClick={() => handleOpenDrawer(!open)} edge="end" sx={styles.toolbarIcons} color="inherit" aria-label="menu">
-                            <BurgerIcon color={open ? '#fff' : '#000'} open={open}/>
+                            <BurgerIcon color={open ? '#fff' : color} open={open}/>
                         </IconButton>
                     </Toolbar>
                     {children}

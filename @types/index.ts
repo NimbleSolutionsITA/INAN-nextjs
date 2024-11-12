@@ -40,7 +40,6 @@ export type Header = {
     sizeGuideOpen: boolean
     bgColor: string
     pageTitle: string | null
-    isMobile: boolean
     loading: boolean
     shop: {
         onlyInStock: boolean

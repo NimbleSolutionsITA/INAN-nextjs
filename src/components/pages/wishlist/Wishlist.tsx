@@ -21,7 +21,7 @@ const Wishlist = () => {
                         </>
                     }
                 /> :
-                <Typography variant="h1" component="h1" color="secondary">THE BAG IS EMPTY</Typography>
+                <Typography variant="h1" component="h1" color="secondary">THE WISHLIST IS EMPTY</Typography>
             }
         </Container>
     )

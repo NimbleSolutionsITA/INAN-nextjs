@@ -40,7 +40,7 @@ const Newsletter = ({isMobile}: {isMobile: boolean}) => {
                     </Grid>
                     {!subscribed && (
                         <Grid item xs={12} sm={6} md={6}>
-                            <NewsletterForm isMobile={isMobile} isModal sendFeedback={setSubscribed} />
+                            <NewsletterForm isModal sendFeedback={setSubscribed} />
                         </Grid>
                     )}
                 </Grid>

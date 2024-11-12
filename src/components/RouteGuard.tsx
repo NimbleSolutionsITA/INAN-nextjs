@@ -12,7 +12,7 @@ class RouteGuardProps {
 }
 
 function RouteGuard({ children }: RouteGuardProps) {
-    const { auth: {authenticated} } = useSelector((state: RootState) => state);
+    const authenticated = useSelector((state: RootState) => state.auth.authenticated);
     const router = useRouter();
     const privateRoute = router.pathname.startsWith('/account')
     const authData = useRef({privateRoute, authenticated})

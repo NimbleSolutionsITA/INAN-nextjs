@@ -3,10 +3,10 @@ import Button from "../../Button"
 import styled from "@emotion/styled"
 import {Typography} from "@mui/material";
 import {ShopProduct} from "../../../utils/products";
-import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../../../redux/store";
+import {useDispatch} from "react-redux";
 import {addWishlistItem} from "../../../redux/wishlistSlice";
 import Image from "next/image";
+import {useIsMobile} from "../../../utils/layout";
 
 const CardWrapper = styled.div`
     height: 100%;
@@ -52,9 +52,10 @@ const Sale = styled.span`
 `
 
 const ProductCard = ({product, isPrivate = false}: {product: ShopProduct, isPrivate?: boolean}) => {
-    const { isMobile} = useSelector((state: RootState) => state.header);
+    const isMobile = useIsMobile()
     const dispatch = useDispatch()
     const subPath = isPrivate ? '/private-sales' : '/product'
+    console.log(product.images)
 
     const handleClick = () => {
         dispatch(addWishlistItem({
@@ -75,13 +76,13 @@ const ProductCard = ({product, isPrivate = false}: {product: ShopProduct, isPriv
         <CardWrapper key={product.id}>
             {product.images[0] && (
                 <ImageWrapper
-                    bg={product.images[0]?.woocommerce_thumbnail}
-                    bgHover={product.images[1]?.woocommerce_thumbnail}
+                    bg={product.images[0]?.woocommerce_single}
+                    bgHover={product.images[1]?.woocommerce_single}
                 >
                     {!isMobile && <Button disableHover disableGutters disableRipple onClick={handleClick}>add to wishlist</Button>}
                     <Link href={`${subPath}/${product.slug}`}>
                         <div style={{paddingBottom: '150%'}}>
-                            <Image key={product.images[0].id} src={product.images[0]?.woocommerce_thumbnail} alt={product.images[0].alt} fill />
+                            <Image key={product.images[0].id} src={product.images[0]?.woocommerce_single} alt={product.images[0].alt} fill />
                         </div>
                     </Link>
                 </ImageWrapper>
@@ -100,9 +101,9 @@ const ProductCard = ({product, isPrivate = false}: {product: ShopProduct, isPriv
                     }
                     <>
                         {isMobile && <br/>}
-                        {product.stock_status === 'outofstock' && ` ${isMobile ? '' : ' -'} out of stock`}
+                        {product.stock_status === 'outofstock' && ` ${isMobile ? '' : ' -'} sold out`}
                         {product.stock_status === 'onbackorder' && ` ${isMobile ? '' : ' -'} pre order`}
-                        {!!product.stock_quantity && product.stock_quantity < 4 && product.stock_quantity > 0 && `${isMobile ? '' : ' -'} only ${product.stock_quantity} in stock`}
+                        {!!product.stock_quantity && product.stock_quantity === 1 && `${isMobile ? '' : ' -'} only ${product.stock_quantity} in stock`}
                         {product.featured && (
                             <>{!isMobile ? '' : ' -'} <span style={{color: 'red'}}>new</span></>
                         )}

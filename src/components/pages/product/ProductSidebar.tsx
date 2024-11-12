@@ -5,7 +5,7 @@ import styled from "@emotion/styled";
 import {Collapse, Divider, Typography} from "@mui/material";
 import RichText from "../../RichText";
 import ExpansionPanel from "./ExpansionPanel";
-import {ProductPageProps} from "../../../utils/layout";
+import {ProductPageProps, useIsMobile} from "../../../utils/layout";
 import {ProductAttribute} from "../../../../@types/woocommerce";
 import CheckboxFromControl from "./CheckboxFormControl";
 import {ShopProduct, Variation} from "../../../utils/products";
@@ -35,7 +35,8 @@ const AddToBagWrapper = styled.div`
   margin: 40px 0;
 `
 
-const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, currentProduct, setCurrentProduct, colorVariations, isPrivate}: ProductSidebarProps) => {
+const ProductSidebar = ({variations, product, colors, sizeGuide, currentProduct, setCurrentProduct, colorVariations, isPrivate}: ProductSidebarProps) => {
+    const isMobile = useIsMobile()
     const dispatch = useDispatch()
     const router = useRouter()
     const getColorOptions = () => {
@@ -119,7 +120,7 @@ const ProductSidebar = ({variations, product, colors, isMobile, sizeGuide, curre
                     <><Sale>€ {currentProduct.regular_price}</Sale> - € {currentProduct.sale_price}</> :
                     `€ ${currentProduct.price}`
                 }
-                {isOutOfStock && ' - out of stock'}
+                {isOutOfStock && ' - sold out'}
                 {isPreOrder && ' - pre-order'}
             </Typography>
             {!isMobile && (

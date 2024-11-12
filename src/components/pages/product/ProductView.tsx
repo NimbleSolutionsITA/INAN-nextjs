@@ -1,6 +1,6 @@
 import { Grid } from "@mui/material";
 import Container from "../../Container";
-import {ProductPageProps} from "../../../utils/layout";
+import {ProductPageProps, useIsMobile} from "../../../utils/layout";
 import {useState} from "react";
 import {ProductAttribute} from "../../../../@types/woocommerce";
 import ProductSidebar from "./ProductSidebar";
@@ -9,8 +9,6 @@ import ModalImage from "../../ModalImage";
 import VimeoPlayer from "../../VimeoPlayer";
 import {ShopProduct, Variation} from "../../../utils/products";
 import CrossSell from "./CrossSell";
-import {useSelector} from "react-redux";
-import {RootState} from "../../../redux/store";
 
 type ProductViewProps = {
     product: ShopProduct
@@ -37,13 +35,12 @@ const getDefaultCurrent = (product: ShopProduct, variations: ProductPageProps['v
 }
 
 const ProductView = ({product, relatedProducts, variations, colors, sizeGuide, isPrivate}: ProductViewProps) => {
-    const { isMobile } = useSelector((state: RootState) => state.header);
+    const isMobile = useIsMobile()
     const [currentProduct, setCurrentProduct] = useState<ShopProduct | Variation>(getDefaultCurrent(product, variations))
     const {video, video_cover: videoCover} = product.acf
     const colorVariations = relatedProducts.filter(p => product.acf.color_variations?.includes(p.id))
     const variationImage = {image: null, ...currentProduct}.image
     const images = (product.type === 'variable' && variationImage) ? [variationImage, ...product.images.slice(1)] : product.images
-    console.log(images)
     const slides =  video ? [
         ...images.map((image) =>  <ModalImage url={image} alt={image.alt} />),
         <VimeoPlayer video={video} autoplay={!videoCover && !isMobile} cover={videoCover} color="#fff" />

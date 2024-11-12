@@ -2,8 +2,7 @@ import {Children, cloneElement, ReactNode} from "react";
 import Carousel, {CarouselProps} from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import styled from "@emotion/styled";
-import {useSelector} from "react-redux";
-import {RootState} from "../redux/store";
+import {useIsMobile} from "../utils/layout";
 
 type MultiCarouselProps = {
     children: ReactNode[]
@@ -64,7 +63,7 @@ const CustomButtonGroupAsArrows = ({ next, previous }: {next?: () => {}, previou
 }
 
 const MultiCarousel = ({children, ...props}: MultiCarouselProps) => {
-    const { isMobile } = useSelector((state: RootState) => state.header);
+    const isMobile = useIsMobile()
     return (
         <StyledCarousel
             arrows={false}

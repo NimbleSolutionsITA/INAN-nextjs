@@ -232,7 +232,7 @@ interface Attribute {
 }
 
 export interface Image {
-    woocommerce_single: string | undefined;
+    woocommerce_single: string;
     woocommerce_thumbnail: string;
     id: number;
     date_created: Date;

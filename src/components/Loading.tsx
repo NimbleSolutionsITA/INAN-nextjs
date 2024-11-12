@@ -4,6 +4,7 @@ import Container from "./Container";
 import {useSelector} from "react-redux";
 import {RootState} from "../redux/store";
 import {useRouter} from "next/router";
+import {useIsMobile} from "../utils/layout";
 
 const Waivy = styled.div`
   position: relative;
@@ -27,31 +28,25 @@ const Letter = styled.span<{ delay: number}>`
   animation-delay: calc(.2s * ${({delay}) => delay});
 `
 
-const Loading = ({children}: {children: JSX.Element}) => {
+const Loading = () => {
     const {isFallback} = useRouter()
-    const { isMobile, loading } = useSelector((state: RootState) => state.header);
+    const { loading } = useSelector((state: RootState) => state.header);
+    const isMobile = useIsMobile()
     const letters = '...'.split('')
-    return (
-        <>
-            {(loading || isFallback) && (
-                <div style={{width: !isMobile ? '100%' : undefined, paddingBottom: '40px'}}>
-                    <div style={{borderBottom: isMobile ? '1px solid black' : undefined}}>
-                        <Container style={{display: 'flex'}}>
-                            <Waivy>
-                                <Typography variant="h1" component="span">LOADING</Typography>
-                                {letters.map((letter, index) =>
-                                    <Typography key={letter+index} variant="h1" component={Letter} delay={index}>{letter}</Typography>
-                                )}
-                            </Waivy>
-                        </Container>
-                    </div>
-                </div>
-            )}
-            <div style={{display: loading ? 'none' : 'block'}}>
-                {children}
+    return (loading || isFallback) ? (
+        <div style={{width: !isMobile ? '100%' : undefined, paddingBottom: '40px'}}>
+            <div style={{borderBottom: isMobile ? '1px solid black' : undefined}}>
+                <Container style={{display: 'flex'}}>
+                    <Waivy>
+                        <Typography variant="h1" component="span">LOADING</Typography>
+                        {letters.map((letter, index) =>
+                            <Typography key={letter+index} variant="h1" component={Letter} delay={index}>{letter}</Typography>
+                        )}
+                    </Waivy>
+                </Container>
             </div>
-        </>
-    )
+        </div>
+    ) : null
 }
 
 export default Loading

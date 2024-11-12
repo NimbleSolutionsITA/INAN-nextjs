@@ -5,6 +5,9 @@ import {ShopProduct, Variation} from "./products";
 import {CategoryProps} from "./shop";
 import {ProductAttribute} from "../../@types/woocommerce";
 import {WordpressPage} from "../../@types";
+import {useTheme} from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import {Breakpoint} from "@mui/material";
 
 export type Cover = {
     id: number
@@ -122,15 +125,7 @@ export type CollectionPostACF = WordpressPage & { acf: {
             video_poster: ACFMedia
         }
         video_poster: ACFMedia | false
-        gallery1: string | false
-        gallery2: string | false
-        gallery3: string | false
-        gallery4: string | false
-        gallery5: string | false
-        gallery6: string | false
-        gallery7: string | false
-        gallery8: string | false
-        gallery9: string | false
+        type: "collection" | "collaboration"
 
     }}
 
@@ -197,7 +192,7 @@ export const getProductPageProps = async<T> (slug: string): Promise<PageProps> =
 }
 
 export const getCollectionProps = async (): Promise<{ collections:  CollectionPostACF[]}> => {
-    const collections: CollectionPostACF[] = await fetch(`${ WORDPRESS_API_ENDPOINT}/wp/v2/collection`, { cache: "force-cache", next: { revalidate: 60 } }).then(response => response.json())
+    const collections: CollectionPostACF[] = await fetch(`${ WORDPRESS_API_ENDPOINT}/wp/v2/collection?per_page=99`, { cache: "force-cache", next: { revalidate: 60 } }).then(response => response.json())
     return { collections: collections.map(collection => ({
             ...collection
         }))}
@@ -208,11 +203,17 @@ export const getStockistsProps = async (): Promise<{ stockists:  StockistsPostAC
     return { stockists }
 }
 
-export const getAllCollectionIds = async () => {
+export const getAllCollectionIds = async (type: "collection"|"collaboration") => {
     const {collections} = await getCollectionProps()
-    return collections.map(collection => ({
+    return collections.filter(c => c.acf.type === type).map(collection => ({
         params: {
             cslug: collection.slug,
         }
     }))
+}
+
+export const useIsMobile = (size: Breakpoint | number = "sm") => {
+    const theme = useTheme();
+    return useMediaQuery(theme.breakpoints.down(size));
+
 }

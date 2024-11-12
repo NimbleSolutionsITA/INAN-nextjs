@@ -6,11 +6,11 @@ import CollectionPage from "../../src/components/pages/collection/CollectionPage
 export default CollectionPage
 
 export async function getStaticProps(context: {params?: {cslug?: string}}) {
-    return getCollectionStaticProps(context, 'collection')
+    return getCollectionStaticProps(context, 'collaboration')
 }
 
 export async function getStaticPaths() {
-    const paths = await getAllCollectionIds("collection");
+    const paths = await getAllCollectionIds("collaboration");
     return {
         paths,
         fallback: 'blocking',

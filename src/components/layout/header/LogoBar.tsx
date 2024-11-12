@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 import Logo from "../../Logo";
 import {useSelector} from "react-redux";
 import {RootState} from "../../../redux/store";
+import {useIsMobile} from "../../../utils/layout";
 
 const LogoWrapper = styled.div`
   width: 100%;
@@ -14,7 +15,8 @@ const LogoWrapper = styled.div`
 `;
 
 const LogoBar = () => {
-    const { headerColor, headerColorMobile, isMobile } = useSelector((state: RootState) => state.header);
+    const { headerColor, headerColorMobile } = useSelector((state: RootState) => state.header);
+    const isMobile = useIsMobile()
     return (
         <LogoWrapper>
             <Link href="/">

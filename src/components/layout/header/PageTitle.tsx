@@ -1,5 +1,3 @@
-import {useTheme} from "@mui/material/styles";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import {Divider, Typography} from "@mui/material";
 import Container from "../../Container";
 import Button from "../../Button";
@@ -7,13 +5,15 @@ import {useRouter} from "next/router";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../../redux/store";
 import {resetAuth} from "../../../redux/authSlice";
+import {useIsMobile} from "../../../utils/layout";
 
 const PageTitle = ({pageTitle}: { pageTitle: string | null }) => {
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-    const {
-        auth: { authenticated }, cart: {items: cart}, wishlist: {items: wishlist}, header: {headerColor, bgColor, loading}
-    } = useSelector((state: RootState) => state);
+    const isMobile = useIsMobile()
+    const authenticated = useSelector((state: RootState) => state.auth.authenticated);
+    const cart = useSelector((state: RootState) => state.cart.items);
+    const wishlist = useSelector((state: RootState) => state.wishlist.items);
+    const {headerColor, headerColorMobile, bgColor, loading} = useSelector((state: RootState) => state.header);
+
     const dispatch = useDispatch()
     const router = useRouter()
     const handleLogout = () => {
@@ -24,15 +24,16 @@ const PageTitle = ({pageTitle}: { pageTitle: string | null }) => {
     const amountCart = router.pathname.startsWith('/bag') ? cart?.length || 0 : false
     const amountWishlist = router.pathname.startsWith('/wishlist') ? wishlist?.length || 0 : false
     const amount = amountCart || amountWishlist
+    console.log(bgColor)
     return pageTitle && !loading ? (
         isMobile ? (
             <>
-                <Divider />
+                <Divider sx={{backgroundColor: headerColorMobile}} />
                 <Container noPaddingBottom style={{display: 'flex', backgroundColor: bgColor}}>
                     <Typography
                         component="div"
                         style={{
-                            color: headerColor,
+                            color: headerColorMobile,
                             paddingTop: '6px'
                         }}
                     >
@@ -43,7 +44,7 @@ const PageTitle = ({pageTitle}: { pageTitle: string | null }) => {
                         <Typography
                             component="div"
                             style={{
-                                color: headerColor,
+                                color: headerColorMobile,
                                 backgroundColor: bgColor,
                                 paddingTop: '6px'
                             }}

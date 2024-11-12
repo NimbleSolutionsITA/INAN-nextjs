@@ -10,13 +10,15 @@ import PaymentError from "./PaymentError";
 import PaymentSuccess from "./PaymentSuccess";
 import {ShippingProps} from "../../../utils/shop";
 import {Order} from "../../../../@types/woocommerce";
+import {useIsMobile} from "../../../utils/layout";
 
 type CheckoutProps = {
     woocommerce: ShippingProps
 }
 
 const Checkout = ({woocommerce}: CheckoutProps) => {
-    const { header: {isMobile}, cart: {items: cart}, auth: {authenticated} } = useSelector((state: RootState) => state);
+    const { cart: {items: cart}, auth: {authenticated} } = useSelector((state: RootState) => state);
+    const isMobile = useIsMobile()
     const [isGuest, setIsGuest] = useState(false)
     const [paypalSuccess, setPaypalSuccess] = useState<false | Partial<Order>>(false);
     const [paypalError, setPaypalError] = useState<false | string>(false);

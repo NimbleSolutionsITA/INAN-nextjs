@@ -22,6 +22,7 @@ import {Billing, Customer, Order, Shipping} from "../../../../@types/woocommerce
 import {API_CUSTOMER_ENDPOINT} from "../../../utils/endpoints";
 import {setCustomer} from "../../../redux/customerSlice";
 import {createOrder} from "../../../utils/helpers";
+import {useIsMobile} from "../../../utils/layout";
 
 type PreProcessAddressProps = {
     isGuest: boolean
@@ -43,8 +44,8 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
     shippingR: shippingRcost,
     shippingUK: shippingUKcost
 }}: PreProcessAddressProps) => {
-    const { header: {isMobile}, cart: {items: cart}, auth: {user} } = useSelector((state: RootState) => state);
-
+    const { cart: {items: cart}, auth: {user} } = useSelector((state: RootState) => state);
+    const isMobile = useIsMobile()
     const dispatch = useDispatch()
 
     const emptyAddress = {
