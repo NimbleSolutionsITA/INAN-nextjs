@@ -41,9 +41,6 @@ export type Header = {
     bgColor: string
     pageTitle: string | null
     loading: boolean
-    shop: {
-        onlyInStock: boolean
-    }
 }
 
 export type User = {

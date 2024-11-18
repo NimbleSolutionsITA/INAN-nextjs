@@ -36,9 +36,9 @@ const Blink = styled.span`
 `;
 
 const NavBar = ({headerMenuItems}: NavBarProps) => {
-    const {
-        cart: { items: cart }, wishlist: { items: wishlist }, auth: { authenticated }
-    } = useSelector((state: RootState) => state);
+    const cart = useSelector((state: RootState) => state.cart.items);
+    const wishlist = useSelector((state: RootState) => state.wishlist.items);
+    const authenticated = useSelector((state: RootState) => state.auth.authenticated);
     const router = useRouter()
     const cartItems = cart?.length
     const wishlistItems = wishlist?.length

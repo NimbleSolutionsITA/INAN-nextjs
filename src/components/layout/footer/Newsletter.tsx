@@ -1,13 +1,11 @@
-import {useState} from "react"
+import {useEffect, useState} from "react"
 import NewsletterForm from "./NewsletterForm";
 import Container from "../../Container";
 import {Dialog, Grid, IconButton, Typography} from "@mui/material";
 import CloseIcon from "../../icons/CloseIcon";
 
 const Newsletter = ({isMobile}: {isMobile: boolean}) => {
-    const [open, setOpen] = useState(typeof window !== 'undefined' ?
-        localStorage.getItem('inan_Newsletter') !== 'seen' : false
-    )
+    const [open, setOpen] = useState(false)
     const [subscribed, setSubscribed] = useState<boolean>(false)
 
     const handleClick = () => {
@@ -17,6 +15,12 @@ const Newsletter = ({isMobile}: {isMobile: boolean}) => {
         )
         setOpen(false)
     }
+
+    useEffect(() => {
+        if (localStorage.getItem('inan_Newsletter') !== 'seen') {
+            setOpen(true)
+        }
+    }, []);
 
     return (
         <Dialog

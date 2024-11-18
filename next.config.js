@@ -5,6 +5,9 @@ const WORDPRESS_SITE_URL = process.env.NEXT_PUBLIC_WORDPRESS_SITE_URL;
 module.exports = {
   reactStrictMode: true,
   trailingSlash: true,
+  experimental: {
+      scrollRestoration: true
+  },
   /*webpackDevMiddleware: config => {
     config.watchOptions = {
       poll: 1000,

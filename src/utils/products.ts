@@ -33,6 +33,26 @@ export type Variation = WooVariation & {
 
 export type ProductsProps = { products: ShopProduct[] }
 
+// Define the type for a single term (option)
+export interface AttributeTerm {
+    id: number;
+    name: string;
+    slug: string;
+    count: number; // Number of products associated with this term
+    description?: string;
+}
+
+// Define the type for an attribute
+export interface Attribute {
+    id: number;
+    name: string;
+    slug: string;
+    type: string; // e.g., 'select'
+    order_by: string; // e.g., 'menu_order'
+    has_archives: boolean;
+    options: AttributeTerm[]; // Array of terms associated with this attribute
+}
+
 const WooCommerceRestApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 const api = new WooCommerceRestApi( {

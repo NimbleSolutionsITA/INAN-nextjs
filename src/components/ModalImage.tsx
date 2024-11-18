@@ -29,21 +29,19 @@ const ModalImage = forwardRef(({url, alt}: ModalImageProps, disabled) => {
                 fullScreen
                 PaperProps={{
                     sx: {
-                        backgroundSize: 'cover',
-                        backgroundImage: `url(${url.src})`,
-                        backgroundPosition: 'center',
-                        backgroundRepeat: 'no-repeat',
                         backgroundColor: '#f4f4f6',
+                        overflow: "auto"
                     }
                 }}
             >
                 <Image
                     src={url.src}
                     alt={alt}
-                    fill
-                    style={{width: '100%', height: '100%'}}
+                    width={1600}
+                    height={1600}
+                    style={{width: '100%', height: 'auto'}}
                 />
-                <IconButton disableRipple onClick={() => setOpen(false)} style={{position: 'absolute', right: 0, top: 0}}>
+                <IconButton disableRipple onClick={() => setOpen(false)} style={{position: 'fixed', right: 0, top: 0}}>
                     <CloseIcon width="21px" />
                 </IconButton>
             </Dialog>

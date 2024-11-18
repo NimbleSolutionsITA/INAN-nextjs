@@ -33,7 +33,6 @@ const Collection = ({collection}: CollectionProps) => {
                 {Array.isArray(products) && products?.map(prod => (
                     <Grid key={prod.image.ID} item xs={12} md={6} style={{paddingBottom: isMobile ? '24px' : undefined}}>
                         <CollectionCard isMobile={isMobile} product={prod} />
-                        <Divider />
                     </Grid>
                 ))}
             </Grid>

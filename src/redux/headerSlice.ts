@@ -12,9 +12,6 @@ const initialState: Header = {
     heightMobile: 94,
     pageTitle: null,
     loading: false,
-    shop: {
-        onlyInStock: true,
-    }
 }
 
 export const headerSlice = createSlice({
@@ -29,28 +26,10 @@ export const headerSlice = createSlice({
             state = {...state, ...payload}
             return state
         },
-        toggleOnlyInStock: (state) => {
-            return {
-                ...state,
-                shop: {
-                    ...state.shop,
-                    onlyInStock: !state.shop.onlyInStock
-                }
-            }
-        },
-        setInStock: (state, event) => {
-            return {
-                ...state,
-                shop: {
-                    ...state.shop,
-                    onlyInStock: event.payload
-                }
-            }
-        },
     },
 })
 
 // Action creators are generated for each case reducer function
-export const { setHeader, toggleOnlyInStock, setInStock} = headerSlice.actions
+export const { setHeader} = headerSlice.actions
 
 export default headerSlice.reducer

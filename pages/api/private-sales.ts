@@ -14,8 +14,6 @@ export default async function handler(
 
 	const check = await fetch(`${ WORDPRESS_API_ENDPOINT}/wp/v2/pages/3909?password=${password}`).then(response => response.json())
 
-	console.log(req.body.password, check)
-
 	if (check.code === 'rest_post_incorrect_password') {
 		return res.status(401).json({
 			authenticated: false,

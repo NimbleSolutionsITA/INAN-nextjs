@@ -24,7 +24,6 @@ const PageTitle = ({pageTitle}: { pageTitle: string | null }) => {
     const amountCart = router.pathname.startsWith('/bag') ? cart?.length || 0 : false
     const amountWishlist = router.pathname.startsWith('/wishlist') ? wishlist?.length || 0 : false
     const amount = amountCart || amountWishlist
-    console.log(bgColor)
     return pageTitle && !loading ? (
         isMobile ? (
             <>

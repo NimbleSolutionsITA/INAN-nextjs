@@ -31,6 +31,7 @@ const CollectionCard = ({product, isMobile, isLookbook}: CollectionCardProps) =>
                             <Typography variant="h3" component="div" style={{lineHeight: '21px'}}>{product.product.post_title === 'BAG BELT 4' ? 'bag belt' : product.product.post_title}</Typography>
                         </div>
                     </Container>
+                    <Divider />
                 </>
             )}
             <Dialog

@@ -8,12 +8,14 @@ import {
 import {Provider} from "react-redux";
 import {store} from "../src/redux/store"
 import {RouteGuard} from "../src/components/RouteGuard";
+import useScrollRestoration from "../src/utils/useScrollRestoration";
 
 // Create a client
 const queryClient = new QueryClient()
 
-function MyApp({ Component, pageProps }: AppProps) {
-  return (
+function MyApp({ Component, pageProps, router }: AppProps) {
+    useScrollRestoration(router);
+    return (
       <Provider store={store}>
           <ThemeProvider theme={theme}>
               <QueryClientProvider client={queryClient}>

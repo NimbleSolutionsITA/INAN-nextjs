@@ -55,7 +55,6 @@ const ProductCard = ({product, isPrivate = false}: {product: ShopProduct, isPriv
     const isMobile = useIsMobile()
     const dispatch = useDispatch()
     const subPath = isPrivate ? '/private-sales' : '/product'
-    console.log(product.images)
 
     const handleClick = () => {
         dispatch(addWishlistItem({
@@ -81,8 +80,8 @@ const ProductCard = ({product, isPrivate = false}: {product: ShopProduct, isPriv
                 >
                     {!isMobile && <Button disableHover disableGutters disableRipple onClick={handleClick}>add to wishlist</Button>}
                     <Link href={`${subPath}/${product.slug}`}>
-                        <div style={{paddingBottom: '150%'}}>
-                            <Image key={product.images[0].id} src={product.images[0]?.woocommerce_single} alt={product.images[0].alt} fill />
+                        <div style={{position: 'relative', paddingBottom: '150%'}}>
+                            <Image key={product.images[0].id} src={product.images[0]?.woocommerce_single} alt={product.images[0].alt} fill sizes="(max-width: 600px) 100vw, 50vw" />
                         </div>
                     </Link>
                 </ImageWrapper>

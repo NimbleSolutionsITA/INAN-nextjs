@@ -28,7 +28,6 @@ const HomeCovers = ({covers, showContent, setShowContent, currentCoverIndex, set
 
     useEffect(() => {
         if(covers && window.scrollY === 0) {
-            console.log('setHeader',{ headerColor: covers[0].color, headerColorMobile: covers[0].colorMobile, bgColor: 'transparent'})
             dispatch(setHeader({ headerColor: covers[0].color, headerColorMobile: covers[0].colorMobile, bgColor: 'transparent'}))
             setCurrentCoverIndex(0)
         }

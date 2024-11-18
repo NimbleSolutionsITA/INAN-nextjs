@@ -1,7 +1,7 @@
 import {ChangeEvent, Dispatch, SetStateAction, useState} from "react"
 import MailchimpSubscribe, {EmailFormFields} from "react-mailchimp-subscribe"
 import Link from "../../Link";
-import {Divider, FormControl, FormControlLabel, TextField, Typography} from "@mui/material";
+import {Divider, FormControl, FormControlLabel, TextField, Typography, Link as MuiLink} from "@mui/material";
 import {regExpEmail} from "../../../utils/helpers";
 import Checkbox from "../../Checkbox";
 import {useIsMobile} from "../../../utils/layout";
@@ -49,8 +49,8 @@ const NewsletterForm = ({isModal, sendFeedback}: NewsletterFormProps) => {
                 url={process.env.NEXT_PUBLIC_MAILCHIMP || ''}
                 render={({ subscribe }) => (
                     <>
-                        <div style={{display: 'flex', marginBottom: '5px'}}>
-                            {!isMobile && !isModal && <div style={{marginRight: '10px', padding: '6px 0'}}><b>NEWSLETTER</b> |</div>}
+                        <div style={{display: 'flex', marginBottom: '2px'}}>
+                            {!isMobile && !isModal && <div style={{marginRight: '10px', padding: '7px 0'}}><b>NEWSLETTER</b> |</div>}
                             <div
                                 style={{
                                     flexGrow: 1,
@@ -102,13 +102,14 @@ const NewsletterForm = ({isModal, sendFeedback}: NewsletterFormProps) => {
                                                 control={
                                                     <Checkbox
                                                         checked={consent}
+                                                        isCrossed
                                                         inputProps={{ 'aria-label': 'primary checkbox' }}
                                                         onChange={() => setConsent(!consent)}
                                                     />}
                                                 label={<Typography color="primary.dark">i have read, understood and agree to the <Link isUnderline color="primary.dark" href="/legal-area/privacy-policy">privacy and data protection policy</Link></Typography>}
                                                 labelPlacement="end"
                                             />
-                                            {consent && <Link style={{float: 'right', color: (isMobile || isModal) ? '#fff' : '#000', fontWeight: 'bold'}} onClick={e => submit(subscribe)}>SUBSCRIBE</Link>}
+                                            {consent && <MuiLink style={{float: 'right', color: (isMobile || isModal) ? '#fff' : '#000', fontWeight: 'bold'}} onClick={e => submit(subscribe)}>SUBSCRIBE</MuiLink>}
                                         </>
                                     )}
                                 </div>

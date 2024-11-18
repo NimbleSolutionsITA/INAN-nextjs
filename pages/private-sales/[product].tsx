@@ -64,7 +64,6 @@ export async function getStaticProps({ params: {product} }: { params: {product: 
         }
     }
     const currentProduct = products[0]
-    console.log(currentProduct)
     const color_variations = currentProduct.acf.color_variations ?
         currentProduct.acf.color_variations.filter(id => id !== currentProduct.id) : []
     const { products: relatedProducts} = await getProducts({include: [

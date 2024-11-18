@@ -22,7 +22,6 @@ type ProductViewProps = {
 const getDefaultCurrent = (product: ShopProduct, variations: ProductPageProps['variations']) => {
     if (product.type === 'variable') {
         if (product.default_attributes.length > 0) {
-            console.log(variations.find(v => v.attributes.every(a => product.default_attributes.find(da => da.id === a.id)?.option === a.option)))
             const defaultVariation = variations.find(v => v.attributes.every(a => product.default_attributes.find(da => da.id === a.id)?.option.toLowerCase() === a.option.toLowerCase()))
             if (defaultVariation) {
                 return defaultVariation

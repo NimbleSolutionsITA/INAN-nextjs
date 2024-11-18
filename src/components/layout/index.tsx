@@ -28,7 +28,8 @@ export default function Layout({ header: { favicon, headerMenuItems }, footer, n
     return (
         <>
             <Head>
-                <link rel="shortcut icon" href={favicon} />
+                <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+                <link rel="shortcut icon" href={favicon}/>
                 {yoast && parse(yoast)}
             </Head>
             <main>
