@@ -29,7 +29,8 @@ const FilterMobileWrapper = styled.div<{isMobile: boolean}>`
 const Filters = ({links, activeLink}: FiltersProps) => {
     const isMobile = useIsMobile()
     const router = useRouter()
-    const isCollection = router.route.startsWith('/collection')
+    const isShop = router.route.startsWith('/shop')
+    const path = router.route.split('/')[1]
 
     const [open, setOpen] = useState(false)
 
@@ -73,9 +74,9 @@ const Filters = ({links, activeLink}: FiltersProps) => {
                                     padding: '2px 0',
                                     float: 'left',
                                 }}
-                                href={isCollection ? '/collection' : '/shop'}
+                                href={`/${path}`}
                             >
-                                {isCollection ? 'COLLECTION' : 'SHOP'}
+                                {path.toUpperCase()}
                             </Link>
                             <Link
                                 href="#"
@@ -90,10 +91,10 @@ const Filters = ({links, activeLink}: FiltersProps) => {
                                     setOpen(true)
                                 }}
                             >
-                                {isCollection ? 'PAST COLLECTIONS' : 'FILTER'}
+                                {isShop ?'FILTER' :  `PAST ${path.toUpperCase()}S`}
                             </Link>
                         </Container>
-                        <RightDrawer open={open} setOpen={setOpen} title={isCollection ? 'PAST COLLECTIONS' : 'FILTER'}>
+                        <RightDrawer open={open} setOpen={setOpen} title={isShop ?'FILTER' :  `PAST ${path.toUpperCase()}S`}>
                             <List style={{
                                 width: '90%',
                                 display: 'flex',

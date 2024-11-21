@@ -27,7 +27,7 @@ const CollectionPage: NextPage<CollectionProps> = ({
 	return (
 		<Layout key={router.asPath} {...layoutProps} yoast={collection?.yoast_head} pageSettings={pageSettings} links={links} news={news} activeLink={collection?.slug}>
 			<>
-				<Loader image="collection" />
+				<Loader page="collection" />
 				<Container disableGutters={isMobile} headerPadding>
 					{collection && <Collection collection={collection} />}
 				</Container>

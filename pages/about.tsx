@@ -33,7 +33,7 @@ const AboutPage: NextPage<AboutPageProps> = ({
     return (
         <Layout key="about" pageSettings={pageSettings} yoast={content.yoast_head} {...layoutProps} links={links} news={news}>
             <div style={{backgroundColor: '#000'}}>
-                <Loader image="about" />
+                <Loader page="about" />
                 {content && (
                     <Container headerPadding>
                         <Typography style={{color: '#fff'}} variant="h1">{content.title.rendered}</Typography>

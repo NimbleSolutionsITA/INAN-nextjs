@@ -49,7 +49,7 @@ export async function getCollectionStaticProps(context: {params?: {cslug?: strin
         id: collection.id,
         slug: collection.slug,
         name: collection.title.rendered,
-        url: `/collection/${collection.slug}`
+        url: `/${type}/${collection.slug}`
     }))
     const slug = context.params?.cslug ?? (links && links[links.length - 1]?.slug)
     const collection = collections.find((c) => c.slug === slug)
