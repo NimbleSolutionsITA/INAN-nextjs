@@ -1,22 +1,9 @@
 import {Box, Checkbox as MuiCheckbox, CheckboxProps as MuiCheckboxProps} from "@mui/material";
+import {DisabledByDefault, Square} from "@mui/icons-material";
 
 type CheckboxProps = Partial<Omit<MuiCheckboxProps, 'color'>> & {
     color?: string
     isCrossed?: boolean
-}
-
-function isDark(color: string) {
-    if (color === 'black')
-        return true
-    if (color === 'white')
-        return false
-    const c = color.substring(1);      // strip #
-    const rgb = parseInt(c, 16);   // convert rrggbb to decimal
-    const r = (rgb >> 16) & 0xff;  // extract red
-    const g = (rgb >>  8) & 0xff;  // extract green
-    const b = (rgb >>  0) & 0xff;  // extract blue
-    const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
-    return luma > 40;
 }
 
 function lightenDarkenColor(col: string, amt: number) {
@@ -57,9 +44,9 @@ function lightenDarkenColor(col: string, amt: number) {
 }
 
 
-const crossedCheckbox = (onBlack: boolean | undefined) => ({
-    '&:before': {
-        background: `url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' preserveAspectRatio=\'none\' viewBox=\'0 0 100 100\'><path d=\'M100 0 L0 100 \' stroke=\'${onBlack ? 'white' : 'black'}\' stroke-width=\'10\'/><path d=\'M0 0 L100 100 \' stroke=\'${onBlack ? 'white' : 'black'}\' stroke-width=\'10\'/></svg>")`,
+const crossedCheckbox = {
+    '& .MuiCheckbox-root .MuiBox-root:before': {
+        background: `url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' preserveAspectRatio=\'none\' viewBox=\'0 0 100 100\'><path d=\'M100 0 L0 100 \' stroke=\'black\' stroke-width=\'10\'/><path d=\'M0 0 L100 100 \' stroke=\'black\' stroke-width=\'10\'/></svg>")`,
         display: 'block',
         width: 10,
         height: 10,
@@ -67,25 +54,25 @@ const crossedCheckbox = (onBlack: boolean | undefined) => ({
         content: '""',
     },
     'input:hover ~ &': {
-        backgroundColor: onBlack ? '#ccc' : '#232323',
+        backgroundColor: '#232323',
     },
-})
+}
 
-const defaultCheckbox = (onBlack: boolean | undefined) => ({
+const defaultCheckbox = {
     backgroundImage: 'linear-gradient(180deg,hsla(0,0%,100%,.1),hsla(0,0%,100%,0))',
         'input ~ &': {
-        backgroundColor: onBlack ? '#fff' : '#000',
+        backgroundColor: '#000',
     },
-    '&:before': {
+    '& .MuiCheckbox-root .MuiBox-root:before': {
         display: 'block',
             width: 16,
             height: 16,
             content: '""',
     },
     'input:hover ~ &': {
-        backgroundColor: onBlack ? '#ccc' : '#232323',
+        backgroundColor: '#232323',
     },
-})
+}
 
 const CheckboxIcon = ({
     color,
@@ -96,7 +83,6 @@ const CheckboxIcon = ({
     isChecked?: boolean,
     isCrossed?: boolean
 }) => {
-    const onBlack = !!color && !isDark(color)
     return (
         <Box
             component="span"
@@ -104,20 +90,18 @@ const CheckboxIcon = ({
                 borderRadius: 0,
                 width: 16,
                 height: 16,
-                boxShadow: `inset 0 0 0 2px ${((color !== '#ffffff') && color) || (onBlack ? '#fff' : '#000')}, inset 0 -2px 0 ${(color !== '#ffffff' && color) || (onBlack ? '#fff' : '#000')}`,
-                'input ~ &': {
-                    backgroundColor: color || (onBlack ? 'transparent' : '#ebf1f5'),
-                },
+                boxShadow: `inset 0 0 0 2px #000, inset 0 -2px 0 #000}`,
+                backgroundColor: color ?? '#ebf1f5',
                 'input:disabled ~ &': {
                     boxShadow: 'none',
                     background: 'rgba(206,217,224,.5)',
                 },
                 ...(!isChecked ? {
                     'input:hover ~ &': {
-                        backgroundColor: color ? lightenDarkenColor(color, -10) : ( onBlack ? '#333' : '#ebf1f5' ),
+                        backgroundColor: color ? lightenDarkenColor(color, -10) : '#ebf1f5',
                     },
                 } : {}),
-                ...(isChecked ? (isCrossed ? crossedCheckbox(onBlack) : defaultCheckbox(onBlack)) : {})
+                ...(isChecked ? (isCrossed ? crossedCheckbox : defaultCheckbox) : {})
             }}
         />
     )
@@ -125,9 +109,25 @@ const CheckboxIcon = ({
 
 const Checkbox = ({color, isCrossed, ...rest}: CheckboxProps) => (
     <MuiCheckbox
-        sx={{'&:hover': { backgroundColor: 'transparent' }}}
-        checkedIcon={<CheckboxIcon isChecked color={color} isCrossed={isCrossed}/>}
-        icon={<CheckboxIcon color={color} isCrossed={isCrossed} />}
+        icon={<Square
+            sx={{
+                border: "2px solid black",
+                borderRadius: 0,
+                width: 16,
+                height: 16,
+                color: (color && color !== "") ? color : "#ebf1f5",
+                fill: color ?? "#ebf1f5",
+                background: color ?? "#ebf1f5"
+            }} />}
+        checkedIcon={<DisabledByDefault
+            sx={{
+                borderRadius: 0,
+                width: 16,
+                height: 16,
+                color: "#ebf1f5",
+                backgroundColor: "#000000"
+            }}
+        />}
         {...rest}
     />
 )

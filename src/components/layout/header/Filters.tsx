@@ -7,6 +7,7 @@ import Link from "../../Link";
 import RightDrawer from "../../RightDrawer";
 import {useRouter} from "next/router";
 import {useIsMobile} from "../../../utils/layout";
+import {decodeHtmlEntities} from "../../../utils/helpers";
 
 
 type FiltersProps = {
@@ -42,7 +43,7 @@ const Filters = ({links, activeLink}: FiltersProps) => {
                     onClick={() => setOpen(false)}
                     href={link.url}
                 >
-                    <ListItemText primary={link.name} />
+                    <ListItemText primary={decodeHtmlEntities(link.name)} />
                 </ListItem>
             ) : (
                 <Link
@@ -54,7 +55,7 @@ const Filters = ({links, activeLink}: FiltersProps) => {
                     isActive={activeLink === link.slug}
                     href={link.url}
                 >
-                    {link.name}
+                    {decodeHtmlEntities(link.name)}
                 </Link>
             )
         );

@@ -28,7 +28,6 @@ const Shop: NextPage<ShopProps> = ({
                                        attributes, // Attributes fetched and passed to the component
                                    }) => {
     const router = useRouter();
-    console.log(router.query.category?.toString())
     return (
         <Layout
             key={router.asPath}

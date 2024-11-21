@@ -64,3 +64,9 @@ export async function getCollectionStaticProps(context: {params?: {cslug?: strin
         notFound: true,
     }
 }
+
+export function decodeHtmlEntities(string: string) {
+    const textarea = document.createElement("textarea");
+    textarea.innerHTML = string;
+    return textarea.value;
+}

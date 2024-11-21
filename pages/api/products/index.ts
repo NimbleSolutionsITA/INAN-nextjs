@@ -32,7 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     const {
         per_page,
         page,
-        category,
+        categories,
         include,
         stock_status,
         pa_color,
@@ -51,7 +51,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             status,
             include,
             name,
-            categories: Array.isArray(category) ? category.join(',') : category,
+            categories: Array.isArray(categories) ? categories.join(',') : categories,
             pa_color: Array.isArray(pa_color) ? pa_color.join(',') : pa_color,
             "pa_leather-type": Array.isArray(leather_type) ? leather_type.join(',') : leather_type,
             pa_size: Array.isArray(pa_size) ? pa_size.join(',') : pa_size

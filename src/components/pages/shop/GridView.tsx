@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import Container from "../../../components/Container";
 import ProductCard from "./ProductCard";
-import {Grid, Typography, FormControlLabel, FormGroup, FormControl, FormLabel} from "@mui/material";
+import {Grid, Typography } from "@mui/material";
 import { Attribute, ShopProduct } from "../../../utils/products";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { API_GET_PRODUCTS_ENDPOINT } from "../../../utils/endpoints";
 import { useRouter } from "next/router";
 import { ShopPageProps, useIsMobile } from "../../../utils/layout";
-import Checkbox from "../../Checkbox";
 import Filters from "./Filters";
+import {decodeHtmlEntities} from "../../../utils/helpers";
 
 type GridViewProps = {
     productCategories: ShopPageProps["productCategories"];
@@ -110,7 +110,7 @@ const GridView = ({ productCategories, attributes, inStock }: GridViewProps) => 
                         variant="h1"
                         component="h1"
                     >
-                        {category?.name}
+                        {decodeHtmlEntities(category?.name)}
                     </Typography>
                 </Container>
             </div>

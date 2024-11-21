@@ -14,10 +14,9 @@ const Filters = ({attributes, selectedFilters, handleFilterChange}: FiltersProps
 	return (
 		<ExpansionPanel title="">
 			<div style={{marginBottom: "20px", marginTop: "20px"}}>
-				<Grid container>
+				<Grid container spacing={2}>
 					<Grid item xs={6}>
 						<FormControl component="fieldset" style={{width: '100%', padding: '8px 3px'}}>
-							<FormLabel component="legend" sx={{"&.Mui-focused": {color: "#000000"}}}>Cerca per nome</FormLabel>
 							<TextField value={selectedFilters['name'] ?? ""} onChange={e => handleFilterChange("name", e.target.value, )} />
 						</FormControl>
 					</Grid>
@@ -48,12 +47,12 @@ const Filters = ({attributes, selectedFilters, handleFilterChange}: FiltersProps
 										<FormControlLabel
 											control={
 												<Checkbox
-													checked={selectedFilters[attribute.slug]?.includes(option.slug) || false}
+													checked={selectedFilters[attribute.slug]?.includes(option.slug) ?? false}
 													inputProps={{'aria-label': 'primary checkbox'}}
 													onChange={(e) =>
 														handleFilterChange(attribute.slug, option.slug, e.target.checked)
 													}
-													color={option.description}
+													color={attribute.slug === "pa_color" ? option.description : undefined}
 													isCrossed
 												/>}
 											label={option.name}

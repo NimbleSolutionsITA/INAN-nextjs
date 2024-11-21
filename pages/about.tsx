@@ -49,7 +49,7 @@ const AboutPage: NextPage<AboutPageProps> = ({
                         <Grid container>
                             {!isMobile && (
                                 <Grid item xs={3}>
-                                    <div style={{display: 'flex', justifyContent: 'left', alignItems: 'center', height: '100%'}}><InLogo color="#fff" /></div>
+                                    <div style={{display: 'flex', justifyContent: 'left', alignItems: 'center', height: '100%'}}><InLogo height={100} color="#fff" /></div>
                                 </Grid>
                             )}
                             <Grid item xs={12} md={6}>
@@ -57,11 +57,11 @@ const AboutPage: NextPage<AboutPageProps> = ({
                             </Grid>
                             {isMobile && (
                                 <Grid item xs={9} style={{padding: '10px 0'}}>
-                                    <div style={{display: 'flex', justifyContent: 'left', alignItems: 'center', height: '100%'}}><InLogo color="#fff" /></div>
+                                    <div style={{display: 'flex', justifyContent: 'left', alignItems: 'center', height: '100%'}}><InLogo height={60} color="#fff" /></div>
                                 </Grid>
                             )}
                             <Grid item xs={3}>
-                                <div style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center', height: '100%'}}><AnLogo color="#fff" /></div>
+                                <div style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center', height: '100%'}}><AnLogo height={isMobile ? 60 : 100} color="#fff" /></div>
                             </Grid>
                         </Grid>
                         <Divider style={{backgroundColor: '#fff'}} />

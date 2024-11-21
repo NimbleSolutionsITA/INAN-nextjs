@@ -12,7 +12,7 @@ const PageTitle = ({pageTitle}: { pageTitle: string | null }) => {
     const authenticated = useSelector((state: RootState) => state.auth.authenticated);
     const cart = useSelector((state: RootState) => state.cart.items);
     const wishlist = useSelector((state: RootState) => state.wishlist.items);
-    const {headerColor, headerColorMobile, bgColor, loading} = useSelector((state: RootState) => state.header);
+    const { headerColorMobile, bgColor, loading} = useSelector((state: RootState) => state.header);
 
     const dispatch = useDispatch()
     const router = useRouter()
