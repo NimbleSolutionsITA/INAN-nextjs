@@ -1,7 +1,7 @@
 import { useIsMobile } from "../utils/layout";
 import { useEffect, useState } from "react";
 
-const FRAME_DURATION = 100;
+const FRAME_DURATION = 250;
 const FRAME_COUNT = 4;
 
 const Loader = ({ page }: { page: string }) => {

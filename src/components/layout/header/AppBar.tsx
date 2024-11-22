@@ -66,7 +66,6 @@ const AppBar = ({children, navLinks, height = 94}: AppBarProps) => {
     const wishlistItems = useSelector((state: RootState) => state.wishlist.items);
     const {open, bgColor, headerColor, headerColorMobile} = useSelector((state: RootState) => state.header);
     const isMobile = useIsMobile()
-    const color = isMobile ? headerColorMobile : headerColor
     const dispatch = useDispatch()
 
     const handleOpenDrawer = (open: boolean) => {
@@ -78,23 +77,38 @@ const AppBar = ({children, navLinks, height = 94}: AppBarProps) => {
         return router.push('/bag')
     }
 
+    const device = useIsMobile() ? 'mobile' : 'desktop'
+    const drawerStatus = open ? 'open' : 'closed'
+    const colors = {
+        bg: {
+            mobile: { open: "#000", closed: bgColor === 'transparent' ? '#fff' : bgColor },
+            desktop: { open: bgColor, closed: bgColor === 'transparent' ? '#fff' : bgColor }
+        },
+        text: {
+            mobile: { open: "#fff", closed: headerColorMobile },
+            desktop: { open: "#fff", closed: headerColor }
+        }
+    }
+    const color = colors.text[device][drawerStatus]
+    const backgroundColor = colors.bg[device][drawerStatus]
+
     return (
         <Box sx={{...styles.root, height}}>
             <MuiAppBar position="fixed" square elevation={0} sx={{
-                backgroundColor: open ? bgColor : (bgColor === 'transparent' ? '#fff' : bgColor),
+                backgroundColor,
                 zIndex: (theme) => theme.zIndex.modal+2,
             }}>
                 <>
                     <Toolbar component={Container}>
                         <IconButton edge="start" sx={styles.title} color="inherit" component={Link} onClick={() => handleOpenDrawer(false)} href="/">
-                            <Logo height={30} color={open ? '#fff' : color} />
+                            <Logo height={30} color={color} />
                         </IconButton>
                         <div style={{flex: 1}} />
                         <IconButton onClick={handleBagClick} sx={styles.toolbarIcons} color="inherit" aria-label="menu">
-                            <CartIcon color={open ? '#fff' : color} height={20} open={open} items={cartItems.length} />
+                            <CartIcon color={color} height={20} open={open} items={cartItems.length} />
                         </IconButton>
                         <IconButton onClick={() => handleOpenDrawer(!open)} edge="end" sx={styles.toolbarIcons} color="inherit" aria-label="menu">
-                            <BurgerIcon color={open ? '#fff' : color} open={open}/>
+                            <BurgerIcon color={color} open={open}/>
                         </IconButton>
                     </Toolbar>
                     {children}
