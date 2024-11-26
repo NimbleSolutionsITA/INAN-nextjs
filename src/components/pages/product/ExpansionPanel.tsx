@@ -1,14 +1,15 @@
 import {ReactNode, SyntheticEvent, useState} from "react"
-import {Accordion, AccordionSummary, AccordionDetails} from "@mui/material"
+import {Accordion, AccordionSummary, AccordionDetails, SxProps} from "@mui/material"
 import {ExpandMore, Add, Remove} from '@mui/icons-material';
 
 type ExpansionPanelProps = {
     children: ReactNode
     title: ReactNode | string
-    plusMinus?: boolean
+    plusMinus?: boolean,
+    sx?:  SxProps
 }
 
-const ExpansionPanel = ({children ,title, plusMinus}: ExpansionPanelProps) => {
+const ExpansionPanel = ({children ,title, plusMinus, sx}: ExpansionPanelProps) => {
     const [expanded, setExpanded] = useState<boolean | string>(false)
 
     const handleChange = (panel: boolean | string) => (event: SyntheticEvent, isExpanded: boolean) => {
@@ -37,6 +38,7 @@ const ExpansionPanel = ({children ,title, plusMinus}: ExpansionPanelProps) => {
                 '&::before': {
                     display: 'none',
                 },
+                ...sx
             }}
         >
             <AccordionSummary

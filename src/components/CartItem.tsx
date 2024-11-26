@@ -53,22 +53,22 @@ const CartItem = ({itemData, isBag}: CartItemProps) => {
                     {itemData.color && <Typography>Color: {itemData.color}</Typography>}
                     <br />
                 </div>
-                <Divider light />
+                <Divider sx={{opacity: 0.6}} />
                 <div>
                     QUANTITY:
                     <IconButton disableRipple disabled={itemData.qty === 1} color="secondary" onClick={() => handleUpdateQty(itemData.qty-1)}>
                         <MinusIcon width="14px" />
                     </IconButton>
                     {itemData.qty}
-                    <IconButton disableRipple color="secondary" onClick={() => handleUpdateQty(itemData.qty+1)}>
+                    <IconButton disableRipple disabled={itemData.qty >= (itemData.stockQuantity ?? 0)} color="secondary" onClick={() => handleUpdateQty(itemData.qty+1)}>
                         <PlusIcon width="14px" />
                     </IconButton>
                 </div>
-                <Divider light />
+                <Divider sx={{opacity: 0.6}} />
                 <Typography style={{padding: '10px 0'}} variant="h2">SUBTOTAL: {formatPrice(itemData.price * itemData.qty)}</Typography>
             </Grid>
             <Grid item xs={12} style={{paddingTop: 0}}>
-                <Divider light />
+                <Divider sx={{opacity: 0.6}} />
                 <div style={{display: 'flex'}}>
                     <Button inactive onClick={handleRemove} disableGutters>Remove</Button>
                     <div style={{flexGrow: 1}} />

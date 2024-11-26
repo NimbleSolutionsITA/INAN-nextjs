@@ -1,5 +1,5 @@
 import {LayoutProps} from "../src/utils/layout";
-import {WP_REST_API_Post} from "wp-types/index";
+import {WP_REST_API_Post} from "wp-types";
 
 export type LinkItem = {
     id: number
@@ -27,6 +27,7 @@ export type CartItem = {
     slug: string
     qty: number,
     private?: boolean
+    stockQuantity?: number
 }
 
 export type Cart = CartItem[] | undefined

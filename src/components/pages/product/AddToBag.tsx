@@ -2,7 +2,6 @@ import {ReactNode, useState} from "react"
 import Button from "../../Button";
 import RightDrawer from "../../RightDrawer";
 import {Grid, Typography} from "@mui/material";
-import styled from "@emotion/styled";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../../redux/store";
 import {addCartItem} from "../../../redux/cartSlice";
@@ -18,15 +17,10 @@ type AddToBagProps = {
     slug: string
     children?: ReactNode | string
     isPrivate?: boolean
+    stockQuantity?: number
 }
 
-const TitleWrapper = styled.div`
-  padding: 10px 0;
-  border-bottom: 1px solid;
-  margin-bottom: 2px;
-`
-
-const AddToBag = ({itemId, name, price, leather, size, color, image, slug, children = 'add to bag', isPrivate}: AddToBagProps) => {
+const AddToBag = ({itemId, name, price, leather, size, color, image, slug, children = 'add to bag', isPrivate, stockQuantity}: AddToBagProps) => {
     const cart = useSelector((state: RootState) => state.cart.items);
     const dispatch = useDispatch()
     const [open, setOpen] = useState(false)
@@ -43,7 +37,8 @@ const AddToBag = ({itemId, name, price, leather, size, color, image, slug, child
                 image,
                 slug,
                 qty: 1,
-                private: isPrivate
+                private: isPrivate,
+                stockQuantity
             }))
             setOpen(true)
         }

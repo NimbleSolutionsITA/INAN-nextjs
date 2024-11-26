@@ -203,24 +203,6 @@ interface ShippingLine {
     meta_data: any[];
 }
 
-interface Meta_Data_Line_Item {
-    // built from my own object sending in, disregard if necessary!
-    key: string;
-    value: string;
-}
-interface Cart {
-    // built from my own object sending in, disregard if necessary!
-    payment_method: string;
-    payment_method_title: string;
-    billing: Billing;
-    shipping: Shipping;
-    line_items: Array<LineItem>;
-    shipping_lines: Array<ShippingLine>;
-    customer_id: number;
-    meta_data: Array<Meta_Data_Line_Item>;
-    set_paid: false;
-}
-
 interface Attribute {
     id: number;
     name: string;

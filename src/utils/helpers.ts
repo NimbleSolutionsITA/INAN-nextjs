@@ -45,6 +45,7 @@ export async function getCollectionStaticProps(context: {params?: {cslug?: strin
         getCollectionProps()
     ]);
     const collections = allCollections.filter(c => c.acf.type === type)
+    console.log(collections)
     const links = collections.map(collection => ({
         id: collection.id,
         slug: collection.slug,

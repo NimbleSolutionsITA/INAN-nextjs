@@ -192,7 +192,7 @@ export const getProductPageProps = async<T> (slug: string): Promise<PageProps> =
 }
 
 export const getCollectionProps = async (): Promise<{ collections:  CollectionPostACF[]}> => {
-    const collections: CollectionPostACF[] = await fetch(`${ WORDPRESS_API_ENDPOINT}/wp/v2/collection?per_page=99`, { cache: "force-cache", next: { revalidate: 60 } }).then(response => response.json())
+    const collections: CollectionPostACF[] = await fetch(`${ WORDPRESS_API_ENDPOINT}/wp/v2/collection?per_page=99&order_by=menu_order`, { cache: "force-cache", next: { revalidate: 60 } }).then(response => response.json())
     return { collections: collections.map(collection => ({
             ...collection
         }))}

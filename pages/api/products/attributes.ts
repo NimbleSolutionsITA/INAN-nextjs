@@ -38,7 +38,7 @@ export const getAttributes = async () => {
 	return await Promise.all(
 		attributes.map(async (attribute: { id: number; name: string; slug: string }) => {
 			try {
-				const { data: terms } = await api.get(`products/attributes/${attribute.id}/terms`);
+				const { data: terms } = await api.get(`products/attributes/${attribute.id}/terms?per_page=100`);
 				return {
 					...attribute,
 					options: terms, // Add terms (options) to the attribute

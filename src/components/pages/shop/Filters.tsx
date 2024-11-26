@@ -3,6 +3,7 @@ import Checkbox from "../../Checkbox";
 import React from "react";
 import {Attribute} from "../../../utils/products";
 import ExpansionPanel from "../product/ExpansionPanel";
+import SearchIcon from '@mui/icons-material/Search';
 
 type FiltersProps = {
 	attributes: Attribute[];
@@ -12,12 +13,20 @@ type FiltersProps = {
 
 const Filters = ({attributes, selectedFilters, handleFilterChange}: FiltersProps) => {
 	return (
-		<ExpansionPanel title="">
+		<ExpansionPanel title="FILTERS" sx={{"& .MuiAccordionSummary-content": {justifyContent: "end"}}}>
 			<div style={{marginBottom: "20px", marginTop: "20px"}}>
-				<Grid container spacing={2}>
+				<Grid container>
 					<Grid item xs={6}>
-						<FormControl component="fieldset" style={{width: '100%', padding: '8px 3px'}}>
-							<TextField value={selectedFilters['name'] ?? ""} onChange={e => handleFilterChange("name", e.target.value, )} />
+						<FormControl component="fieldset" style={{width: '100%', padding: '0 3px 8px', display: "flex", alignItems: "center", flexDirection: "row", paddingRight: '20px'}}>
+							<TextField
+								label="Search by name"
+								value={selectedFilters['name'] ?? ""}
+								onChange={e => handleFilterChange("name", e.target.value, )}
+								fullWidth
+								size="small"
+								sx={{marginTop: "-16px"}}
+							/>
+							<SearchIcon fontSize="large"/>
 						</FormControl>
 					</Grid>
 					<Grid item xs={6}>

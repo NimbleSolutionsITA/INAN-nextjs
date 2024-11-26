@@ -70,7 +70,7 @@ const ProductCard = ({product, isPrivate = false}: {product: ShopProduct, isPriv
             private: isPrivate
         }))
     }
-
+    console.log(product)
     return (
         <CardWrapper key={product.id}>
             {product.images[0] && (

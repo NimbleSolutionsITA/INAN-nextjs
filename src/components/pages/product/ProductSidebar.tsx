@@ -81,7 +81,6 @@ const ProductSidebar = ({variations, product, colors, sizeGuide, currentProduct,
         return vars[0] ?? null
 
     }
-
     const setColor = (color: string) => {
         if (color !== colorType) {
             const colorVariation = colorVariations.find(p => p.attributes.find(a => a.id === 4)?.options[0] === color)
@@ -177,14 +176,14 @@ const ProductSidebar = ({variations, product, colors, sizeGuide, currentProduct,
                 {isPreOrder && (
                     <>
                         <Typography variant="body2" component="p">{product.acf.pre_order ?? 'Expected shipping in 60 days'}</Typography>
-                        <AddToBag name={product.name} itemId={itemId} leather={leatherType} size={sizeType} color={colorType} image={product.images[0].src} slug={product.slug} price={Number(product.price)}>pre-order</AddToBag>
+                        <AddToBag name={product.name} itemId={itemId} leather={leatherType} size={sizeType} color={colorType} image={product.images[0].src} slug={product.slug} price={Number(product.price)} stockQuantity={product.stock_quantity}>pre-order</AddToBag>
                     </>
                 )}
                 {isOutOfStock && (
                     <GetNotified isMobile={isMobile} colorType={colorType} leatherType={leatherType} sizeType={sizeType} product={product} itemId={itemId} />
                 )}
                 {!isPreOrder && !isOutOfStock && (
-                    <AddToBag name={product.name} itemId={itemId} leather={leatherType} size={sizeType} color={colorType} image={product.images[0].src} slug={product.slug} price={Number(product.price)} isPrivate={isPrivate} />
+                    <AddToBag name={product.name} itemId={itemId} leather={leatherType} size={sizeType} color={colorType} image={product.images[0].src} slug={product.slug} price={Number(product.price)} isPrivate={isPrivate} stockQuantity={product.stock_quantity}/>
                 )}
                 <Button disableGutters disableRipple onClick={() => dispatch(addWishlistItem({
                     id: itemId,
