@@ -62,8 +62,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
         const queryString = new URLSearchParams(query).toString();
 
-        console.log(queryString);
-
         // Fetch data from WooCommerce
         const response = await fetch(
             `${process.env.NEXT_PUBLIC_WORDPRESS_SITE_URL}/wp-json/nimble/v1/products?${queryString}`,

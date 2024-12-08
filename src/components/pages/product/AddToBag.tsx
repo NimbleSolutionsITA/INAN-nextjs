@@ -25,7 +25,7 @@ const AddToBag = ({itemId, name, price, leather, size, color, image, slug, child
     const dispatch = useDispatch()
     const [open, setOpen] = useState(false)
     const qty = cart?.filter(item => item.id === itemId)[0]?.qty
-    console.log(stockQuantity)
+
     const handleAddToCart = () => {
         if(itemId) {
             dispatch(addCartItem({

@@ -9,7 +9,6 @@ import {useIsMobile} from "../../../utils/layout";
 const AccountLayout = ({children}: {children: ReactNode}) => {
     const { customer } = useSelector((state: RootState) => state.customer);
     const isMobile = useIsMobile()
-    console.log(customer)
     return (
         <Container headerPadding >
             <Grid container spacing={4} style={{paddingTop: '30px'}}>

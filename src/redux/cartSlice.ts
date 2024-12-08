@@ -13,7 +13,6 @@ export const cartSlice = createSlice({
         addCartItem: (state, { payload }: PayloadAction<CartItem>) => {
             const i = state.items.findIndex((_element: CartItem) => _element.id === payload.id)
             if (i > -1) {
-                console.log(payload.stockQuantity, state.items[i].qty, payload.stockQuantity && state.items[i].qty < payload.stockQuantity)
                 if (payload.stockQuantity && state.items[i].qty < payload.stockQuantity) {
                     state.items[i].qty = state.items[i].qty + 1
                 }
