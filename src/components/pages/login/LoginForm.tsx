@@ -18,7 +18,7 @@ const LoginForm = () => {
     const [error, setError] = React.useState<false | string>(false)
 
     const dispatch = useDispatch()
-    const { authenticating } = useSelector((state: RootState) => state.auth)
+    const authenticating = useSelector((state: RootState) => state.auth.authenticating)
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         if (event.target.type === 'email') {

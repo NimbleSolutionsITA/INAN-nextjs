@@ -40,6 +40,7 @@ function RouteGuard({ children }: RouteGuardProps) {
                 }))
                 return
             }
+            dispatch(setAuth({authenticated: false, authenticating: false}))
         }
         dispatch(setAuth({authenticated: false, authenticating: true}))
         authenticate().then(r => r)
