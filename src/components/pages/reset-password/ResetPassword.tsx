@@ -55,18 +55,6 @@ const ResetPassword = () => {
     })
 
     const handleChange = (event:  ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: string) => {
-        const value = event.target.value
-        if (field === 'code' && data.email && regExpEmail.test(data.email) && value.length === 4) {
-            setData({...data, code: value})
-            validateCode(data.email, value)
-                .then((response) => setData({...data, code: value, validCode: !!response.message}))
-                .catch((error) => {
-                    setData({...data, code: value, validCode: false})
-                    if (error.message) setDataError({...dataError, code: error.message})
-                });
-            return
-        }
-        if (field === 'code' && value.length > 4) return
         setDataError({...dataError, [field]: false})
         setData({...data, [field]: event.target.value})
     }
@@ -82,9 +70,19 @@ const ResetPassword = () => {
             email: !data.email ? 'EMAIL IS REQUIRED' : !regExpEmail.test(data.email) && 'PLEASE ENTER A VALID EMAIL ADDRESS',
             password: !data.password && 'PASSWORD IS REQUIRED',
             confirmPassword: data.password !== data.confirmPassword && 'PASSWORD DOES NOT MATCH',
-            code: data.code?.length !== 4 ? 'CODE MUST BE 4 DIGITS' : dataError.code
+            code: !data.code && 'CODE IS REQUIRED'
         })
-        if (data.code && data.validCode && data.email && regExpEmail.test(data.email) && data.password && data.password === data.confirmPassword && !honeyRef.current?.value) {
+        if (data.code && data.email && regExpEmail.test(data.email) && data.password && data.password === data.confirmPassword && !honeyRef.current?.value) {
+            validateCode(data.email, data.code)
+                .then((response) => {
+                    setNewPassword(data.email as string, data.code as string, data.password as string)
+                        .then(response => setData({...data, resetSuccess: response.message}))
+                })
+                .catch((error) => {
+                    setData({...data, code: data.code, validCode: false})
+                    if (error.message) setDataError({...dataError, code: error.message})
+                });
+
             setNewPassword(data.email, data.code, data.password).
                 then(response => setData({...data, resetSuccess: response.message}))
         }
@@ -155,13 +153,13 @@ const ResetPassword = () => {
                                         focused: false,
                                         shrink: true,
                                     }}
-                                    placeholder="ENTER THE 4 DIGIT CODE RECEIVED BY EMAIL"
+                                    placeholder="ENTER THE CODE RECEIVED BY EMAIL"
                                     required
                                     error={!!dataError.code}
                                     label="code"
                                     helperText={dataError.code || data.validCode}
                                     fullWidth
-                                    type="number"
+                                    type="text"
                                     value={data.code}
                                     onChange={(event) => handleChange(event, 'code')}
                                 />

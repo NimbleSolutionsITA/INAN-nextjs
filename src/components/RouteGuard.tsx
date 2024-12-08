@@ -4,6 +4,7 @@ import {useDispatch, useSelector} from "react-redux";
 import { RootState } from "../redux/store";
 import {checkLoginUser} from "../utils/auth";
 import {setAuth} from "../redux/authSlice";
+import {setCustomer} from "../redux/customerSlice";
 
 export { RouteGuard };
 
@@ -25,8 +26,20 @@ function RouteGuard({ children }: RouteGuardProps) {
 
     useEffect(() => {
         const authenticate = async (): Promise<void> => {
-            const user = await checkLoginUser();
-            dispatch(setAuth({authenticated: !!user, authenticating: false, user: user || undefined}))
+            const customer = await checkLoginUser()
+            if (customer) {
+                dispatch(setCustomer(customer))
+                dispatch(setAuth({
+                    authenticated: !!customer, authenticating: false, user: customer ? {
+                        id: customer.id,
+                        email: customer.email,
+                        first_name: customer.first_name,
+                        last_name: customer.last_name,
+                        username: customer.username,
+                    } : undefined
+                }))
+                return
+            }
         }
         dispatch(setAuth({authenticated: false, authenticating: true}))
         authenticate().then(r => r)

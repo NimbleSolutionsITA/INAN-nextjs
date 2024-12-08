@@ -21,9 +21,6 @@ export const authSlice = createSlice({
                 first_name: state.user.first_name,
                 last_name: state.user.last_name,
                 username: state.user.username,
-                registered_date: state.user.registered_date,
-                avatar_url: state.user.avatar_url,
-                roles: state.user.roles,
                 ...payload.user
             } : payload.user
             return state

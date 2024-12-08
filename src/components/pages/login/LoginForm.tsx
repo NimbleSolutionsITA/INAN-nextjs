@@ -8,6 +8,7 @@ import {RootState} from "../../../redux/store";
 import {checkLoginUser, loginUser} from "../../../utils/auth";
 import {setAuth} from "../../../redux/authSlice";
 import parse from "html-react-parser";
+import {setCustomer} from "../../../redux/customerSlice";
 
 const LoginForm = () => {
     const [email, setEmail] = React.useState('')
@@ -44,9 +45,20 @@ const LoginForm = () => {
             if (response.token ) {
                 const token = response.token
                 localStorage.setItem('inan-token', token);
-                const user = await checkLoginUser()
-                dispatch(setAuth({authenticated: !!user, authenticating: false, user: user || undefined}))
-                return
+                const customer = await checkLoginUser()
+                if (customer) {
+                    dispatch(setCustomer(customer))
+                    dispatch(setAuth({
+                        authenticated: !!customer, authenticating: false, user: customer ? {
+                            id: customer.id,
+                            email: customer.email,
+                            first_name: customer.first_name,
+                            last_name: customer.last_name,
+                            username: customer.username,
+                        } : undefined
+                    }))
+                    return
+                }
             }
             else if (response.code === '[jwt_auth] incorrect_password')
                 setPasswordError('the password is incorrect')
@@ -80,7 +92,7 @@ const LoginForm = () => {
                 />
             </FormControl>
             <div style={{position: 'relative', marginTop: '10px', marginBottom: '25px'}}>
-                <Link style={{position: 'absolute', top: '10px', right: 0, zIndex: 1}} color="error" href="/account/reset-password">Forgot Password?</Link>
+                <Link style={{position: 'absolute', top: '10px', right: 0, zIndex: 1}} color="error" href="/reset-password">Forgot Password?</Link>
                 <FormControl fullWidth>
                     <TextField
                         sx={{

@@ -1,20 +1,29 @@
 import {
+    API_CUSTOMER_ENDPOINT,
     WORDPRESS_LOGIN_ENDPOINT,
     WORDPRESS_RESET_PASSWORD_ENDPOINT,
     WORDPRESS_RESET_PASSWORD_VALIDATE_CODE_ENDPOINT,
     WORDPRESS_SET_NEW_PASSWORD_ENDPOINT,
-    WORDPRESS_USER_INFO_ENDPOINT
+    WORDPRESS_VERIFY_TOKEN_ENDPOINT
 } from "./endpoints";
-import {Auth} from "../../@types";
+import {Customer} from "../../@types/woocommerce";
 
-export const checkLoginUser = (): Promise<Auth['user']> | false => {
+export const checkLoginUser = async (): Promise<Customer | false> => {
     const localAccessToken = localStorage.getItem('inan-token');
     if (localAccessToken) {
-        let myHeaders = new Headers()
-        myHeaders.append('Authorization', `Bearer ${localAccessToken}`)
-        return fetch(WORDPRESS_USER_INFO_ENDPOINT, { method: 'POST',  headers: myHeaders})
-            .then(response => response.json())
-            .catch((error) => error);
+        const response = await fetch(WORDPRESS_VERIFY_TOKEN_ENDPOINT, { method: 'POST',  headers: {
+                'Authorization': `Bearer ${localAccessToken}`
+            }})
+        const verify = await response.json()
+        if (verify.code === 'jwt_auth_valid_token') {
+            const user_id = getUserIdFromToken(localAccessToken);
+            const userResponse = await fetch(`${API_CUSTOMER_ENDPOINT}/${user_id}`, {
+                headers: [["Content-Type", 'application/json']]
+            })
+            const {customer} = await userResponse.json()
+            return customer
+        }
+        localStorage.removeItem('inan-token')
     }
     return false
 }
@@ -78,4 +87,27 @@ export const validateCode = (email: string, code: string): Promise<{message: str
     return fetch(WORDPRESS_RESET_PASSWORD_VALIDATE_CODE_ENDPOINT, requestOptions)
         .then((response) => response.json())
         .catch(error => error.response.data.code);
+}
+
+function getUserIdFromToken(token: string) {
+    try {
+        // Split the token into parts (header, payload, signature)
+        const parts = token.split('.');
+        if (parts.length !== 3) {
+            throw new Error('Invalid token format');
+        }
+
+        // Decode the payload (base64 URL-encoded)
+        const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+
+        // Ensure the payload has the expected structure
+        if (payload && payload.data && payload.data.user && payload.data.user.id) {
+            return payload.data.user.id;
+        } else {
+            throw new Error('user_id not found in token');
+        }
+    } catch (error: any) {
+        console.error('Error extracting user_id:', error.message);
+        return null; // Return null if extraction fails
+    }
 }

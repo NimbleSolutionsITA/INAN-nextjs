@@ -50,13 +50,6 @@ export type User = {
     first_name: string
     last_name: string
     username: string
-    registered_date: string
-    roles: string[]
-    avatar_url: {
-        '24': string
-        '48': string
-        '96': string
-    }
 }
 
 export type Auth = {

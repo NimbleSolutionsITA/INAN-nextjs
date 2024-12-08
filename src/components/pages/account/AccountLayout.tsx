@@ -1,35 +1,15 @@
 import {Divider, Grid} from "@mui/material"
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import {RootState} from "../../../redux/store";
 import NavButton from "../../NavButton";
-import {ReactNode, useEffect} from "react";
+import {ReactNode} from "react";
 import Container from "../../Container";
-import {API_CUSTOMER_ENDPOINT} from "../../../utils/endpoints";
-import {setCustomer} from "../../../redux/customerSlice";
-import {setHeader} from "../../../redux/headerSlice";
 import {useIsMobile} from "../../../utils/layout";
 
 const AccountLayout = ({children}: {children: ReactNode}) => {
-    const { auth: {user}, customer: {customer} } = useSelector((state: RootState) => state);
+    const { customer } = useSelector((state: RootState) => state.customer);
     const isMobile = useIsMobile()
-    const dispatch = useDispatch()
-    useEffect(() => {
-        if (user?.id) {
-            dispatch(setHeader({loading: true}))
-            fetch(`${API_CUSTOMER_ENDPOINT}/${user.id}`, {
-                headers: [["Content-Type", 'application/json']]
-            })
-                .then(r => r.json())
-                .then((response => {
-                    if (response.success) {
-                        dispatch(setCustomer(response.customer))
-                    }
-                }))
-                .finally(() => dispatch(setHeader({loading: false})))
-
-        }
-    }, []);
-
+    console.log(customer)
     return (
         <Container headerPadding >
             <Grid container spacing={4} style={{paddingTop: '30px'}}>
