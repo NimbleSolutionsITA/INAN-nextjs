@@ -1,8 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import {CartItem, Header} from "../../@types";
+import {PayPalApplePayConfig, PayPalGooglePayConfig} from "../components/paypal/PayPalProvider";
 
-const initialState: {items: CartItem[]} = {
+const initialState: {
+    items: CartItem[],
+    applePayConfig?: PayPalApplePayConfig
+    googlePayConfig?: PayPalGooglePayConfig
+} = {
     items: []
 }
 
@@ -38,10 +43,16 @@ export const cartSlice = createSlice({
             state = JSON.parse( localStorage.getItem( 'next-cart' ) || '{ "items": [] }' )
             return state
         },
+        setApplePayConfig: (state, action) => {
+            state.applePayConfig = action.payload
+        },
+        setGooglePayConfig: (state, action) => {
+            state.googlePayConfig = action.payload
+        },
     },
 })
 
 // Action creators are generated for each case reducer function
-export const { addCartItem, updateCartItem, deleteCartItem, destroyCart, initCart } = cartSlice.actions
+export const { addCartItem, updateCartItem, deleteCartItem, destroyCart, initCart, setApplePayConfig, setGooglePayConfig } = cartSlice.actions
 
 export default cartSlice.reducer
