@@ -3,11 +3,8 @@ import PreProcessAddress from "./PreProcessAddress";
 import SplitLayout from "../../../components/SplitLayout";
 import PreProcessPay from "./PreProcessPay";
 import PaypalButton from "./PaypalButton";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import {RootState} from "../../../redux/store";
-import {setHeader} from "../../../redux/headerSlice";
-import {API_CUSTOMER_ENDPOINT} from "../../../utils/endpoints";
-import {setCustomer} from "../../../redux/customerSlice";
 import {Billing, Order, Shipping} from "../../../../@types/woocommerce";
 import {CheckoutPageProps} from "../../../../pages/checkout";
 
@@ -30,22 +27,6 @@ const PreProcess = ({currentOrder, setCurrentOrder, isGuest, setPaypalSuccess, s
     // @ts-ignore
     const [address, setAddress] = useState<PreProcessAdress>({shipping: null, billing: null})
     const [isCheckoutReady, setIsCheckoutReady] = useState(false)
-    const dispatch = useDispatch()
-    useEffect(() => {
-        if (user?.id) {
-            dispatch(setHeader({loading: true}))
-            fetch(`${API_CUSTOMER_ENDPOINT}/${user.id}`, {
-                headers: [["Content-Type", 'application/json']]
-            })
-                .then(r => r.json())
-                .then((response => {
-                    if (response.success) {
-                        dispatch(setCustomer(response.customer))
-                    }
-                }))
-                .finally(() => dispatch(setHeader({loading: false})))
-        }
-    }, []);
     return (isGuest || customer) ? (
         <SplitLayout
             left={
