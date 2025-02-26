@@ -1,76 +1,96 @@
-import {Dispatch, SetStateAction, useEffect, useState} from 'react'
+import {useState} from 'react'
 import PreProcessAddress from "./PreProcessAddress";
 import SplitLayout from "../../../components/SplitLayout";
 import PreProcessPay from "./PreProcessPay";
-import PaypalButton from "./PaypalButton";
-import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../../../redux/store";
-import {setHeader} from "../../../redux/headerSlice";
-import {API_CUSTOMER_ENDPOINT} from "../../../utils/endpoints";
-import {setCustomer} from "../../../redux/customerSlice";
-import {Billing, Order, Shipping} from "../../../../@types/woocommerce";
 import {CheckoutPageProps} from "../../../../pages/checkout";
+import PayPalCheckout from "../../paypal/PayPalCheckout";
+import {PayPalCheckoutProvider} from "../../paypal/PayPalCheckoutProvider";
+import {FormProvider, useForm} from "react-hook-form";
+import {Billing, Shipping} from "../../../../@types/woocommerce";
+import {useSelector} from "react-redux";
+import {RootState} from "../../../redux/store";
 
 type PreProcessProps = {
     isGuest: boolean
-    setPaypalSuccess: Dispatch<SetStateAction<false | Partial<Order>>>
-    setPaypalError: Dispatch<SetStateAction<false | string>>
     woocommerce: CheckoutPageProps['woocommerce']
-    currentOrder: Partial<Order>,
-    setCurrentOrder: Dispatch<SetStateAction<Partial<Order>>>
 }
 
-export type PreProcessAdress = {
-    shipping: Partial<Shipping>;
-    billing: Partial<Billing>;
-}
+export type PaymentMethod = "applepay" | "googlepay" | "card" | "paypal"
 
-const PreProcess = ({currentOrder, setCurrentOrder, isGuest, setPaypalSuccess, setPaypalError, woocommerce}: PreProcessProps) => {
-    const { header: {loading}, auth: {user}, customer: {customer} } = useSelector((state: RootState) => state);
-    // @ts-ignore
-    const [address, setAddress] = useState<PreProcessAdress>({shipping: null, billing: null})
-    const [isCheckoutReady, setIsCheckoutReady] = useState(false)
-    const dispatch = useDispatch()
-    useEffect(() => {
-        if (user?.id) {
-            dispatch(setHeader({loading: true}))
-            fetch(`${API_CUSTOMER_ENDPOINT}/${user.id}`, {
-                headers: [["Content-Type", 'application/json']]
-            })
-                .then(r => r.json())
-                .then((response => {
-                    if (response.success) {
-                        dispatch(setCustomer(response.customer))
-                    }
-                }))
-                .finally(() => dispatch(setHeader({loading: false})))
+export type FormFields = {
+    has_shipping: boolean,
+    billing: Billing,
+    shipping?: Shipping
+    step: Step,
+    payment_method: PaymentMethod
+    vat: ""
+};
+
+export type Step = 'ADDRESS'|'RECAP'|'PAYMENT'
+
+const PreProcess = ({currentOrder, setCurrentOrder, isGuest, woocommerce}: PreProcessProps) => {
+    const customer = useSelector((state: RootState) => state.customer.customer);
+
+    const form = useForm<FormFields>({
+        defaultValues: {
+            step: 'ADDRESS',
+            has_shipping: false,
+            payment_method: 'paypal',
+            vat: '',
+            billing: {
+                email: customer?.email ?? '',
+                first_name: customer?.billing.first_name ?? '',
+                last_name: customer?.billing.last_name ?? '',
+                company: customer?.billing.company ?? '',
+                address_1: customer?.billing.address_1 ?? '',
+                address_2: customer?.billing.address_2 ?? '',
+                city: customer?.billing.city ?? '',
+                postcode: customer?.billing.postcode ?? '',
+                country: customer?.billing.country ?? '',
+                state: customer?.billing.state ?? '',
+                phone: customer?.billing.phone ?? ''
+            },
+            shipping: {
+                first_name: customer?.shipping.first_name ?? '',
+                last_name: customer?.shipping.last_name ?? '',
+                company: customer?.shipping.company ?? '',
+                address_1: customer?.shipping.address_1 ?? '',
+                address_2: customer?.shipping.address_2 ?? '',
+                city: customer?.shipping.city ?? '',
+                postcode: customer?.shipping.postcode ?? '',
+                country: customer?.shipping.country ?? '',
+                state: customer?.shipping.state ?? '',
+            },
         }
-    }, []);
-    return (isGuest || customer) ? (
-        <SplitLayout
-            left={
-                <PreProcessAddress
-                    userInfo={isGuest ? null : customer}
-                    address={address}
-                    setAddress={setAddress}
-                    isGuest={isGuest}
-                    woocommerce={woocommerce}
-                    setOrder={setCurrentOrder}
-                />
-            }
-            right={isCheckoutReady ?
-                (!loading && currentOrder &&
-                <PaypalButton
-                    order={currentOrder}
-                    setOrder={setCurrentOrder}
-                    setPaypalSuccess={setPaypalSuccess}
-                    setPaypalError={setPaypalError}
-                />) :
-                <PreProcessPay setIsCheckoutReady={setIsCheckoutReady} order={currentOrder} setOrder={setCurrentOrder} />
+    })
+    const [isCheckoutReady, setIsCheckoutReady] = useState(false)
 
-            }
-        />
-    ) : <span />
+    return (
+        <FormProvider {...form}>
+            <PayPalCheckoutProvider order={}>
+                <SplitLayout
+                    left={
+                        <PreProcessAddress
+                            userInfo={isGuest ? null : customer}
+                            address={address}
+                            setAddress={setAddress}
+                            isGuest={isGuest}
+                            woocommerce={woocommerce}
+                            setOrder={setCurrentOrder}
+                        />
+                    }
+                    right={isCheckoutReady ?
+                        <PayPalCheckout /> :
+                        <PreProcessPay
+                            setIsCheckoutReady={setIsCheckoutReady}
+                            order={currentOrder}
+                            setOrder={setCurrentOrder}
+                        />
+                    }
+                />
+            </PayPalCheckoutProvider>
+        </FormProvider>
+    )
 }
 
 export default PreProcess

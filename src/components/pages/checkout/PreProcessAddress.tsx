@@ -16,12 +16,10 @@ import AddressForm from "../account/AddressForm";
 import {regExpEmail} from "../../../utils/helpers";
 import Checkbox from "../../../components/Checkbox";
 import {RootState} from "../../../redux/store";
-import {PreProcessAdress} from "./PreProcess";
 import {CheckoutPageProps} from "../../../../pages/checkout";
-import {Billing, Customer, Order, Shipping} from "../../../../@types/woocommerce";
+import {Billing, Customer, OrderPayload, Shipping} from "../../../../@types/woocommerce";
 import {API_CUSTOMER_ENDPOINT} from "../../../utils/endpoints";
 import {setCustomer} from "../../../redux/customerSlice";
-import {createOrder} from "../../../utils/helpers";
 import {useIsMobile} from "../../../utils/layout";
 
 type PreProcessAddressProps = {
@@ -30,7 +28,16 @@ type PreProcessAddressProps = {
     setAddress: Dispatch<SetStateAction<PreProcessAdress>>
     userInfo?:  Customer | null
     woocommerce: CheckoutPageProps['woocommerce']
-    setOrder: Dispatch<SetStateAction<Partial<Order>>>
+    setOrder: Dispatch<SetStateAction<OrderPayload>>
+}
+
+type AddressErrors = {
+    firstName: string | false,
+    lastName: string | false,
+    address: string | false,
+    city: string | false,
+    postcode: string | false,
+    country: string | false,
 }
 
 const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, woocommerce: {
@@ -48,46 +55,6 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
     const isMobile = useIsMobile()
     const dispatch = useDispatch()
 
-    const emptyAddress = {
-        firstName: '',
-        lastName: '',
-        company: '',
-        address: '',
-        city: '',
-        postcode: '',
-        country: '',
-        state: '',
-        phone: ''
-    }
-    // @ts-ignore
-    const shippingWP = isGuest ? emptyAddress : userInfo.shipping
-    // @ts-ignore
-    const billingWP = isGuest ? emptyAddress : userInfo.billing
-    // @ts-ignore
-    const initialState = (address) => {
-        return {
-            firstName: address.first_name,
-            lastName: address.last_name,
-            company: address.company,
-            address: address.address_1,
-            city: address.city,
-            postcode: address.postcode,
-            country: address.country,
-            state: address.state,
-            phone: address.phone
-        }
-    }
-    const errorInitialState = {
-        firstName: false,
-        lastName: false,
-        company: false,
-        address: false,
-        city: false,
-        postcode: false,
-        country: false,
-        state: false,
-        phone: false
-    }
     const [shippingData, setShippingData] = useState(initialState(shippingWP))
     // @ts-ignore
     const [editShipping, setEditShipping] = useState(!!shippingWP.address_1)
@@ -147,8 +114,7 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
             postcode: address.postcode,
             country: address.country,
             state: address.state,
-            // @ts-ignore
-            email: guestEmail || user.email,
+            email: guestEmail || user?.email || '',
             phone: address.phone
         }
     }
@@ -156,10 +122,8 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
     function handleSave() {
         setCreatingUser(true)
 
-        // @ts-ignore
         setBillingError(getErrors(billingData))
         if (editShipping) {
-            // @ts-ignore
             setShippingError(getErrors(shippingData))
         }
 
@@ -244,13 +208,14 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
             else shippingCost = shippingRcost
         }*/
         const savedShipping = saveData(shippingData ?? billingData)
+        console.log(shippingCost, shippingClass, cart)
         if (isGuest) {
             // @ts-ignore
             setGuestEmailError((!guestEmail.match(regExpEmail) || !guestEmail) && 'PLEASE ENTER A VALID EMAIL')
             if (!guestEmail.match(regExpEmail))
                 return
             setAddress({shipping: savedShipping, billing: saveData(billingData)})
-            const {order: newOrder} = await createOrder({
+            /*const {order: newOrder} = await createOrder({
                 shipping: saveData(shippingData),
                 billing: saveData(billingData),
                 line_items: cartItems,
@@ -262,13 +227,13 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
                 // @ts-ignore
                 meta_data: [{key: 'vat', value: vat}]
             })
-            setOrder(newOrder)
+            setOrder(newOrder)*/
             setCreatingUser(false)
             return
         }
         setAddress({shipping: savedShipping, billing: billingData.address ? saveData(billingData) : {}})
         if (user) {
-            const {order: newOrder} =  await createOrder({
+            /*const {order: newOrder} =  await createOrder({
                 shipping: saveData(shippingData),
                 billing: billingData.address && saveData(billingData) || undefined,
                 line_items: cartItems,
@@ -281,7 +246,7 @@ const PreProcessAddress = ({isGuest, address, setAddress, userInfo, setOrder, wo
                 // @ts-ignore
                 meta_data: [{key: 'vat', value: vat}]
             })
-            setOrder(newOrder)
+            setOrder(newOrder)*/
         }
         setCreatingUser(false)
     }

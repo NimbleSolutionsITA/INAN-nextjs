@@ -1,18 +1,13 @@
 import React, {ElementRef, RefObject, useEffect, useRef} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch, RootState} from "../redux/store";
 import {PayPalApplePayConfig, PayPalWithApplePay} from "./PayPalProvider";
-import {Cart, Shipping} from "../types/cart-type";
-import {ShippingData} from "../redux/layoutSlice";
-import {getCartItemPrice, getCartTotals, getIsEU, gtagPurchase} from "../utils/utils";
 import {callCart, PaymentButtonProps} from "./AppleGooglePayButtons";
-import {destroyCart} from "../redux/cartSlice";
 import {useRouter} from "next/router";
-import useAuth from "../utils/useAuth";
+import {AppDispatch, RootState} from "../../redux/store";
 
 const ApplePayButton = ({cart: checkoutCart, shipping, invoice, customerNote, askForShipping}: PaymentButtonProps) => {
 	const { applePayConfig } = useSelector((state: RootState) => state.cart);
-	const { user } = useAuth();
+	const {customer} = useSelector((state: RootState) => state.customer);
 	const buttonRef = useRef<ElementRef<'div'>>(null);
 	const dispatch = useDispatch<AppDispatch>();
 	const router = useRouter();

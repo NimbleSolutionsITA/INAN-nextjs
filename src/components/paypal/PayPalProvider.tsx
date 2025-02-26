@@ -7,7 +7,6 @@ import ApplePayPaymentToken = ApplePayJS.ApplePayPaymentToken;
 import ApplePayMerchantCapability = ApplePayJS.ApplePayMerchantCapability;
 import MerchantInfo = google.payments.api.MerchantInfo;
 import PaymentMethodSpecification = google.payments.api.PaymentMethodSpecification;
-import {useRouter} from "next/router";
 import {AppDispatch} from "../../redux/store";
 import {setApplePayConfig, setGooglePayConfig} from "../../redux/cartSlice";
 
@@ -88,19 +87,13 @@ export type PayPalWithGooglePay = PayPalNamespace & {
 
 const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
 
-const LOCALES = {
-	it: "it_IT",
-	en: "en_US"
-}
-
 const PayPalProvider = ({ children }: PayPalProviderProps) => {
-	const { locale } = useRouter()
 	return PAYPAL_CLIENT_ID ? (
 		<PayPalScriptProvider options={{
 			clientId: PAYPAL_CLIENT_ID,
 			components: "buttons,applepay,googlepay,card-fields,messages",
 			currency: "EUR",
-			locale: "en"
+			locale: "en_US"
 		}}>
 			<PayPalApplePayConfig/>
 			<PayPalGooglePayConfig />

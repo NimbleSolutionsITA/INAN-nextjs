@@ -1,21 +1,16 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch, RootState} from "../redux/store";
 import {PayPalWithGooglePay} from "./PayPalProvider";
 import PaymentAuthorizationResult = google.payments.api.PaymentAuthorizationResult;
 import PaymentData = google.payments.api.PaymentData;
 import {callCart, PaymentButtonProps} from "./AppleGooglePayButtons";
 import TransactionInfo = google.payments.api.TransactionInfo;
 import IntermediatePaymentData = google.payments.api.IntermediatePaymentData;
-import {Cart, Customer, Package} from "../types/cart-type";
-import {CartState, destroyCart} from "../redux/cartSlice";
-import {Country} from "../types/woocommerce";
 import PaymentDataRequestUpdate = google.payments.api.PaymentDataRequestUpdate;
 import CallbackIntent = google.payments.api.CallbackIntent;
 import {useRouter} from "next/router";
-import {getCartItemPrice, getCartTotals, getIsEU, gtagPurchase} from "../utils/utils";
 import TotalPriceStatus = google.payments.api.TotalPriceStatus;
-import useAuth from "../utils/useAuth";
+import {AppDispatch, RootState} from "../../redux/store";
 
 const GooglePayButton = ({cart, shipping, invoice, customerNote, askForShipping}: PaymentButtonProps) => {
 	const { googlePayConfig } = useSelector((state: RootState) => state.cart);
@@ -85,11 +80,10 @@ const GooglePayButton = ({cart, shipping, invoice, customerNote, askForShipping}
 				}
 				const { wooOrder } = orderData;
 
-				gtagPurchase(wooOrder);
 				if (!askForShipping) {
-					dispatch(destroyCart());
+					// TODO destroy cart action
 				}
-				router.push('/checkout/completed')
+				// TODO checkout completed action
 				return {transactionState: "SUCCESS"};
 			} else {
 				return {transactionState: "ERROR"};

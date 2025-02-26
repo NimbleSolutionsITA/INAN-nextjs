@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import {CartItem, Header} from "../../@types";
+import {CartItem} from "../../@types";
 import {PayPalApplePayConfig, PayPalGooglePayConfig} from "../components/paypal/PayPalProvider";
 
 const initialState: {

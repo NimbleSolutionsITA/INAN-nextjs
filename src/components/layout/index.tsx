@@ -10,6 +10,7 @@ import * as React from "react";
 import {RootState} from "../../redux/store";
 import useLayoutHook from "../../utils/useLayoutHook";
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
+import PayPalProvider from "../paypal/PayPalProvider";
 
 export type PageLayoutProps = BasePageProps['layoutProps'] & {
     children: JSX.Element,
@@ -26,7 +27,7 @@ export default function Layout({ header: { favicon, headerMenuItems }, footer, n
     const { loading } = useSelector((state: RootState) => state.header);
     useLayoutHook(pageSettings, links)
     return (
-        <>
+        <PayPalProvider>
             <Head>
                 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
                 <link rel="shortcut icon" href={favicon}/>
@@ -41,6 +42,6 @@ export default function Layout({ header: { favicon, headerMenuItems }, footer, n
                 </AppRouterCacheProvider>
             </main>
             <Footer {...footer} />
-        </>
+        </PayPalProvider>
     )
 }

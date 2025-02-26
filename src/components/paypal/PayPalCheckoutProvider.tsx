@@ -1,20 +1,14 @@
 import React, {createContext, useContext, useEffect, useState} from "react";
 import {OnApproveActions, OnApproveData, PayPalCardFieldsStyleOptions} from "@paypal/paypal-js";
 import {PayPalCardFieldsProvider} from "@paypal/react-paypal-js";
-import {ShippingData} from "../redux/layoutSlice";
-import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch, RootState} from "../redux/store";
-import {useFormContext} from "react-hook-form";
-import {gtagPurchase} from "../utils/utils";
 import {useRouter} from "next/router";
-import {destroyCart} from "../redux/cartSlice";
-import useAuth from "../utils/useAuth";
-import PaymentErrorDialog from "../pages/checkout/PaymentErrorDialog";
 import {useMutation} from "@tanstack/react-query";
+import {OrderPayload} from "../../../@types/woocommerce";
+import PaymentErrorDialog from "./PaymentErrorDialog";
 
 interface PayPalProviderProps {
 	children: React.ReactNode | React.ReactNode[];
-	shipping: ShippingData
+	order: OrderPayload
 }
 
 
@@ -22,25 +16,18 @@ const PayPalCheckoutContext = createContext({
 	createOrder: async () => { return ""},
 	onApprove: async (data: OnApproveData) => {},
 	onError: (error: any) => {},
-	shipping: {} as ShippingData,
 	isPaying: false,
 	setIsPaying: (isPaying: boolean) => {},
 });
 
-export const PayPalCheckoutProvider = ({children, shipping}: PayPalProviderProps) => {
+export const PayPalCheckoutProvider = ({children, order}: PayPalProviderProps) => {
 	const [error, setError] = useState<string>();
 	const [orderId, setOrderId] = useState<string>();
 	const [isPaying, setIsPaying] = useState(false);
 	const [checkoutCompleted, setCheckoutCompleted] = useState(false);
-	const { user } = useAuth();
-	const { cart } = useSelector((state: RootState) => state.cart);
-	const { watch } = useFormContext()
-	const { invoice, customerNote } = watch()
 	const router = useRouter();
-	const dispatch = useDispatch<AppDispatch>()
-
 	const createOrder = useMutation({
-		mutationFn: async () => {
+		mutationFn: async (paymentMethod: string) => {
 			setOrderId(undefined);
 			setIsPaying(true);
 			try {
@@ -49,7 +36,7 @@ export const PayPalCheckoutProvider = ({children, shipping}: PayPalProviderProps
 					headers: {
 						"Content-Type": "application/json",
 					},
-					body: JSON.stringify({ cart, customerNote, invoice, customerId: user?.user_id }),
+					body: JSON.stringify({ order, paymentMethod }),
 				});
 				const orderData = await response.json();
 				if (!orderData.success) {
@@ -80,8 +67,7 @@ export const PayPalCheckoutProvider = ({children, shipping}: PayPalProviderProps
 			const { wooOrder, success, error = null } = await response.json();
 
 			if (success) {
-				dispatch(destroyCart());
-				gtagPurchase(wooOrder);
+				// empty cart
 				setCheckoutCompleted(true);
 			} else {
 				await onError(new Error(error ?? "An error occurred"));
@@ -110,9 +96,12 @@ export const PayPalCheckoutProvider = ({children, shipping}: PayPalProviderProps
 		}
 	}, [checkoutCompleted, router]);
 
+	const createCardOrder = async () => await createOrder.mutateAsync('PayPal - carta di credito')
+	const createPayPalOrder = async () => await createOrder.mutateAsync('PayPal')
+
 	return (
 		<PayPalCardFieldsProvider
-			createOrder={createOrder.mutateAsync}
+			createOrder={createCardOrder}
 			onApprove={onApprove}
 			onError={onError}
 			style={{
@@ -139,7 +128,7 @@ export const PayPalCheckoutProvider = ({children, shipping}: PayPalProviderProps
 				},
 			} as Record<string, PayPalCardFieldsStyleOptions>}
 		>
-			<PayPalCheckoutContext.Provider value={{createOrder: createOrder.mutateAsync, onApprove, onError, shipping, isPaying, setIsPaying}}>
+			<PayPalCheckoutContext.Provider value={{createOrder: createPayPalOrder, onApprove, onError, isPaying, setIsPaying}}>
 				{children}
 			</PayPalCheckoutContext.Provider>
 			<PaymentErrorDialog setError={(value) => {

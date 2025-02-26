@@ -12,11 +12,11 @@ import Button from "../../../components/Button";
 import CartItems from "./CartItems";
 import {updateOrder} from "../../../utils/helpers";
 import {RootState} from "../../../redux/store";
-import {Order} from "../../../../@types/woocommerce";
+import {OrderPayload} from "../../../../@types/woocommerce";
 
 type PreProcessPayProps = {
-    order: Partial<Order>
-    setOrder: Dispatch<SetStateAction<Partial<Order>>>
+    order: OrderPayload
+    setOrder: Dispatch<SetStateAction<OrderPayload>>
     setIsCheckoutReady: Dispatch<SetStateAction<boolean>>
 }
 
