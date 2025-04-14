@@ -4,7 +4,6 @@ import styled from "@emotion/styled";
 import Container from "../../Container";
 import {Grid, List, ListItem, ListItemText, Typography} from "@mui/material";
 import InAnLogo from "../../icons/InAnLogo";
-import CookieConsent from "./CookieConsent";
 import Newsletter from "./Newsletter";
 import NewsletterForm from "./NewsletterForm";
 import {useIsMobile} from "../../../utils/layout";
@@ -34,8 +33,7 @@ const Footer = ({ footerMenuItems }: FooterProps) => {
     const isMobile = useIsMobile()
     return(
         <>
-            <CookieConsent isMobile={isMobile}/>
-            <Newsletter isMobile={isMobile} />
+            <Newsletter />
             <FooterWrapper isMobile={isMobile}>
                 <Container>
                     {isMobile ? (

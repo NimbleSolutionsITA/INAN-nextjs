@@ -15,6 +15,7 @@ type ButtonProps = {
 const Button = ({disableGutters, disablePadding, inactive, disableHover, children, lineThrough, ...rest}: ButtonProps) => {
     return (
         <MaterialButton
+            {...rest}
             sx={{
                 borderRadius: 0,
                 paddingRight: disableGutters ? 0 : undefined,
@@ -27,11 +28,11 @@ const Button = ({disableGutters, disablePadding, inactive, disableHover, childre
                 '&:hover': (rest.variant !== 'contained' && rest.variant !== 'outlined') ? {
                     backgroundColor: 'transparent',
                     textDecoration: 'line-through'
-                } : undefined
+                } : undefined,
+                ...rest.sx
             }}
             component={rest.href ? RouterLink : 'button'}
             disableElevation
-            {...rest}
         >
             {children}
         </MaterialButton>

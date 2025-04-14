@@ -337,7 +337,7 @@ export interface Billing {
     city: string;
     state: string;
     postcode: string;
-    country: string;
+    country: string|null;
     email: string;
     phone: string;
 }
@@ -351,7 +351,7 @@ export interface Shipping {
     city: string;
     state: string;
     postcode: string;
-    country: string;
+    country: string|null;
 }
 
 export interface Variation {

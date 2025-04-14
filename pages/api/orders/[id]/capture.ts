@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import WooCommerceRestApi from "@woocommerce/woocommerce-rest-api";
-import {WORDPRESS_SITE_URL} from "../../../../src/utils/endpoints";
 import {generateAccessToken} from "../index";
 
 const base = process.env.PAYPAL_API_URL;
@@ -12,7 +11,7 @@ export type CreateOrderResponse = {
 }
 
 const api = new WooCommerceRestApi({
-	url: WORDPRESS_SITE_URL ?? '',
+	url: process.env.NEXT_PUBLIC_WORDPRESS_SITE_URL ?? '',
 	consumerKey: process.env.WC_CONSUMER_KEY ?? '',
 	consumerSecret: process.env.WC_CONSUMER_SECRET ?? '',
 	version: "wc/v3"

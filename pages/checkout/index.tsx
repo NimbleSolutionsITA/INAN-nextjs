@@ -1,9 +1,9 @@
 import type { NextPage } from 'next'
-import Layout from "../src/components/layout";
-import {getLayoutProps, getPageProps} from "../src/utils/layout";
-import {BasePageProps} from "../@types";
-import Checkout from "../src/components/pages/checkout/Checkout";
-import {getCheckoutProps, ShippingProps} from "../src/utils/shop";
+import Layout from "../../src/components/layout";
+import {getLayoutProps, getPageProps} from "../../src/utils/layout";
+import {BasePageProps} from "../../@types";
+import Checkout from "../../src/components/pages/checkout/Checkout";
+import {getCheckoutProps, ShippingProps} from "../../src/utils/shop";
 
 export type CheckoutPageProps = BasePageProps & { woocommerce: ShippingProps}
 

@@ -1,9 +1,8 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {PayPalWithGooglePay} from "./PayPalProvider";
+import {PayPalGooglePayConfig, PayPalWithGooglePay} from "./PayPalProvider";
 import PaymentAuthorizationResult = google.payments.api.PaymentAuthorizationResult;
 import PaymentData = google.payments.api.PaymentData;
-import {callCart, PaymentButtonProps} from "./AppleGooglePayButtons";
 import TransactionInfo = google.payments.api.TransactionInfo;
 import IntermediatePaymentData = google.payments.api.IntermediatePaymentData;
 import PaymentDataRequestUpdate = google.payments.api.PaymentDataRequestUpdate;
@@ -11,15 +10,31 @@ import CallbackIntent = google.payments.api.CallbackIntent;
 import {useRouter} from "next/router";
 import TotalPriceStatus = google.payments.api.TotalPriceStatus;
 import {AppDispatch, RootState} from "../../redux/store";
+import {useFormContext} from "react-hook-form";
+import {FormFields, Totals} from "./usePayPalFormProvider";
+import {getCartTotal, getOrderPayloadFromFields} from "../../utils/helpers";
+import { CartItem } from "../../../@types";
+import {Country} from "../../../@types/woocommerce";
+import {Box} from "@mui/material";
+import {destroyCart} from "../../redux/cartSlice";
 
-const GooglePayButton = ({cart, shipping, invoice, customerNote, askForShipping}: PaymentButtonProps) => {
-	const { googlePayConfig } = useSelector((state: RootState) => state.cart);
-	const { user } = useAuth();
+type PaymentButtonProps = {
+	items: CartItem[];
+	askForShipping?: boolean;
+	updateShippingMethod: (code: string, total: number) => FormFields["shipping_method"];
+	countries: Country[];
+	totals: Totals
+}
+
+const GooglePayButton = ({items, askForShipping = false, updateShippingMethod, countries, totals }: PaymentButtonProps) => {
+	const googlePayConfig = useSelector((state: RootState) => state.cart.googlePayConfig);
+	const { watch } = useFormContext<FormFields>()
+	const fields = watch()
 	const [paymentsClient, setPaymentsClient] = useState<google.payments.api.PaymentsClient>();
 	const paypal = window.paypal as PayPalWithGooglePay;
-	const cartKey = cart.cart_key;
 	const dispatch = useDispatch<AppDispatch>();
 	const router = useRouter();
+	const cartTotal = getCartTotal(items)
 
 	const processPayment = useCallback(async (paymentData: PaymentData) => {
 		try {
@@ -33,19 +48,17 @@ const GooglePayButton = ({cart, shipping, invoice, customerNote, askForShipping}
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({
-					cart: {
-						...cart,
-						customer: askForShipping ? mapPaymentDataToCartCustomer(paymentData) : cart.customer
+				body: JSON.stringify(getOrderPayloadFromFields(
+					{
+						...fields,
+						...(askForShipping ? mapPaymentDataToOrderAddresses(paymentData) : {})
 					},
-					invoice,
-					customerNote,
-					customerId: user?.user_id,
-					paymentMethod: "PayPal - GooglePay",
-				}),
+					items
+				)),
 			}).then((res) => res.json());
 
 			const {status} = await googlePay.confirmOrder({
+
 				orderId: id,
 				paymentMethodData: paymentData.paymentMethodData,
 			});
@@ -78,12 +91,11 @@ const GooglePayButton = ({cart, shipping, invoice, customerNote, askForShipping}
 						},
 					};
 				}
-				const { wooOrder } = orderData;
 
 				if (!askForShipping) {
-					// TODO destroy cart action
+					dispatch(destroyCart(orderData));
 				}
-				// TODO checkout completed action
+				await router.push("/checkout/completed");
 				return {transactionState: "SUCCESS"};
 			} else {
 				return {transactionState: "ERROR"};
@@ -97,47 +109,17 @@ const GooglePayButton = ({cart, shipping, invoice, customerNote, askForShipping}
 			};
 		}
 
-	}, [askForShipping, cart, customerNote, dispatch, invoice, paypal.Googlepay, router, user?.user_id])
+	}, [askForShipping, dispatch, paypal.Googlepay, router])
 
 	useEffect(() => {
 		function onPaymentDataChanged(paymentData: IntermediatePaymentData): Promise<PaymentDataRequestUpdate> {
-			const getResponse = async () => {
-				const updatedCart = await callCart(cartKey)
-				if (!updatedCart.totals?.total || !updatedCart.shipping?.packages.default) {
-					console.error("No total returned from CoCart");
-					throw new Error("No total returned from CoCart");
-				}
-				return {
-					newTransactionInfo: getGoogleTransactionInfo(updatedCart, googlePayConfig, askForShipping ? "ESTIMATED" : "FINAL"),
-					newShippingOptionParameters: getShippingOptionParameters(updatedCart.shipping.packages.default),
-				}
-			}
 			return new Promise(function (resolve, reject) {
-				if (askForShipping) {
+				if (askForShipping && googlePayConfig) {
 					if (["INITIALIZE", "SHIPPING_ADDRESS"].includes(paymentData.callbackTrigger)) {
-						callCart(cartKey, '/v2/cart/update', "POST", { namespace: "update-customer"}, {
-							state: paymentData.shippingAddress?.administrativeArea,
-							postcode: paymentData.shippingAddress?.postalCode,
-							country: paymentData.shippingAddress?.countryCode,
-							city: paymentData.shippingAddress?.locality,
-							s_state: paymentData.shippingAddress?.administrativeArea,
-							s_postcode: paymentData.shippingAddress?.postalCode,
-							s_country: paymentData.shippingAddress?.countryCode,
-							s_city: paymentData.shippingAddress?.locality,
-						}).then(() => {
-							getResponse().then((data) => {
-								resolve(data)
-							}).catch(reject)
-						})
-					}
-					else if (paymentData.callbackTrigger === "SHIPPING_OPTION") {
-						callCart(cartKey, '/v1/shipping-methods', "POST", undefined, {
-							key: paymentData.shippingOptionData?.id
-						}).then(() => {
-							getResponse().then((data) => {
-								resolve(data)
-							}).catch(reject)
-						})
+						const shipping_method = updateShippingMethod(paymentData.shippingAddress?.countryCode ?? "IT", cartTotal)
+						return {
+							newTransactionInfo: getGoogleTransactionInfo(items, totals, shipping_method, googlePayConfig, askForShipping ? "ESTIMATED" : "FINAL")
+						}
 					}
 				}
 				else {
@@ -174,18 +156,18 @@ const GooglePayButton = ({cart, shipping, invoice, customerNote, askForShipping}
 			getGooglePaymentsClient();
 		}
 
-	}, [askForShipping, cartKey, googlePayConfig, paymentsClient, processPayment])
+	}, [askForShipping, googlePayConfig, paymentsClient, processPayment])
 
 	useEffect(() => {
 		const onGooglePaymentButtonClicked = (paymentsClient: google.payments.api.PaymentsClient) => async () => {
-			if (googlePayConfig && cart.shipping) {
+			if (googlePayConfig) {
 				const { isEligible, countryCode, ...config} = googlePayConfig;
 				const paymentRequest = {
 					...config,
 					emailRequired: askForShipping,
 					callbackIntents: (askForShipping ? ['PAYMENT_AUTHORIZATION', 'SHIPPING_ADDRESS', 'SHIPPING_OPTION'] : ["PAYMENT_AUTHORIZATION"]) as CallbackIntent[],
-					transactionInfo: getGoogleTransactionInfo(cart, googlePayConfig, "FINAL"),
-					...getGoogleShippingInfo(cart.shipping?.packages.default, askForShipping, shipping.countries),
+					transactionInfo: getGoogleTransactionInfo(items, totals, fields.shipping_method, googlePayConfig, "FINAL"),
+					...getGoogleShippingInfo(askForShipping, countries),
 				}
 				await paymentsClient.loadPaymentData(paymentRequest);
 			}
@@ -193,6 +175,7 @@ const GooglePayButton = ({cart, shipping, invoice, customerNote, askForShipping}
 		function addGooglePayButton(paymentsClient: google.payments.api.PaymentsClient) {
 			const button = paymentsClient.createButton({
 				onClick: onGooglePaymentButtonClicked(paymentsClient),
+				buttonColor: "black",
 				buttonSizeMode: "fill",
 				buttonType: "pay",
 				buttonRadius: 0,
@@ -217,42 +200,40 @@ const GooglePayButton = ({cart, shipping, invoice, customerNote, askForShipping}
 				console.error(err);
 			});
 
-	}, [askForShipping, cart, googlePayConfig, paymentsClient, router.locale, shipping.countries]);
+	}, [askForShipping, googlePayConfig, paymentsClient, router.locale]);
 
-	return <div id="google-pay-container" style={{width: '100%', height: "47px"}} />
+	return <Box id="google-pay-container" sx={{width: '100%', height: "30px", "& button": {minHeight: 0}}} />
 }
 
-const getGoogleTransactionInfo = (cart: Cart, googlePayConfig: CartState['googlePayConfig'], status: TotalPriceStatus): TransactionInfo => ({
+const getGoogleTransactionInfo = (items: CartItem[], totals: Totals, shipping_method: FormFields["shipping_method"], googlePayConfig: PayPalGooglePayConfig, status: TotalPriceStatus): TransactionInfo => ({
 	displayItems: [
-		...cart.items.map((item) => ({
+		...items.map((item) => ({
 			label: item.name,
 			type: "LINE_ITEM" as const,
-			price: getCartItemPrice(item, getIsEU(cart.customer)).toString()
+			price: item.price.toString()
 		})),
 		{
-			label: cart.shipping?.packages.default.package_name ?? "Shipping",
+			label: shipping_method.name,
 			type: "SHIPPING_OPTION" as const,
-			price: (Number(cart.totals.shipping_total) / 100).toString(),
+			price: totals.shipping.toString()
 		},
-		{
-			label: "Tax",
-			type: "LINE_ITEM" as const,
-			price: (Number(cart.totals.total_tax) / 100).toString(),
-		},
+		...(totals.discount > 0 ? [{
+			label: "Coupon discount",
+			type: "DISCOUNT" as const,
+			price: totals.discount.toString()
+		}] : [])
 	],
 	currencyCode: "EUR",
 	countryCode: googlePayConfig?.countryCode,
 	totalPriceStatus: status,
-	totalPrice: getCartTotals(cart).total.toString(),
+	totalPrice: totals.total.toString(),
 	totalPriceLabel: "Total",
 
 })
 
-const  getGoogleShippingInfo = (shippingPackage: Package, askForShipping: boolean, countries: Country[]): {
+const  getGoogleShippingInfo = (askForShipping: boolean, countries: Country[]): {
 	shippingAddressRequired: boolean;
 	shippingAddressParameters?: google.payments.api.ShippingAddressParameters;
-	shippingOptionRequired: boolean;
-	shippingOptionParameters?: google.payments.api.ShippingOptionParameters;
 } => {
 	return {
 		shippingAddressRequired: !!askForShipping,
@@ -260,49 +241,38 @@ const  getGoogleShippingInfo = (shippingPackage: Package, askForShipping: boolea
 			allowedCountryCodes: countries.map((country) => country.code),
 			phoneNumberRequired: true,
 		} : undefined,
-		shippingOptionRequired: !!askForShipping,
-		shippingOptionParameters: askForShipping ? getShippingOptionParameters(shippingPackage) : undefined,
 	};
 }
 
-const getShippingOptionParameters = (shippingPackage: Package) => ({
-	defaultSelectedOptionId: shippingPackage.chosen_method,
-	shippingOptions: Object.values(shippingPackage.rates ?? {})?.map((rate) => ({
-		id: rate.key,
-		label: rate.label,
-		description: rate.html,
-	})),
-})
-
-const mapPaymentDataToCartCustomer = (paymentData: PaymentData): Customer => {
+const mapPaymentDataToOrderAddresses = (paymentData: PaymentData) => {
 	const [ firstName, ...lastNameArray] = paymentData.paymentMethodData.info?.billingAddress?.name?.split(" ") ?? [" ", " "]
 	const lastName = lastNameArray.join(" ")
 	const [ shippingFirstName, ...shippingLastNameArray] = paymentData.paymentMethodData.info?.billingAddress?.name?.split(" ") ?? [" ", " "]
 	const shippingLastName = shippingLastNameArray.join(" ")
 	return {
-		billing_address: {
-			billing_company: "",
-			billing_address_1: paymentData.paymentMethodData.info?.billingAddress?.address1 ?? "",
-			billing_address_2: paymentData.paymentMethodData.info?.billingAddress?.address2 ?? "",
-			billing_city: paymentData.paymentMethodData.info?.billingAddress?.locality ?? "",
-			billing_email: paymentData.email ?? "",
-			billing_first_name: firstName,
-			billing_last_name: lastName,
-			billing_country: paymentData.paymentMethodData.info?.billingAddress?.countryCode ?? "",
-			billing_postcode: paymentData.paymentMethodData.info?.billingAddress?.postalCode ?? "",
-			billing_phone: paymentData.paymentMethodData.info?.billingAddress?.phoneNumber ?? "",
-			billing_state: paymentData.paymentMethodData.info?.billingAddress?.administrativeArea ?? ""
+		billing: {
+			company: "",
+			address_1: paymentData.paymentMethodData.info?.billingAddress?.address1 ?? "",
+			address_2: paymentData.paymentMethodData.info?.billingAddress?.address2 ?? "",
+			city: paymentData.paymentMethodData.info?.billingAddress?.locality ?? "",
+			email: paymentData.email ?? "",
+			first_name: firstName,
+			last_name: lastName,
+			country: paymentData.paymentMethodData.info?.billingAddress?.countryCode ?? "",
+			postcode: paymentData.paymentMethodData.info?.billingAddress?.postalCode ?? "",
+			phone: paymentData.paymentMethodData.info?.billingAddress?.phoneNumber ?? "",
+			state: paymentData.paymentMethodData.info?.billingAddress?.administrativeArea ?? ""
 		},
-		shipping_address: {
-			shipping_company: "",
-			shipping_address_1: paymentData.shippingAddress?.address1 ?? "",
-			shipping_address_2: paymentData.shippingAddress?.address2 ?? "",
-			shipping_country: paymentData.shippingAddress?.countryCode ?? "",
-			shipping_state: paymentData.shippingAddress?.administrativeArea ?? "",
-			shipping_city: paymentData.shippingAddress?.locality ?? "",
-			shipping_postcode: paymentData.shippingAddress?.postalCode ?? "",
-			shipping_first_name: shippingFirstName,
-			shipping_last_name: shippingLastName,
+		shipping: {
+			company: "",
+			address_1: paymentData.shippingAddress?.address1 ?? "",
+			address_2: paymentData.shippingAddress?.address2 ?? "",
+			country: paymentData.shippingAddress?.countryCode ?? "",
+			state: paymentData.shippingAddress?.administrativeArea ?? "",
+			city: paymentData.shippingAddress?.locality ?? "",
+			postcode: paymentData.shippingAddress?.postalCode ?? "",
+			first_name: shippingFirstName,
+			last_name: shippingLastName,
 		}
 	}
 }

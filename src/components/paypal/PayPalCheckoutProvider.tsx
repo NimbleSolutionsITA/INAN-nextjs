@@ -1,14 +1,22 @@
-import React, {createContext, useContext, useEffect, useState} from "react";
+import React, {createContext, useContext, useState} from "react";
 import {OnApproveActions, OnApproveData, PayPalCardFieldsStyleOptions} from "@paypal/paypal-js";
 import {PayPalCardFieldsProvider} from "@paypal/react-paypal-js";
 import {useRouter} from "next/router";
 import {useMutation} from "@tanstack/react-query";
-import {OrderPayload} from "../../../@types/woocommerce";
 import PaymentErrorDialog from "./PaymentErrorDialog";
+import {FormProvider} from "react-hook-form";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "../../redux/store";
+import usePayPalFormProvider from "./usePayPalFormProvider";
+import {getOrderPayloadFromFields, gtagPurchase} from "../../utils/helpers";
+import {ShippingProps} from "../../utils/shop";
+import {Country} from "../../../@types/woocommerce";
+import {CartItem} from "../../../@types";
+import {destroyCart} from "../../redux/cartSlice";
 
 interface PayPalProviderProps {
 	children: React.ReactNode | React.ReactNode[];
-	order: OrderPayload
+	woocommerce: ShippingProps
 }
 
 
@@ -18,35 +26,43 @@ const PayPalCheckoutContext = createContext({
 	onError: (error: any) => {},
 	isPaying: false,
 	setIsPaying: (isPaying: boolean) => {},
+	getTotals: () => new Promise(resolve => resolve({ shipping: 0, tax: 0, discount: 0, total: 0, subtotal: 0 })),
+	totals: { shipping: 0, tax: 0, discount: 0, total: 0, subtotal: 0 },
+	getTotalsIsLoading: false,
+	saveAddress: () => {},
+	saveAddressIsLoading: false,
+	saveAddressError: "",
+	countries: [] as Country[],
+	updateShippingMethod: (code: string, total: number) => ({id: "free_shipping", cost: "0", name: "Free shipping"})
 });
 
-export const PayPalCheckoutProvider = ({children, order}: PayPalProviderProps) => {
+export const PayPalCheckoutProvider = ({children, woocommerce}: PayPalProviderProps) => {
+	const cart = useSelector((state: RootState) => state.cart.items);
+	const { getTotals, saveAddress, updateShippingMethod, ...methods } = usePayPalFormProvider(woocommerce, cart)
 	const [error, setError] = useState<string>();
 	const [orderId, setOrderId] = useState<string>();
 	const [isPaying, setIsPaying] = useState(false);
-	const [checkoutCompleted, setCheckoutCompleted] = useState(false);
 	const router = useRouter();
+	const dispatch = useDispatch();
+	const fields = methods.watch()
+
 	const createOrder = useMutation({
-		mutationFn: async (paymentMethod: string) => {
+		mutationFn: async (items: CartItem[]) => {
 			setOrderId(undefined);
 			setIsPaying(true);
-			try {
-				const response = await fetch("/api/orders", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({ order, paymentMethod }),
-				});
-				const orderData = await response.json();
-				if (!orderData.success) {
-					throw new Error(orderData.error);
-				}
-				setOrderId(orderData.wooId);
-				return orderData.id;
-			} catch (error: any) {
-				await onError(error);
+			const response = await fetch("/api/orders", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(getOrderPayloadFromFields(fields, items)),
+			});
+			const orderData = await response.json();
+			if (!orderData.success) {
+				throw new Error(orderData.error);
 			}
+			setOrderId(orderData.wooId);
+			return orderData.id;
 		}
 	})
 
@@ -68,7 +84,9 @@ export const PayPalCheckoutProvider = ({children, order}: PayPalProviderProps) =
 
 			if (success) {
 				// empty cart
-				setCheckoutCompleted(true);
+				dispatch(destroyCart());
+				gtagPurchase(wooOrder);
+				await router.push("/checkout/completed");
 			} else {
 				await onError(new Error(error ?? "An error occurred"));
 			}
@@ -89,53 +107,54 @@ export const PayPalCheckoutProvider = ({children, order}: PayPalProviderProps) =
 			setError(error.message ?? error.details?.[0]?.description ?? "An error occurred");
 		}
 	})
-	// Redirect when checkout is completed
-	useEffect(() => {
-		if (checkoutCompleted) {
-			router.push("/checkout/completed");
-		}
-	}, [checkoutCompleted, router]);
 
-	const createCardOrder = async () => await createOrder.mutateAsync('PayPal - carta di credito')
-	const createPayPalOrder = async () => await createOrder.mutateAsync('PayPal')
+	const createCartOrder = async () => await createOrder.mutateAsync(cart)
 
 	return (
-		<PayPalCardFieldsProvider
-			createOrder={createCardOrder}
-			onApprove={onApprove}
-			onError={onError}
-			style={{
-				'input': {
-					'font-size': '14px',
-					'font-family': 'Apercu, sans-serif',
-					'font-weight': "300",
-					'padding': '16.5px 14px',
-					'border-radius': '0',
-					'border': '1px solid rgba(0, 0, 0, 0.23)',
-				},
-				":focus": {
-					"box-shadow": "none",
-					'border': '2px solid #000',
-					'padding': '15.5px 13px',
-				},
-				"input:hover": {
-					'border': '2px solid #000',
-					'padding': '15.5px 13px',
-				},
-				"input.invalid:hover": {
-					'border': '1px solid #d9360b',
-					'padding': '16.5px 14px',
-				},
-			} as Record<string, PayPalCardFieldsStyleOptions>}
-		>
-			<PayPalCheckoutContext.Provider value={{createOrder: createPayPalOrder, onApprove, onError, isPaying, setIsPaying}}>
-				{children}
-			</PayPalCheckoutContext.Provider>
-			<PaymentErrorDialog setError={(value) => {
-				setIsPaying(false)
-				setError(value)
-			}} error={error} />
-		</PayPalCardFieldsProvider>
+		<FormProvider {...methods}>
+			<PayPalCardFieldsProvider
+				createOrder={createCartOrder}
+				onApprove={onApprove}
+				onError={onError}
+				style={{
+					'body': {
+						'padding': '0.375rem 0'
+					},
+					'input': {
+						'font-size': '10px',
+						'font-family': "'Helvetica Neue',Helvetica,Arial,sans-serif",
+						'font-weight': "300",
+						'padding': '1px 0',
+						'border-radius': '0',
+						'border': 'none',
+						'box-shadow': '0px 1px 0px rgba(0, 0, 0, 0.23)'
+					},
+					"input.card-field-number.display-icon": {
+					"padding-left": "calc(1.2rem + 50px) !important"
+					},
+					":focus": {
+						'box-shadow': '0px 1px 0px black',
+					},
+					"input:hover": {
+						'box-shadow': '0px 1px 0px black',
+					},
+					"input.invalid": {
+						'box-shadow': '0px 1px 0px #d9360b',
+					},
+					"input.invalid:hover": {
+						'box-shadow': '0px 1px 0px black',
+					},
+				} as Record<string, PayPalCardFieldsStyleOptions>}
+			>
+				<PayPalCheckoutContext.Provider value={{createOrder: createCartOrder, onApprove, onError, isPaying, setIsPaying, ...getTotals, ...saveAddress, updateShippingMethod, countries: woocommerce.countries}}>
+					{children}
+				</PayPalCheckoutContext.Provider>
+				<PaymentErrorDialog setError={(value) => {
+					setIsPaying(false)
+					setError(value)
+				}} error={error} />
+			</PayPalCardFieldsProvider>
+		</FormProvider>
 	)
 }
 

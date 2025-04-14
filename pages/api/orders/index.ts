@@ -34,10 +34,6 @@ export default async function handler(
 			if (!orderRequest) {
 				throw new Error('Order data is missing')
 			}
-			const cartAmount = Number(orderRequest.total) / 100
-			if (cartAmount === 0) {
-				throw new Error('Cart amount is 0')
-			}
 			// const orderPayload = await prepareOrderPayload(cart, invoice, customerNote, customerId, paymentMethod)
 			const { data: order } = await api.post("orders", orderRequest)
 			responseData.wooId = order.id
@@ -46,7 +42,7 @@ export default async function handler(
 				await api.delete(`/api/orders/${order.id}`, { force: true })
 				throw new Error('Order amount is 0')
 			}
-			console.log('ORDER', amount, "CART", orderRequest.total)
+			console.log('ORDER', amount, "CART")
 			const paypalOrder = await createOrder(order, paymentMethod)
 			responseData.id = paypalOrder.id
 
@@ -71,7 +67,7 @@ export default async function handler(
  * @see https://developer.paypal.com/docs/api/orders/v2/#orders_create
  */
 const createOrder = async (order: Order, paymentMethod: string) => {
-	const { billing, shipping, line_items, id, total, shipping_lines, shipping_total, discount_total, shipping_tax, discount_tax } = order
+	const { billing, shipping, line_items, id, total, shipping_lines, shipping_total, shipping_tax } = order
 	const accessToken = await generateAccessToken();
 	const requiredFields = [
 		'first_name',
@@ -82,9 +78,9 @@ const createOrder = async (order: Order, paymentMethod: string) => {
 		'postcode'
 	] as const;
 	const shippingAddress = requiredFields.every(field => shipping[field]) ? shipping : billing;
-	const discountTotal = Number(discount_total) + Number(discount_tax);
 	const shippingTotal = Number(shipping_total) + Number(shipping_tax);
-	const itemTotal = Number(order.total) - shippingTotal + discountTotal;
+	const itemTotal = line_items.reduce((sum, item) => sum + (Number(item.subtotal) + Number(item.subtotal_tax)), 0);
+	const discountTotal = itemTotal + shippingTotal - Number(total);
 	const payload = {
 		intent: "CAPTURE",
 		purchase_units: [
@@ -113,7 +109,7 @@ const createOrder = async (order: Order, paymentMethod: string) => {
 					sku: item.sku,
 					unit_amount: {
 						currency_code: "EUR",
-						value: (Number(item.subtotal) + Number(item.subtotal_tax)) + "",
+						value: ((Number(item.subtotal) + Number(item.subtotal_tax)) / item.quantity).toFixed(2) + "",
 					},
 					quantity: item.quantity + ""
 
@@ -135,11 +131,11 @@ const createOrder = async (order: Order, paymentMethod: string) => {
 				}
 			},
 		],
-		...(["PayPal", "PayPal - carta di credito"].includes(paymentMethod) ? {
+		...(["PayPal", "PayPal - Credit Card"].includes(paymentMethod) ? {
 			payment_source: paymentMethod === "PayPal" ? {
 				paypal: {
 					experience_context: {
-						brand_name: "Bottega di Sguardi",
+						brand_name: "INANSTUDIO",
 						shipping_preference: "SET_PROVIDED_ADDRESS",
 						user_action: "PAY_NOW"
 					}
@@ -150,12 +146,14 @@ const createOrder = async (order: Order, paymentMethod: string) => {
 						customer: {
 							email_address: billing.email,
 						}
+					},
+					verification: {
+						method: "SCA_ALWAYS"
 					}
 				}
 			}
 		} : {})
 	};
-	console.log(payload.payment_source)
 	const response = await fetch(`${base}/v2/checkout/orders`, {
 		headers: {
 			"Content-Type": "application/json",
@@ -164,59 +162,12 @@ const createOrder = async (order: Order, paymentMethod: string) => {
 		method: "POST",
 		body: JSON.stringify(payload),
 	});
+	console.log(response);
+	const data = await response.json();
 
-	return await response.json();
+	console.log(data);
+	return data
 };
-
-const prepareOrderPayload = async (cart: any, invoice?: any, customerNote?: string, customerId?: string, paymentMethod: string = "PayPal") => {
-	const selectedShipping = cart.shipping?.packages.default.rates[cart.shipping.packages.default.chosen_method]
-
-	return ({
-		customer_id: customerId,
-		currency: "EUR",
-		payment_method: 'ppcp-gateway',
-		payment_method_title: paymentMethod,
-		billing: mapAddress(cart.customer.billing_address, 'billing'),
-		shipping: mapAddress(cart.customer.shipping_address, 'shipping'),
-		line_items: await Promise.all(cart.items.map(prepareOrderLineItem(api))),
-		shipping_lines: [
-			{
-				method_id: selectedShipping?.method_id,
-				method_title: selectedShipping?.label,
-				total: (Number(selectedShipping?.cost) / 1.22 / 100) + '',
-			}
-		],
-		coupon_lines:  cart.coupons?.[0] ? [{ code: cart.coupons[0].coupon ?? '' }] : [],
-		customer_note: customerNote,
-		meta_data: invoice ? [
-			{ key: '_billing_choice_type', value: invoice.billingChoice ?? "receipt" },
-			{ key: '_billing_invoice_type', value: invoice.invoiceType ?? "private" },
-			{ key: '_billing_sdi_type', value: invoice.sdi ?? "" },
-			{ key: '_billing_vat_number', value: invoice.vat ?? "" },
-			{ key: '_billing_tax_code', value: (!invoice.tax || invoice.tax === "") ?
-					(cart.customer.billing_address.billing_country === 'IT' ?
-						"" :
-						`${cart.customer.billing_address.billing_first_name}${cart.customer.billing_address.billing_last_name}`.slice(0,11).toUpperCase().padEnd(11, '0')) :
-					invoice.tax
-			},
-		] : []
-	})
-}
-
-const mapAddress = (address: any, type: 'billing' | 'shipping') =>
-	Object.fromEntries(Object.entries(address).map(([key, value]) => [key.replace(`${type}_`, ''), value]))
-
-const prepareOrderLineItem = (api: any) => async (item: any) => {
-	const {data: product} = await api.get("products/" + item.id)
-	const itemPrice = product.price
-	const total = ((Number(itemPrice) * item.quantity.value) / 1.22) + ''
-	return {
-		product_id: item.meta.product_type === 'variation' ? item.meta.variation.parent_id : item.id,
-		variation_id: item.meta.product_type === 'variation' ? item.id : undefined,
-		quantity: item.quantity.value,
-		total,
-	}
-}
 
 /**
  * Generate an OAuth 2.0 access token for authenticating with PayPal REST APIs.

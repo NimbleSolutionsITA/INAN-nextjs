@@ -1,24 +1,36 @@
 import React, {ElementRef, RefObject, useEffect, useRef} from "react";
-import {useDispatch, useSelector} from "react-redux";
+import { useSelector} from "react-redux";
 import {PayPalApplePayConfig, PayPalWithApplePay} from "./PayPalProvider";
-import {callCart, PaymentButtonProps} from "./AppleGooglePayButtons";
 import {useRouter} from "next/router";
-import {AppDispatch, RootState} from "../../redux/store";
+import { RootState} from "../../redux/store";
+import {CartItem} from "../../../@types";
+import {Country} from "../../../@types/woocommerce";
+import {FormFields, Totals} from "./usePayPalFormProvider";
+import {getCartTotal, getOrderPayloadFromFields} from "../../utils/helpers";
+import {useFormContext} from "react-hook-form";
 
-const ApplePayButton = ({cart: checkoutCart, shipping, invoice, customerNote, askForShipping}: PaymentButtonProps) => {
-	const { applePayConfig } = useSelector((state: RootState) => state.cart);
-	const {customer} = useSelector((state: RootState) => state.customer);
+type PaymentButtonProps = {
+	items: CartItem[];
+	askForShipping?: boolean;
+	updateShippingMethod: (code: string, total: number) => FormFields["shipping_method"];
+	countries: Country[];
+	totals: Totals
+}
+
+const ApplePayButton = ({items, askForShipping = false, updateShippingMethod, countries, totals }: PaymentButtonProps) => {
+	const applePayConfig = useSelector((state: RootState) => state.cart.applePayConfig);
 	const buttonRef = useRef<ElementRef<'div'>>(null);
-	const dispatch = useDispatch<AppDispatch>();
 	const router = useRouter();
-	const countryCodes = shipping.countries.map(c => c.code);
+	const countryCodes = countries.map(c => c.code);
+	const cartTotal = getCartTotal(items)
+	const { watch } = useFormContext<FormFields>();
+	const fields = watch()
 
 	const onClick = async () => {
-		if (!applePayConfig || !applePayConfig.isEligible || !window.paypal || !checkoutCart?.cart_key) {
+		if (!applePayConfig || !applePayConfig.isEligible || !window.paypal) {
 			console.error("Apple Pay or PayPal not available");
 			return;
 		}
-		const cartKey = checkoutCart.cart_key;
 		const { Applepay } = window.paypal as PayPalWithApplePay;
 		if (!Applepay) {
 			console.error("Apple Pay not available");
@@ -26,11 +38,11 @@ const ApplePayButton = ({cart: checkoutCart, shipping, invoice, customerNote, as
 		}
 		const applepay = new Applepay();
 
-		if (!checkoutCart || parseFloat(checkoutCart.totals.total.toString()) === 0) {
+		if (cartTotal === 0) {
 			console.error("No cart returned from CoCart");
 			return
 		}
-		const paymentRequest: ApplePayJS.ApplePayPaymentRequest = generatePaymentRequest(applePayConfig, checkoutCart, shipping, askForShipping);
+		const paymentRequest: ApplePayJS.ApplePayPaymentRequest = generatePaymentRequest(applePayConfig, items, fields, totals, askForShipping);
 		let session = new window.ApplePaySession(4, paymentRequest) as ApplePaySession;
 
 		session.onvalidatemerchant = (event) => {
@@ -59,66 +71,40 @@ const ApplePayButton = ({cart: checkoutCart, shipping, invoice, customerNote, as
 						newLineItems: [],
 					});
 				} else {
-					const cart = await callCart(cartKey, '/v2/cart/update', "POST", { namespace: "update-customer"}, {
-						first_name: event.shippingContact.givenName,
-						last_name: event.shippingContact.familyName,
-						state: event.shippingContact.administrativeArea,
-						postcode: event.shippingContact.postalCode,
-						country: event.shippingContact.countryCode,
-						city: event.shippingContact.locality,
-						s_first_name: event.shippingContact.givenName,
-						s_last_name: event.shippingContact.familyName,
-						s_state: event.shippingContact.administrativeArea,
-						s_postcode: event.shippingContact.postalCode,
-						s_country: event.shippingContact.countryCode,
-						s_city: event.shippingContact.locality,
-					})
-					if (!cart.shipping?.packages.default.rates) {
+					const shipping_method = updateShippingMethod(event.shippingContact.countryCode, cartTotal)
+
+					if (!shipping_method) {
 						console.error("No shipping rates returned from CoCart");
 						session.abort()
 						return
 					}
 
 					session.completeShippingContactSelection({
-						newShippingMethods: mapShippingMethods(cart.shipping),
-						newLineItems: getLineItems(cart),
+						newShippingMethods: [{
+							identifier: shipping_method.id,
+							label: shipping_method.name,
+							detail: "",
+							amount: shipping_method.cost.toString(),
+						}],
+						newLineItems: getLineItems(items),
 						newTotal: {
-							label: "Bottega di Sguardi",
-							amount: getCartTotals(cart).total.toString(),
+							label: "INANSTUDIO",
+							amount: (cartTotal + Number(shipping_method.cost)).toString(),
 						},
 					})
 				}
-			}
-
-			session.onshippingmethodselected = async (event) => {
-				await callCart(cartKey, '/v1/shipping-methods', "POST", undefined, {
-					key: event.shippingMethod.identifier
-				})
-				const cart = await callCart(cartKey)
-				if (!cart.totals?.total) {
-					console.error("No total returned from CoCart");
-					session.abort()
-					return
-				}
-				session.completeShippingMethodSelection({
-					newTotal: {
-						label: "Bottega di Sguardi",
-						amount: getCartTotals(cart).total.toString(),
-					},
-				})
 			}
 		}
 
 		session.onpaymentauthorized = async (event) => {
 			try {
-				const cart = askForShipping ? await callCart(cartKey, '/v2/cart', "GET") : checkoutCart
 				/* Create Order on the Server Side */
 				const orderResponse = await fetch(`/api/orders`,{
 					method:'POST',
 					headers : {
 						'Content-Type': 'application/json'
 					},
-					body: JSON.stringify({ cart, customerNote, invoice, customerId: user?.user_id, paymentMethod: 'PayPal - ApplePay' })
+					body: JSON.stringify(getOrderPayloadFromFields(fields, items))
 				})
 				if(!orderResponse.ok) {
 					session.completePayment({
@@ -160,12 +146,12 @@ const ApplePayButton = ({cart: checkoutCart, shipping, invoice, customerNote, as
 				}
 				const { wooOrder } = orderData;
 
-				gtagPurchase(wooOrder);
+				// gtagPurchase(wooOrder);
 				session.completePayment({
 					status: window.ApplePaySession.STATUS_SUCCESS,
 				});
 				if (!askForShipping) {
-					dispatch(destroyCart());
+					// dispatch(destroyCart());
 					router.push('/checkout/completed')
 				}
 			} catch (err) {
@@ -189,7 +175,7 @@ const ApplePayButton = ({cart: checkoutCart, shipping, invoice, customerNote, as
 	): void => {
 		const cursor = disabled === true ? 'not-allowed' : 'pointer';
 		const opacity = disabled === true ? '0.5' : '1';
-		button?.setAttribute('style', `cursor: ${cursor}; opacity: ${opacity}; height: 48px; width: 100%;`);
+		button?.setAttribute('style', `cursor: ${cursor}; opacity: ${opacity}; height: 30px; width: 100%;`);
 	};
 
 	const createApplePayButton = (buttonRef: RefObject<HTMLDivElement>) =>
@@ -197,7 +183,7 @@ const ApplePayButton = ({cart: checkoutCart, shipping, invoice, customerNote, as
 			ref: buttonRef,
 			style: {
 				display: 'block',
-				height: '48px',
+				height: '30px',
 			},
 			locale: router.locale,
 			type: "pay"
@@ -233,59 +219,51 @@ const ApplePayButton = ({cart: checkoutCart, shipping, invoice, customerNote, as
 			<style dangerouslySetInnerHTML={{__html: `
 apple-pay-button {
 	--apple-pay-button-width: 100%;
-	--apple-pay-button-height: 48px;
+	--apple-pay-button-height: 25px;
 	--apple-pay-button-border-radius: 0px;
 	--apple-pay-button-padding: 8px 16px;
 	--apple-pay-button-box-sizing: border-box;
-}			
+}	
 			`}} />
 			{(applePayConfig?.isEligible && window.ApplePaySession) ? createApplePayButton(buttonRef) : null}
 		</>
 	)
 }
 
-const mapShippingMethods = (shipping: Shipping) => Object.values(shipping.packages.default.rates).map((rate) => ({
-	identifier: rate.key,
-	label: rate.label,
-	detail: rate.html,
-	amount: (Number(rate.cost) / 100).toString(),
-}))
-
-const generatePaymentRequest = (applePayConfig: PayPalApplePayConfig, cart: Cart, shipping: ShippingData, askForShipping: boolean): ApplePayJS.ApplePayPaymentRequest => {
-	const totals = getCartTotals(cart)
+const generatePaymentRequest = (applePayConfig: PayPalApplePayConfig, cart: CartItem[], fields: FormFields, totals: Totals, askForShipping: boolean): ApplePayJS.ApplePayPaymentRequest => {
 	return {
 		countryCode: applePayConfig.countryCode,
 		currencyCode: applePayConfig.currencyCode,
 		merchantCapabilities: applePayConfig.merchantCapabilities,
 		supportedNetworks: applePayConfig.supportedNetworks,
-		shippingMethods:  (askForShipping && cart.shipping) ? mapShippingMethods(cart.shipping) : undefined,
+		shippingMethods:  undefined,
 		shippingType: undefined,
 		shippingContactEditingMode: askForShipping ? 'available' : 'storePickup',
 		billingContact: askForShipping ? undefined : {
-			phoneNumber: cart.customer.billing_address.billing_phone,
-			emailAddress: cart.customer.billing_address.billing_email,
-			givenName: cart.customer.billing_address.billing_first_name,
-			familyName: cart.customer.billing_address.billing_last_name,
+			phoneNumber: fields.billing.phone,
+			emailAddress: fields.billing.email,
+			givenName: fields.billing.first_name,
+			familyName: fields.billing.last_name,
 			addressLines: [
-				cart.customer.billing_address.billing_address_1,
-				cart.customer.billing_address.billing_address_2
+				fields.billing.address_1,
+				fields.billing.address_2
 			],
-			locality: cart.customer.billing_address.billing_city,
-			administrativeArea: cart.customer.billing_address.billing_state,
-			postalCode: cart.customer.billing_address.billing_postcode,
-			country: cart.customer.billing_address.billing_country,
+			locality: fields.billing.city,
+			administrativeArea: fields.billing.state,
+			postalCode: fields.billing.postcode,
+			country: fields.billing.country ?? "",
 		},
 		shippingContact: askForShipping ? undefined : {
-			givenName: cart.customer.shipping_address.shipping_first_name,
-			familyName: cart.customer.shipping_address.shipping_last_name,
+			givenName: fields.shipping?.first_name ?? "",
+			familyName: fields.shipping?.last_name ?? "",
 			addressLines: [
-				cart.customer.shipping_address.shipping_address_1,
-				cart.customer.shipping_address.shipping_address_2
+				fields.shipping?.address_1 ?? "",
+				fields.shipping?.address_2 ?? ""
 			],
-			locality: cart.customer.shipping_address.shipping_city,
-			administrativeArea: cart.customer.shipping_address.shipping_state,
-			postalCode: cart.customer.shipping_address.shipping_postcode,
-			country: cart.customer.shipping_address.shipping_country
+			locality: fields.shipping?.city ?? "",
+			administrativeArea: fields.shipping?.state ?? "",
+			postalCode: fields.shipping?.postcode ?? "",
+			country: fields.shipping?.country ?? ""
 		},
 		requiredBillingContactFields: askForShipping ? [
 			"name",
@@ -300,7 +278,7 @@ const generatePaymentRequest = (applePayConfig: PayPalApplePayConfig, cart: Cart
 		] : [],
 		lineItems: getLineItems(cart),
 		total: {
-			label: "Bottega di Sguardi",
+			label: "INANSTUDIO",
 			amount: totals.total.toString(),
 			type: askForShipping ? "pending" : "final",
 			paymentTiming: "immediate",
@@ -308,10 +286,10 @@ const generatePaymentRequest = (applePayConfig: PayPalApplePayConfig, cart: Cart
 	}
 }
 
-const getLineItems = (cart: Cart): ApplePayJS.ApplePayLineItem[] => cart.items.map((item) => ({
+const getLineItems = (cart: CartItem[]): ApplePayJS.ApplePayLineItem[] => cart.map((item) => ({
 	type: "final",
 	label: item.name,
-	amount: getCartItemPrice(item, getIsEU(cart.customer)).toString(),
+	amount: item.price.toString(),
 	paymentTiming: "immediate",
 }))
 

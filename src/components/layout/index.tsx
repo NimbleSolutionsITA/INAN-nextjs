@@ -11,6 +11,7 @@ import {RootState} from "../../redux/store";
 import useLayoutHook from "../../utils/useLayoutHook";
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import PayPalProvider from "../paypal/PayPalProvider";
+import GoogleAnalytics from "./GoogleAnalytics";
 
 export type PageLayoutProps = BasePageProps['layoutProps'] & {
     children: JSX.Element,
@@ -35,6 +36,7 @@ export default function Layout({ header: { favicon, headerMenuItems }, footer, n
             </Head>
             <main>
                 <AppRouterCacheProvider>
+                    <GoogleAnalytics />
                     <Header pageTitle={pageSettings.pageTitle} headerMenuItems={headerMenuItems} links={links} activeLink={activeLink} news={news} />
                     <div style={{minHeight: '100vh', backgroundColor: router.pathname === '/about' ? '#000' : undefined}}>
                         {loading ? <Loading /> : children}

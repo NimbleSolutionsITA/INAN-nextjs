@@ -3,10 +3,12 @@ import NewsletterForm from "./NewsletterForm";
 import Container from "../../Container";
 import {Dialog, Grid, IconButton, Typography} from "@mui/material";
 import CloseIcon from "../../icons/CloseIcon";
+import {useIsMobile} from "../../../utils/layout";
 
-const Newsletter = ({isMobile}: {isMobile: boolean}) => {
+const Newsletter = () => {
     const [open, setOpen] = useState(false)
     const [subscribed, setSubscribed] = useState<boolean>(false)
+    const isMobile = useIsMobile()
 
     const handleClick = () => {
         localStorage.setItem(
