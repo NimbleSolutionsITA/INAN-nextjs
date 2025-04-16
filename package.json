@@ -4,7 +4,7 @@
     "dev": "NODE_OPTIONS='--inspect' next dev -p 3004",
     "https": "node server.js",
     "build": "next build",
-    "start": "next start -p 3004",
+    "start": "dotenv -c -- next start",
     "svg": "svgr -d src/components/icons src/components/icons/svgs ",
     "ngrok": "ngrok http 3004 --url https://mildly-glad-flamingo.ngrok-free.app"
   },
@@ -29,6 +29,7 @@
     "@woocommerce/woocommerce-rest-api": "^1.0.1",
     "axios": "^1.2.0",
     "dompurify": "^2.4.1",
+    "dotenv-cli": "^8.0.0",
     "eslint-config-next": "^15.0.2",
     "html-react-parser": "^3.0.7",
     "install": "^0.13.0",

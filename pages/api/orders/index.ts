@@ -78,9 +78,13 @@ const createOrder = async (order: Order, paymentMethod: string) => {
 		'postcode'
 	] as const;
 	const shippingAddress = requiredFields.every(field => shipping[field]) ? shipping : billing;
-	const shippingTotal = Number(shipping_total) + Number(shipping_tax);
-	const itemTotal = line_items.reduce((sum, item) => sum + (Number(item.subtotal) + Number(item.subtotal_tax)), 0);
-	const discountTotal = itemTotal + shippingTotal - Number(total);
+	const TOTAL = Number(parseFloat(total).toFixed(2))
+
+	const shippingTotal = Number(parseFloat((Number(shipping_total) + Number(shipping_tax)).toFixed(2)));
+	const itemTotal = Number(line_items.reduce((sum, item) => sum + (Number(item.subtotal) + Number(item.subtotal_tax)), 0).toFixed(2));
+	const discountTotal = Number(parseFloat((itemTotal + shippingTotal - TOTAL).toFixed(2)));
+	console.log({itemTotal, discountTotal, shippingTotal, TOTAL})
+
 	const payload = {
 		intent: "CAPTURE",
 		purchase_units: [
@@ -88,7 +92,7 @@ const createOrder = async (order: Order, paymentMethod: string) => {
 				reference_id: id,
 				amount: {
 					currency_code: "EUR",
-					value: total,
+					value: TOTAL + "",
 					breakdown: {
 						item_total: {
 							currency_code: "EUR",
