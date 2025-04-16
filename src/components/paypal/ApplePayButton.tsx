@@ -162,8 +162,9 @@ const ApplePayButton = ({items, askForShipping = false, updateShippingMethod, co
 			}
 		};
 
-		session.oncancel  = () => {
+		session.oncancel  = (e) => {
 			console.error("Apple Pay Cancelled !!")
+			console.error(e)
 		}
 
 		session.begin();
