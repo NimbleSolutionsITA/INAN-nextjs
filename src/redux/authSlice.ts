@@ -7,6 +7,7 @@ const initialState: Auth = {
     authenticating: false,
     user: undefined,
     privateSalesAccess: false,
+    cookieModalOpen: false
 }
 
 export const authSlice = createSlice({
@@ -25,11 +26,13 @@ export const authSlice = createSlice({
             } : payload.user
             return state
         },
-        resetAuth: () => initialState
+        resetAuth: () => initialState,
+        openCookieModal: (state) => ({ ...state, cookieModalOpen: true }),
+        closeCookieModal: (state) => ({ ...state, cookieModalOpen: false }),
     },
 })
 
 // Action creators are generated for each case reducer function
-export const { setAuth, resetAuth } = authSlice.actions
+export const { setAuth, resetAuth, openCookieModal, closeCookieModal } = authSlice.actions
 
 export default authSlice.reducer

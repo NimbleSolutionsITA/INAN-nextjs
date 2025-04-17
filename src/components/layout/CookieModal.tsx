@@ -1,63 +1,46 @@
 import {Accordion, AccordionDetails, AccordionSummary, Box, Dialog, DialogContent, Typography} from "@mui/material";
-import React, {ReactNode, useEffect, useState} from "react";
-import {getLocalStorage, gtagConsent, setLocalStorage} from "../../utils/helpers";
+import React, {ReactNode, useState} from "react";
 import {DialogBody} from "next/dist/client/components/react-dev-overlay/internal/components/Dialog";
 import Button from "../Button";
 import Checkbox from "../Checkbox";
+import {COOKIE_CONSENT_NAME, OptionalConsent} from "./GoogleAnalytics";
+import {useDispatch, useSelector} from "react-redux";
+import {closeCookieModal} from "../../redux/authSlice";
+import {RootState} from "../../redux/store";
+import Cookies from "js-cookie";
 
 type CookieModalProps = {
-    open: boolean;
-    setOpen: (open: boolean) => void;
+    onConsentChange: (consent: OptionalConsent) => void;
 }
 
-const defaultCookieSettings = {
-    analytics: true,
-    profiling: true,
-    usage: true,
-    storage: true
-}
+const CookieModal = ({onConsentChange}: CookieModalProps) => {
+    const cookieSettings = Cookies.get(COOKIE_CONSENT_NAME)
+    const defaultCookieSettings: OptionalConsent = cookieSettings ? JSON.parse(cookieSettings) : {
+        adUserDataConsentGranted: false,
+        adPersonalizationConsentGranted: false,
+        analyticsConsentGranted: false,
+        personalizationConsentGranted:false
+    }
+    const [currentSettings, setCurrentSettings] = useState<OptionalConsent>(defaultCookieSettings)
 
-const getConsent = (consent: boolean) => consent ? 'granted' : 'denied'
-
-const CookieModal = ({open, setOpen}: CookieModalProps) => {const [analytics, setAnalytics] = useState(defaultCookieSettings.analytics);
-    const [profiling, setProfiling] = useState(defaultCookieSettings.profiling);
-    const [usage, setUsage] = useState(defaultCookieSettings.usage);
-    const [storage, setStorage] = useState(defaultCookieSettings.storage);
+    const dispatch = useDispatch();
+    const cookieModalOpen = useSelector<RootState>(state => state.auth.cookieModalOpen) as boolean;
 
     const handleSaveSettings = (allTrue?: boolean) => {
-        if (allTrue) {
-            setAnalytics(true);
-            setProfiling(true);
-            setUsage(true);
-            setStorage(true);
-        }
-        const preferences = {
-            analytics: allTrue || analytics,
-            profiling: allTrue || profiling,
-            usage: allTrue || usage,
-            storage: allTrue || storage
-        }
-        setLocalStorage('cookie_consent', preferences)
-        gtagConsent({
-            'ad_user_data': getConsent(preferences.usage),
-            'ad_personalization': getConsent(preferences.profiling),
-            'ad_storage': getConsent(preferences.storage),
-            'analytics_storage': getConsent(preferences.analytics),
-        })
-        setOpen(false);
-
+        const newSettings = allTrue ? {
+            adUserDataConsentGranted: true,
+            adPersonalizationConsentGranted: true,
+            analyticsConsentGranted: true,
+            personalizationConsentGranted:true
+        } : currentSettings
+        onConsentChange(newSettings)
+        dispatch(closeCookieModal());
     }
 
-    useEffect (() => {
-        let cookieSettings = getLocalStorage("cookie_consent", defaultCookieSettings)
-        setAnalytics(cookieSettings.analytics)
-        setProfiling(cookieSettings.profiling)
-        setUsage(cookieSettings.usage)
-        setStorage(cookieSettings.storage)
-    }, [])
+    const toggleSetting = (setting: keyof OptionalConsent)=>  () => setCurrentSettings({...currentSettings, [setting]: !currentSettings[setting]})
 
     return (
-        <Dialog open={open} onClose={setOpen}>
+        <Dialog open={cookieModalOpen} onClose={() => dispatch(closeCookieModal())}>
             <DialogBody>
                 <DialogContent>
                     <Typography textAlign="center" variant="h5" sx={{marginBottom: '8px'}}>
@@ -79,19 +62,24 @@ const CookieModal = ({open, setOpen}: CookieModalProps) => {const [analytics, se
                             Cookies are pieces of information saved in small text files on your browser when you visit a website. These cookies allow the sender to identify your device during the validity period of consent, which is usually one year.
                         </Typography>
                     </AccordionPanel>
-                    <AccordionPanel title="Analytical Cookies" checked={analytics} setChecked={setAnalytics}>
+                    <AccordionPanel title="Ad User Data Consent" checked={currentSettings.adUserDataConsentGranted} setChecked={toggleSetting('adUserDataConsentGranted')}>
                         <Typography textAlign="justify">
-                            Other cookies are used to analyze the behavior of visitors and monitor site performance. By accepting these cookies, you help us to improve our website and provide an optimal browsing experience.
+                            We use cookies to send user data for advertising purposes, such as tracking ad performance and measuring audience interactions. Granting this consent helps us improve how we deliver and report ads.
                         </Typography>
                     </AccordionPanel>
-                    <AccordionPanel title="Advertising Profiling Cookies" checked={profiling} setChecked={setProfiling}>
+                    <AccordionPanel title="Ad Personalization Consent" checked={currentSettings.adPersonalizationConsentGranted} setChecked={toggleSetting('adPersonalizationConsentGranted')}>
                         <Typography textAlign="justify">
-                            Furthermore, there are cookies that allow INANSTUDIO to show you advertisements based on your preferences, in line with the information collected during your navigation. These cookies are set by both us and carefully selected third parties. If you disable these cookies, the ads you will see may be less relevant to your personal interests.
+                            We use cookies to personalize ads based on your interests and online behavior. Granting this consent allows ads to be more relevant and tailored to you.
                         </Typography>
                     </AccordionPanel>
-                    <AccordionPanel title="Cookies to personalize your experience" checked={usage} setChecked={setUsage}>
+                    <AccordionPanel title="Analytics Consent" checked={currentSettings.analyticsConsentGranted} setChecked={toggleSetting('analyticsConsentGranted')}>
                         <Typography textAlign="justify">
-                            Finally, there are cookies that collect information about how the user uses the site in order to improve its quality, customize its features, and ensure an optimized browsing experience.
+                            We use cookies to collect data about how you interact with our website, like pages visited and actions taken. Granting this consent helps us understand usage patterns and improve our services.
+                        </Typography>
+                    </AccordionPanel>
+                    <AccordionPanel title="Personalization Consent" checked={currentSettings.personalizationConsentGranted} setChecked={toggleSetting('personalizationConsentGranted')}>
+                        <Typography textAlign="justify">
+                            We use cookies to personalize your overall experience on our site, beyond just ads. Granting this consent allows us to offer features, content, and recommendations tailored to your preferences.
                         </Typography>
                     </AccordionPanel>
                     <Button variant="contained" fullWidth color="secondary" onClick={() => handleSaveSettings()} sx={{marginTop: '16px'}}>

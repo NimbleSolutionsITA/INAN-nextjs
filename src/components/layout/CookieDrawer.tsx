@@ -1,34 +1,29 @@
 import {Box, Drawer, Typography} from "@mui/material";
 import Button from "../Button";
-import {getConsent, gtagConsent, setLocalStorage} from "../../utils/helpers";
+import { OptionalConsent} from "./GoogleAnalytics";
+import {openCookieModal} from "../../redux/authSlice";
+import {useDispatch} from "react-redux";
 
 type CookieDrawerProps = {
     open: boolean;
-    setOpen: (open: boolean) => void;
-    setDialogOpen: (open: boolean) => void;
+    onConsentChange: (consent: OptionalConsent) => void;
 }
 
-const CookieDrawer = ({open, setOpen, setDialogOpen}: CookieDrawerProps) => {
+const CookieDrawer = ({open, onConsentChange}: CookieDrawerProps) => {
+    const dispatch = useDispatch();
     const acceptCookies = (all: boolean) => {
-        setLocalStorage('cookie_consent', {
-            analytics: all,
-            profiling: all,
-            usage: all,
-            storage: all
+        onConsentChange({
+            adUserDataConsentGranted: all,
+            adPersonalizationConsentGranted: all,
+            analyticsConsentGranted: all,
+            personalizationConsentGranted:all
         })
-        gtagConsent({
-            'ad_user_data': getConsent(all),
-            'ad_personalization': getConsent(all),
-            'ad_storage': getConsent(all),
-            'analytics_storage': getConsent(all),
-        })
-        setOpen(false);
     }
     const acceptAll = () => acceptCookies(true)
     const acceptOnlyTechnical = () => acceptCookies(false)
     const cookieSettings = () => {
-        setOpen(false);
-        setDialogOpen(true);
+        dispatch(openCookieModal());
+        acceptCookies(false);
     }
     return (
         <Drawer
