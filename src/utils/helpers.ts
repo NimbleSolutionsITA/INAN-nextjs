@@ -204,15 +204,17 @@ export const gtagPurchase = (order: Order) => {
     sendGTMEvent(event)
 };
 
-type Consent = 'granted' | 'denied'
+export function getRelativePath(url: string) {
+    // If it's already a relative path (starts with / or . or no protocol)
+    if (/^(\/|\.|(?![a-zA-Z]+:))/.test(url)) {
+        return url;
+    }
 
-export const gtagConsent = (consent: {
-    'ad_user_data': Consent,
-    'ad_personalization': Consent,
-    'ad_storage': Consent,
-    'analytics_storage': Consent
-}) => {
-    window.gtag?.("consent", 'update', consent);
+    try {
+        const urlObj = new URL(url);
+        return urlObj.pathname + urlObj.search + urlObj.hash;
+    } catch (e) {
+        // If URL parsing fails, return the original
+        return url;
+    }
 }
-
-export const getConsent = (consent: boolean) => consent ? 'granted' : 'denied';
