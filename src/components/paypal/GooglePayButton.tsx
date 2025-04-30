@@ -57,8 +57,9 @@ const GooglePayButton = ({items, askForShipping = false, updateShippingMethod, c
 				)),
 			}).then((res) => res.json());
 
-			const {status} = await googlePay.confirmOrder({
+			console.log(paymentData.paymentMethodData)
 
+			const {status} = await googlePay.confirmOrder({
 				orderId: id,
 				paymentMethodData: paymentData.paymentMethodData,
 			});
@@ -101,6 +102,7 @@ const GooglePayButton = ({items, askForShipping = false, updateShippingMethod, c
 				return {transactionState: "ERROR"};
 			}
 		} catch (err: any) {
+			console.error(err);
 			return {
 				transactionState: "ERROR",
 				error: {
@@ -109,7 +111,7 @@ const GooglePayButton = ({items, askForShipping = false, updateShippingMethod, c
 			};
 		}
 
-	}, [askForShipping, dispatch, paypal.Googlepay, router])
+	}, [askForShipping, dispatch, router, fields, items])
 
 	useEffect(() => {
 		function onPaymentDataChanged(paymentData: IntermediatePaymentData): Promise<PaymentDataRequestUpdate> {
@@ -169,6 +171,7 @@ const GooglePayButton = ({items, askForShipping = false, updateShippingMethod, c
 					transactionInfo: getGoogleTransactionInfo(items, totals, fields.shipping_method, googlePayConfig, "FINAL"),
 					...getGoogleShippingInfo(askForShipping, countries),
 				}
+				console.log(paymentRequest)
 				await paymentsClient.loadPaymentData(paymentRequest);
 			}
 		}

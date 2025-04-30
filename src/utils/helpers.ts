@@ -77,7 +77,6 @@ export function decodeHtmlEntities(string: string) {
 }
 
 export function getOrderPayloadFromFields({billing, shipping, shipping_method, has_shipping, coupon, payment_method}: FormFields, items: CartItem[]) {
-    console.log(items)
     return ({
         paymentMethod: {
             paypal: "PayPal",

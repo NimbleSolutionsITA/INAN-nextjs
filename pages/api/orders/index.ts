@@ -34,6 +34,7 @@ export default async function handler(
 			if (!orderRequest) {
 				throw new Error('Order data is missing')
 			}
+			console.log(orderRequest)
 			// const orderPayload = await prepareOrderPayload(cart, invoice, customerNote, customerId, paymentMethod)
 			const { data: order } = await api.post("orders", orderRequest)
 			responseData.wooId = order.id
@@ -44,6 +45,7 @@ export default async function handler(
 			}
 			console.log('ORDER', amount, "CART")
 			const paypalOrder = await createOrder(order, paymentMethod)
+			console.log('PAYPAL ORDER', paypalOrder)
 			responseData.id = paypalOrder.id
 
 			responseData.success = true
@@ -166,11 +168,7 @@ const createOrder = async (order: Order, paymentMethod: string) => {
 		method: "POST",
 		body: JSON.stringify(payload),
 	});
-	console.log(response);
-	const data = await response.json();
-
-	console.log(data);
-	return data
+	return await response.json();
 };
 
 /**

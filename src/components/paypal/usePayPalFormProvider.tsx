@@ -60,7 +60,7 @@ const usePayPalFormProvider = (woocommerce: ShippingProps, cart: CartItem[]) => 
                 address_2: customer?.billing.address_2 ?? '',
                 city: customer?.billing.city ?? '',
                 postcode: customer?.billing.postcode ?? '',
-                country: customer?.billing.country ?? null,
+                country: customer?.billing.country ?? 'IT',
                 state: customer?.billing.state ?? '',
                 phone: customer?.billing.phone ?? ''
             },
@@ -72,7 +72,7 @@ const usePayPalFormProvider = (woocommerce: ShippingProps, cart: CartItem[]) => 
                 address_2: customer?.shipping.address_2 ?? '',
                 city: customer?.shipping.city ?? '',
                 postcode: customer?.shipping.postcode ?? '',
-                country: customer?.shipping.country ?? null,
+                country: customer?.shipping.country ?? 'IT',
                 state: customer?.shipping.state ?? '',
             },
         }
@@ -85,7 +85,6 @@ const usePayPalFormProvider = (woocommerce: ShippingProps, cart: CartItem[]) => 
     const getTotals = useQuery({
         queryKey: ["get-order-totals", fields, cart],
         queryFn: async () => {
-            console.log(cart)
             const response = await fetch("/api/orders/totals", {
                 method: "POST",
                 headers: {

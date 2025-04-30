@@ -95,7 +95,7 @@ const PaymentMethods = () => {
 											/>
 										</AccordionSummary>
 										<AccordionDetails sx={{padding: "8px 0 16px"}}>
-											{method === "card" && (
+											{method === "card" && method === value && (
 												<Grid container>
 													<Grid item xs={12}>
 														<PayPalNameField placeholder="CARDHOLDER NAME (OPTIONAL)" />
@@ -117,7 +117,7 @@ const PaymentMethods = () => {
 													</Typography>
 												</Grid>
 											)}
-											{method == "paypal" && (
+											{method == "paypal" && method === value && (
 												<>
 													<PayPalButtons
 														createOrder={createOrder}
@@ -156,7 +156,7 @@ const PaymentMethods = () => {
 													/>
 												</>
 											)}
-											{method == "googlepay" && (
+											{method == "googlepay" && method === value && (
 												<GooglePayButton
 													items={items}
 													updateShippingMethod={updateShippingMethod}
@@ -164,7 +164,7 @@ const PaymentMethods = () => {
 													totals={totals}
 												/>
 											)}
-											{method == "applepay" && (
+											{method == "applepay" && method === value && (
 												<ApplePayButton
 													items={items}
 													updateShippingMethod={updateShippingMethod}

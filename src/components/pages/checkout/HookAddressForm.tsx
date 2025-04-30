@@ -78,7 +78,7 @@ const HookAddressForm = ({ countries, namespace }: AddressFormProps) => {
                         }}
                     />
                 </Grid>
-                <Grid item xs={12} lg={6}>
+                <Grid item xs={12} lg={states?.length > 0  ? 6 : 12}>
                     <Controller
                         control={control}
                         name={`${namespace}.country`}
