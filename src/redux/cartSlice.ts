@@ -1,8 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import {CartItem, Header} from "../../@types";
+import {CartItem} from "../../@types";
+import {PayPalApplePayConfig, PayPalGooglePayConfig} from "../components/paypal/PayPalProvider";
+import {gtagEcommerceEvent} from "../utils/helpers";
 
-const initialState: {items: CartItem[]} = {
+const initialState: {
+    items: CartItem[],
+    applePayConfig?: PayPalApplePayConfig
+    googlePayConfig?: PayPalGooglePayConfig
+} = {
     items: []
 }
 
@@ -20,6 +26,7 @@ export const cartSlice = createSlice({
             else
                 state.items.push(payload)
             localStorage.setItem('next-cart', JSON.stringify(state))
+            gtagEcommerceEvent([payload], 'add_to_cart')
         },
         updateCartItem: (state, { payload }: PayloadAction<{ id: number, qty: number }>) => {
             const i = state.items.findIndex((_element: CartItem) => _element.id === payload.id)
@@ -38,10 +45,16 @@ export const cartSlice = createSlice({
             state = JSON.parse( localStorage.getItem( 'next-cart' ) || '{ "items": [] }' )
             return state
         },
+        setApplePayConfig: (state, action) => {
+            state.applePayConfig = action.payload
+        },
+        setGooglePayConfig: (state, action) => {
+            state.googlePayConfig = action.payload
+        },
     },
 })
 
 // Action creators are generated for each case reducer function
-export const { addCartItem, updateCartItem, deleteCartItem, destroyCart, initCart } = cartSlice.actions
+export const { addCartItem, updateCartItem, deleteCartItem, destroyCart, initCart, setApplePayConfig, setGooglePayConfig } = cartSlice.actions
 
 export default cartSlice.reducer

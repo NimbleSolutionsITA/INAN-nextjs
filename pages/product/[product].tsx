@@ -6,6 +6,8 @@ import {getProducts, getProductVariations} from "../../src/utils/products";
 import {getAllProductsIds, getCategoriesProps, getProductColorsProps, getSizeGuideProps} from "../../src/utils/shop";
 import {useRouter} from "next/router";
 import ProductView from "../../src/components/pages/product/ProductView";
+import {useEffect} from "react";
+import {gtagEcommerceEvent} from "../../src/utils/helpers";
 
 export type ProductProps = BasePageProps & ProductPageProps
 
@@ -28,6 +30,22 @@ const Product: NextPage<ProductProps> = ({
     page: { yoast_head }
 }) => {
     const router = useRouter()
+
+    useEffect(() => {
+        gtagEcommerceEvent([{
+            id: product.id,
+            name: product.name,
+            price: Number( product.price),
+            leather: product.attributes.find(a => a.id === 3)?.option ?? null,
+            size: product.attributes.find(a => a.id === 2)?.option ?? null,
+            color: product.attributes.find(a => a.id === 4)?.option ?? null,
+            image: product.images[0].src,
+            slug: product.slug,
+            qty: 1,
+            private: false
+        }], 'view_item')
+    }, []);
+
     return (
         <Layout
             key={router.asPath}

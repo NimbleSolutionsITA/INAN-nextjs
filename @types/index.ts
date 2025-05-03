@@ -57,6 +57,7 @@ export type Auth = {
     authenticating: boolean
     user: User | undefined
     privateSalesAccess: boolean
+    cookieModalOpen: boolean
 }
 
 export type PageSettings = {

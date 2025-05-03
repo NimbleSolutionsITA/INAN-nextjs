@@ -25,7 +25,7 @@ export type ShippingType = {
     company?: string,
     state: string
     vat?: string,
-    phone: string
+    phone?: string
 }
 
 export type ShippingErrors = {
@@ -65,9 +65,9 @@ const AddressBook = ({ countries }: {countries: AddressBookPageProps['countries'
             address: address.address_1,
             city: address.city,
             postcode: address.postcode,
-            country: address.country,
+            country: address.country ?? "",
             state: address.state,
-            phone: address.phone
+            phone: (address as Customer['billing']).phone ?? ""
         }
     }
     const errorInitialState: ShippingErrors = {

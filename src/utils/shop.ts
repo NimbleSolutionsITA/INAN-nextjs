@@ -1,6 +1,6 @@
 import {
     Category,
-    Continent, Country, Order,
+    Continent, Country,
     Product,
     ProductAttribute,
     ShippingLocation,

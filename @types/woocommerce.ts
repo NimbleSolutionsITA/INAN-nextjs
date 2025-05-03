@@ -257,6 +257,25 @@ export interface Customer {
     _links: Links;
 }
 
+export interface OrderPayload {
+    customer_id: number;
+    currency: string;
+    billing: Billing;
+    shipping: Shipping;
+    payment_method: string;
+    payment_method_title: string;
+    line_items: {
+        product_id: number;
+        quantity: number;
+    }[];
+    shipping_lines: {
+
+    }[];
+    coupon_lines: {
+
+    }[];
+}
+
 export interface Order {
     id: number;
     parent_id: number;
@@ -318,7 +337,7 @@ export interface Billing {
     city: string;
     state: string;
     postcode: string;
-    country: string;
+    country: string|null;
     email: string;
     phone: string;
 }
@@ -332,9 +351,7 @@ export interface Shipping {
     city: string;
     state: string;
     postcode: string;
-    country: string;
-    email: string;
-    phone: string;
+    country: string|null;
 }
 
 export interface Variation {

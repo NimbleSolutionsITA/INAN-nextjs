@@ -15,14 +15,14 @@ export type SocialItem = {
 export type HcmsResponse = { data: {
         header: {
             favicon: string
-            headerMenuItems: string | MenuItem[]
+            headerMenuItems: MenuItem[]
             siteDescription: string
             siteLogoUrl: string
             siteTitle: string
         },
         footer: {
             copyrightText: boolean | string
-            footerMenuItems: string | MenuItem[]
+            footerMenuItems: MenuItem[]
             sidebarOne: string
             sidebarTwo: string
             socialLinks: SocialItem[]

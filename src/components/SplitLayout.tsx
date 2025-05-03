@@ -1,5 +1,6 @@
-import {Grid, Hidden} from "@mui/material";
+import {Grid} from "@mui/material";
 import {ReactNode} from "react";
+import {useIsMobile} from "../utils/layout";
 
 type SplitLayoutProps = {
     left: ReactNode | ReactNode[]
@@ -7,6 +8,7 @@ type SplitLayoutProps = {
 }
 
 const SplitLayout = ({left, right}: SplitLayoutProps) => {
+    const isMobile = useIsMobile()
     return (
         <Grid container spacing={4}>
             <Grid item xs={12} md={6}>
@@ -14,7 +16,7 @@ const SplitLayout = ({left, right}: SplitLayoutProps) => {
             </Grid>
             <Grid item xs={12} md={6}>
                 <Grid container>
-                    <Hidden xsDown><Grid item xs={1} lg={4} /></Hidden>
+                    {!isMobile && <Grid item xs={1} lg={4}/>}
                     <Grid item xs={12} lg={8}>
                         {right}
                     </Grid>

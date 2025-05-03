@@ -8,6 +8,7 @@ import {WordpressPage} from "../../@types";
 import {useTheme} from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import {Breakpoint} from "@mui/material";
+import {getRelativePath} from "./helpers";
 
 export type Cover = {
     id: number
@@ -156,7 +157,23 @@ export const getLayoutProps = async (): Promise<LayoutProps> => {
         fetch(HEADER_FOOTER_ENDPOINT, { cache: "force-cache", next: { revalidate: 60 * 60 } }).then(response => response.json())
     ])
     return ({
-        layoutProps,
+        layoutProps: {
+            ...layoutProps,
+            header: {
+                ...layoutProps.header,
+                headerMenuItems: layoutProps.header.headerMenuItems.map(item => ({
+                    ...item,
+                    url: getRelativePath(item.url)
+                }))
+            },
+            footer: {
+                ...layoutProps.footer,
+                footerMenuItems: layoutProps.header.headerMenuItems.map(item => ({
+                    ...item,
+                    url: getRelativePath(item.url)
+                }))
+            }
+        },
         news: news.map((n) => ({ title: n.title.rendered, id: n.id }))
     })
 };

@@ -10,16 +10,24 @@ export default class MyDocument extends Document {
             <Html lang="en">
                 <Head>
                     {/* PWA primary color */}
-                    <meta name="theme-color" content={theme.palette.primary.main} />
-                    <meta name="emotion-insertion-point" content="" />
+                    <meta name="theme-color" content={theme.palette.primary.main}/>
+                    <meta name="emotion-insertion-point" content=""/>
                     {
                         // @ts-ignore
                         this.props.emotionStyleTags
                     }
+                    <script dangerouslySetInnerHTML={{
+                        __html: `
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      'event': 'consent_update', // Optional: Initial state for debugging
+    });
+  `
+                    }}/>
                 </Head>
                 <body>
-                    <Main />
-                    <NextScript />
+                <Main/>
+                <NextScript/>
                 </body>
             </Html>
         );
