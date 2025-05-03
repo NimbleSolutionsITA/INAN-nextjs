@@ -42,7 +42,7 @@ export default function GoogleAnalytics() {
 		consentListeners.forEach((callback: (consent: Consent) => void) => {
 			callback(newConsent);
 		});
-		Cookies.set(COOKIE_CONSENT_NAME, JSON.stringify(consent), { path: '/', sameSite: 'Lax' });
+		Cookies.set(COOKIE_CONSENT_NAME, JSON.stringify(newConsent), { path: '/', sameSite: 'Lax' });
 		setDrawerOpen(false);
 	};
 
