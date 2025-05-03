@@ -30,7 +30,6 @@ export default async function handler(
     try {
         if (req.method === 'POST') {
             const { data } = await api.post(`orders`, req.body.order)
-            console.log(data)
             const { id, total, total_tax, shipping_total, discount_total } = data
             responseData.totals = {
                 shipping: shipping_total,

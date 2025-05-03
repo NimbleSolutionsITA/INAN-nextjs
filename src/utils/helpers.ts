@@ -1,12 +1,10 @@
 import { useLayoutEffect } from 'react'
 import DOMPurify from 'dompurify'
 import {Continent, Order} from "../../@types/woocommerce";
-import {API_ORDER_ENDPOINT} from "./endpoints";
 import {getCollectionProps, getLayoutProps} from "./layout";
 import {FormFields} from "../components/paypal/usePayPalFormProvider";
 import {CartItem} from "../../@types";
 import {ShippingProps} from "./shop";
-import {sendGTMEvent} from "@next/third-parties/google";
 
 export const sanitize = ( content: string ) => {
     return typeof window !== 'undefined' ? DOMPurify.sanitize( content ) : content
@@ -23,22 +21,6 @@ export const formatPrice = (price: number) =>  new Intl.NumberFormat('it-IT', { 
 type RecursivePartial<T> = {
     [P in keyof T]?: RecursivePartial<T[P]>;
 };
-
-export const createOrder = async (order: RecursivePartial<Order>) => {
-    return await fetch(API_ORDER_ENDPOINT, {
-        method: 'POST',
-        body: JSON.stringify(order),
-        headers: [["Content-Type", 'application/json']],
-    }).then(r => r.json())
-}
-
-export const updateOrder = async (order: RecursivePartial<Order>, id: number) => {
-    return await fetch(`${API_ORDER_ENDPOINT}/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify(order),
-        headers: [["Content-Type", 'application/json']],
-    }).then(r => r.json())
-}
 
 export async function getCollectionStaticProps(context: {params?: {cslug?: string}}, type: "collection"|"collaboration") {
     const [
@@ -159,29 +141,29 @@ export function getLocalStorage(key: string, defaultValue:any){
         : defaultValue;
 }
 
-export function setLocalStorage(key: string, value:any){
-    localStorage.setItem(key, JSON.stringify(value));
-}
+type EcommerceEvent = 'add_to_cart' | 'begin_checkout' | 'add_to_wishlist' | 'view_item' | 'purchase';
 
-export const gtagAddToCart = (item: CartItem, isWishList = false) => {
-    sendGTMEvent({
-        event: isWishList ? "add_to_wishlist" : "add_to_cart",
+export const gtagEcommerceEvent = (items: CartItem[], event: EcommerceEvent) => {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+        event,
         ecommerce: {
             currency: "EUR",
-            value: Number(item.price),
-            items: [{
+            value: getCartTotal(items),
+            items: items.map(item => ({
                 item_id: item.id,
                 item_name: item.name,
                 item_variant: [item.color, item.leather, item.size].filter(Boolean).join(' - '),
                 price: Number(item.price),
                 quantity: item.qty
-            }],
+            })),
         }
-    })
-}
+    });
+};
 
 export const gtagPurchase = (order: Order) => {
-    const event = {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
         event: 'purchase',
         ecommerce: {
             currency: 'EUR',
@@ -189,19 +171,17 @@ export const gtagPurchase = (order: Order) => {
             value: Number(order.total),
             tax: Number(order.total_tax),
             shipping: Number(order.shipping_total),
-            items: order.line_items.map((item) => {
-                return {
-                    item_id: item.product_id.toString(),
-                    item_name: item.name,
-                    item_variant: item.variation_id?.toString(),
-                    price: Number(item.total),
-                    quantity: item.quantity
-                }
-            })
+            items: order.line_items.map(item => ({
+                item_id: item.product_id.toString(),
+                item_name: item.name,
+                item_variant: item.variation_id?.toString(),
+                price: Number(item.total),
+                quantity: item.quantity
+            }))
         }
-    }
-    sendGTMEvent(event)
+    });
 };
+
 
 export function getRelativePath(url: string) {
     // If it's already a relative path (starts with / or . or no protocol)

@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import {CartItem} from "../../@types";
 import {PayPalApplePayConfig, PayPalGooglePayConfig} from "../components/paypal/PayPalProvider";
-import {gtagAddToCart} from "../utils/helpers";
+import {gtagEcommerceEvent} from "../utils/helpers";
 
 const initialState: {
     items: CartItem[],
@@ -26,7 +26,7 @@ export const cartSlice = createSlice({
             else
                 state.items.push(payload)
             localStorage.setItem('next-cart', JSON.stringify(state))
-            gtagAddToCart(payload)
+            gtagEcommerceEvent([payload], 'add_to_cart')
         },
         updateCartItem: (state, { payload }: PayloadAction<{ id: number, qty: number }>) => {
             const i = state.items.findIndex((_element: CartItem) => _element.id === payload.id)
