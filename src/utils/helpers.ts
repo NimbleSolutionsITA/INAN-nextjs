@@ -16,12 +16,6 @@ export const regExpEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|
 
 export const formatPrice = (price: number) =>  new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(price)
 
-
-
-type RecursivePartial<T> = {
-    [P in keyof T]?: RecursivePartial<T[P]>;
-};
-
 export async function getCollectionStaticProps(context: {params?: {cslug?: string}}, type: "collection"|"collaboration") {
     const [
         {layoutProps},
@@ -132,14 +126,6 @@ export const getShippingMethod = (shippingProps: ShippingProps, country: string 
 
 export const getCartTotal = (items: CartItem[]) =>
     items.reduce((sum, i) => sum + i.qty * i.price, 0);
-
-export function getLocalStorage(key: string, defaultValue:any){
-    const stickyValue = localStorage.getItem(key);
-
-    return (stickyValue !== null && stickyValue !== 'undefined')
-        ? JSON.parse(stickyValue)
-        : defaultValue;
-}
 
 type EcommerceEvent = 'add_to_cart' | 'begin_checkout' | 'add_to_wishlist' | 'view_item' | 'purchase';
 
