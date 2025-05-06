@@ -49,7 +49,7 @@ const usePayPalFormProvider = (woocommerce: ShippingProps, cart: CartItem[]) => 
             payment_method: 'paypal',
             vat: customer?.meta_data.find(m => m.key === 'vat')?.value ?? '',
             address_tab: "billing" as const,
-            shipping_method: {id: "free_shipping", cost: "0", name: "Free shipping"},
+            shipping_method: getShippingMethod(woocommerce, customer?.billing.country ?? 'IT'),
             coupon: "",
             billing: {
                 email: customer?.email ?? '',
@@ -79,8 +79,8 @@ const usePayPalFormProvider = (woocommerce: ShippingProps, cart: CartItem[]) => 
     })
 
     const fields = methods.watch()
-    const { step, has_shipping, billing, shipping, vat } = fields
-    const initialData =  { shipping: 0, tax: 0, discount: 0, total: cartTotal, subtotal: cartTotal }
+    const { step, has_shipping, billing, shipping, vat, shipping_method } = fields
+    const initialData =  { shipping: Number(shipping_method.cost), tax: 0, discount: 0, total: cartTotal + Number(shipping_method.cost), subtotal: cartTotal }
 
     const getTotals = useQuery({
         queryKey: ["get-order-totals", fields, cart],
@@ -137,7 +137,7 @@ const usePayPalFormProvider = (woocommerce: ShippingProps, cart: CartItem[]) => 
                     dispatch(setCustomer(customer))
                 }
             }
-            methods.setValue("shipping_method", getShippingMethod(woocommerce, has_shipping ? shipping?.country : billing.country, cartTotal))
+            methods.setValue("shipping_method", getShippingMethod(woocommerce, (has_shipping ? shipping?.country : billing.country) as string))
             methods.setValue('step', "COUPON")
         }
     })
@@ -146,8 +146,8 @@ const usePayPalFormProvider = (woocommerce: ShippingProps, cart: CartItem[]) => 
         ...methods,
         getTotals: {getTotals: getTotals.refetch, totals: getTotals.data, getTotalsIsLoading: getTotals.isLoading},
         saveAddress: { saveAddress: saveAddressMutation.mutateAsync, saveAddressIsLoading: saveAddressMutation.isLoading, saveAddressError: saveAddressMutation.error?.toString() ?? "" },
-        updateShippingMethod: (code: string, total: number) => {
-            const method = getShippingMethod(woocommerce, code, total)
+        updateShippingMethod: (code: string) => {
+            const method = getShippingMethod(woocommerce, code)
             methods.setValue("shipping_method", method)
             return method
         },

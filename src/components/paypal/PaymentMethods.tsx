@@ -38,7 +38,8 @@ const PaymentMethods = () => {
 	const { control } = useFormContext<FormFields>()
 	const {isPaying, updateShippingMethod, totals, countries, createOrder, onError, onApprove} = usePayPalCheckout()
 	const availablePaymentMethods = PAYMENT_METHODS.filter(m => {
-		if (m === 'applepay' && (!applePayConfig?.isEligible || !window.ApplePaySession)) return false;
+		if (m === 'applepay' && (!applePayConfig?.isEligible || !window.ApplePaySession))
+			return false;
 		return !(m === 'googlepay' && !googlePayConfig?.isEligible);
 	})
 	return (

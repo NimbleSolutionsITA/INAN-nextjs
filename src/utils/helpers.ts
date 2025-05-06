@@ -78,51 +78,37 @@ export function getOrderPayloadFromFields({billing, shipping, shipping_method, h
     })
 }
 
-export function getShippingMethodByCountryCode({countries, continents, shippingIT, shippingEU, shippingR, shippingUK, shippingW}: ShippingProps, countryCode: string | undefined) {
+export function getShippingMethod({countries, continents, shippingIT, shippingEU, shippingR, shippingUK, shippingW}: ShippingProps, countryCode: string) {
     // Find the country object based on the countryCode
     const country = countries.find((c) => c.code === countryCode);
 
     if (!country) {
-        return null; // Country not found, handle this case as needed
+        throw new Error(`${countryCode} is not a valid country code`)
     }
 
     const countriesEU = getCountries(continents, 'EU');
     const countriesW = [...getCountries(continents, 'A'), ...getCountries(continents, 'NA')];
+    let method = shippingR
 
     // Check for the shipping method based on the country code
     if (countryCode === 'IT') {
-        return shippingIT;
+        method = shippingIT;
     } else if (countryCode === 'GB') {
-        return shippingUK;
+        method = shippingUK;
     } else if (countriesEU.some((location) => location.code === countryCode)) {
-        return shippingEU;
+        method = shippingEU;
     } else if (countriesW.some((location) => location.code === countryCode)) {
-        return shippingW;
-    } else {
-        return shippingR; // Default shipping method
+        method = shippingW;
+    }
+    return {
+        id: method.method_id,
+        cost: method.settings.cost.value,
+        name: method.settings.title.value,
     }
 }
 
 const getCountries = (continents: Continent[], code: string) =>
     continents.find((c) => c.code === code)?.countries ?? []
-
-
-export const getShippingMethod = (shippingProps: ShippingProps, country: string | null | undefined, total: number) => {
-    const countryCode = shippingProps.countries.find(c => c.name === country)?.code
-    const defaultShippingMethod = {
-        id: 'free_shipping',
-        cost: '0',
-        name: 'Free Shipping'
-    }
-    if (total < 1000)
-        return defaultShippingMethod
-    const newShippingMethod = getShippingMethodByCountryCode(shippingProps, countryCode)
-    return newShippingMethod ? {
-        id: newShippingMethod.method_id,
-        cost: newShippingMethod.settings.cost.value,
-        name: newShippingMethod.settings.title.value,
-    } : defaultShippingMethod
-}
 
 export const getCartTotal = (items: CartItem[]) =>
     items.reduce((sum, i) => sum + i.qty * i.price, 0);
