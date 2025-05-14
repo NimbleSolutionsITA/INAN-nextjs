@@ -52,7 +52,7 @@ export function decodeHtmlEntities(string: string) {
     return textarea.value;
 }
 
-export function getOrderPayloadFromFields({billing, shipping, shipping_method, has_shipping, coupon, payment_method}: FormFields, items: CartItem[]) {
+export function getOrderPayloadFromFields({billing, shipping, shipping_method, has_shipping, coupon, vat, payment_method}: FormFields, items: CartItem[]) {
     return ({
         paymentMethod: {
             paypal: "PayPal",
@@ -74,6 +74,10 @@ export function getOrderPayloadFromFields({billing, shipping, shipping_method, h
             coupon_lines: coupon ? [
                 { code: coupon }
             ] : undefined,
+            meta_data: vat ? [{
+                key: 'vat',
+                value: vat
+            }] : []
         }
     })
 }
