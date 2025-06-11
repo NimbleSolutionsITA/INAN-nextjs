@@ -30,7 +30,6 @@ const Home: NextPage<HomeProps> = ({
     const [currentCoverIndex, setCurrentCoverIndex] = useState(0);
     const currentCover = covers[currentCoverIndex]
     const isMobile = useIsMobile();
-    console.log(currentCover.products);
     return (
         <Layout {...layoutProps} yoast={page.yoast_head} pageSettings={pageSettings} links={links} news={news}>
             <div style={{position: 'relative'}}>
@@ -51,7 +50,7 @@ const Home: NextPage<HomeProps> = ({
                     covers={covers}
                     currentCover={currentCover}
                 />
-                <Container>
+                <Container sx={{my: '128px'}}>
                     <CrossSell items={currentCover.products} isMobile={isMobile} disableTitle />
                 </Container>
             </div>

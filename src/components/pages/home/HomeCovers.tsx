@@ -78,7 +78,7 @@ const HomeCovers = ({covers, showContent, setShowContent, currentCoverIndex, set
     return (
         <>
             {covers && covers.map((cover, index) => (
-                <div key={cover.id} ref={elRefs.current[index]} style={{minHeight: getCoverHeight(index)}}>
+                <div key={cover.id} ref={elRefs.current[index]}>
                     <HomeCover
                         bg={cover.bg}
                         bgMobile={cover.bgMobile}
