@@ -3,7 +3,7 @@ import {HEADER_FOOTER_ENDPOINT, NEWS_FEED_ENDPOINT, WORDPRESS_API_ENDPOINT} from
 import {WP_REST_API_Posts, WP_REST_API_Post} from "wp-types";
 import {ShopProduct, Variation} from "./products";
 import {CategoryProps} from "./shop";
-import {ProductAttribute} from "../../@types/woocommerce";
+import {Product, ProductAttribute} from "../../@types/woocommerce";
 import {WordpressPage} from "../../@types";
 import {useTheme} from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -25,6 +25,7 @@ export type Cover = {
     loop: boolean
     autoplay: boolean
     mute: boolean
+    products: ShopProduct[]
 }
 
 export type CoverPostACF = WP_REST_API_Post & { acf: {
@@ -41,6 +42,7 @@ export type CoverPostACF = WP_REST_API_Post & { acf: {
         loop: boolean
         autoplay: boolean
         mute: boolean
+        products: any[]
     }}
 
 export type ACFMedia = {
@@ -194,7 +196,8 @@ export const getHomeProps = async (): Promise<HomePageProps> => {
             video: cover.acf.video,
             loop: cover.acf.loop || false,
             autoplay: cover.acf.autoplay || false,
-            mute: cover.acf.mute || false
+            mute: cover.acf.mute || false,
+            products: cover.acf.products || []
         }))}
 }
 

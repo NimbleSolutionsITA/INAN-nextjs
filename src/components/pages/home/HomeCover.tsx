@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 import {Typography} from "@mui/material";
 import VimeoPlayer from "../../VimeoPlayer";
 import {Dispatch, SetStateAction} from "react";
+import Link from "../../Link";
 
 type HomeCoverProps = {
     bg: string
@@ -30,7 +31,7 @@ const CoverWrapper = styled.div<{hasBgImage: boolean, hasVideo: boolean, bg: str
   background-position: center;
   background-color: ${({hasVideo}) => hasVideo ? '#000' : '#fff'};
   overflow: hidden;
-  margin-top: ${({isCover, isMobile}) => isCover ? (isMobile ? '-84px' : '-103px') : undefined}};  
+  margin-top: ${({isCover, isMobile}) => isCover ? (isMobile ? '-84px' : '-103px') : undefined};  
 `;
 
 const PortraitImageWrapper = styled.div<{ isMobile: boolean }>`
@@ -52,8 +53,10 @@ const HomeCover = ({bg, bgMobile, title, isCover, isCoverMobile, color, colorMob
             isCoverMobile={isCoverMobile}
             isMobile={isMobile}
         >
-            {!video && isMobile && isCoverMobile && <img src={bgMobile || bg} alt="" style={{width: '100%', opacity: 0}} />}
-            {!video && !isMobile && isCover && <img src={bg} alt="" style={{width: '100%', opacity: 0}} />}
+            <Link underline="none" color="inherit" href={'/shop'}>
+                {!video && isMobile && isCoverMobile && <img src={bgMobile || bg} alt="" style={{width: '100%', opacity: 0}} />}
+                {!video && !isMobile && isCover && <img src={bg} alt="" style={{width: '100%', opacity: 0}} />}
+            </Link>
             {video ? (
                 <VimeoPlayer
                     cover={{url: isMobile ? bgMobile || bg : bg}}
@@ -85,7 +88,9 @@ const HomeCover = ({bg, bgMobile, title, isCover, isCoverMobile, color, colorMob
                                 {title}
                             </Typography>
                             <PortraitImageWrapper isMobile={isMobile}>
-                                <img alt={title} width="100%" src={isMobile ? bgMobile : bg} />
+                                <Link underline="none" color="inherit" href={'/shop'}>
+                                    <img alt={title} width="100%" src={isMobile ? bgMobile : bg} />
+                                </Link>
                             </PortraitImageWrapper>
                         </>
                     )}

@@ -1,10 +1,14 @@
 import type { NextPage } from 'next'
 import Layout from "../src/components/layout";
-import {getHomeProps, getLayoutProps, getPageProps, HomePageProps} from "../src/utils/layout";
+import {getHomeProps, getLayoutProps, getPageProps, HomePageProps, useIsMobile} from "../src/utils/layout";
 import {BasePageProps} from "../@types";
 import {useState} from "react";
 import CoverContent from "../src/components/pages/home/CoverContent";
 import HomeCovers from "../src/components/pages/home/HomeCovers";
+import CrossSell from "../src/components/pages/product/CrossSell";
+import {getProducts} from "../src/utils/products";
+import {Container} from "@mui/material";
+import {WP_REST_API_Post} from "wp-types";
 
 export type HomeProps = BasePageProps & HomePageProps
 
@@ -25,6 +29,8 @@ const Home: NextPage<HomeProps> = ({
     const [showContent, setShowContent] = useState(true);
     const [currentCoverIndex, setCurrentCoverIndex] = useState(0);
     const currentCover = covers[currentCoverIndex]
+    const isMobile = useIsMobile();
+    console.log(currentCover.products);
     return (
         <Layout {...layoutProps} yoast={page.yoast_head} pageSettings={pageSettings} links={links} news={news}>
             <div style={{position: 'relative'}}>
@@ -45,6 +51,9 @@ const Home: NextPage<HomeProps> = ({
                     covers={covers}
                     currentCover={currentCover}
                 />
+                <Container>
+                    <CrossSell items={currentCover.products} isMobile={isMobile} disableTitle />
+                </Container>
             </div>
         </Layout>
   )
@@ -62,10 +71,16 @@ export async function getStaticProps() {
       getHomeProps(),
       getPageProps('home')
   ]);
+
+  const getCoverProducts = async (cover: any) => {
+      const { products } = await getProducts({include: cover.products.map((p: WP_REST_API_Post) => p.ID)})
+      return { ...cover, products }
+  }
+
   return {
     props: {
         layoutProps,
-        covers,
+        covers: await Promise.all(covers.map(getCoverProducts)),
         news,
         page
     },

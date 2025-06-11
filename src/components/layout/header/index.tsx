@@ -1,10 +1,7 @@
-import {forwardRef } from "react";
 import HeaderMobile from "./HeaderMobile";
 import {HomeProps} from "../../../../pages";
 import HeaderDesktop from "./HeaderDesktop";
 import {LinkItem} from "../../../../@types";
-import {useSelector} from "react-redux";
-import {RootState} from "../../../redux/store";
 import {useIsMobile} from "../../../utils/layout";
 
 type HeaderProps = {
