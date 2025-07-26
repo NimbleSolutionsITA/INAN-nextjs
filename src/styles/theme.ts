@@ -161,6 +161,10 @@ theme.components = {
             input[type="text"] {
               font-size: inherit;
             }
+            .react-multi-carousel-list {
+              margin-left: 1px;
+            }
+
       `,
     },
     MuiTextField: {

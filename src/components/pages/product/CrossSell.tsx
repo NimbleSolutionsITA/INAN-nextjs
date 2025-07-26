@@ -29,7 +29,8 @@ const responsive = {
     mobile: {
         breakpoint: { max: 735, min: 0 },
         items: 2,
-        slidesToSlide: 1 // optional, default to 1.
+        slidesToSlide: 1, // optional, default to 1.
+        partialVisibilityGutter: 30
     }
 };
 
@@ -67,7 +68,7 @@ const CrossSell = ({items, isMobile, disableTitle = false, title = "You may Also
                 itemClass="carousel-item-padding-40-px"
                 customLeftArrow={<div><Portal container={() => container.current!}><ArrowBackIosIcon sx={{...arrowStyle, left: '-40px'}} /></Portal></div>}
                 customRightArrow={<div><Portal container={() => container.current!}><ArrowForwardIosIcon sx={{...arrowStyle,  right: '-40px'}} /></Portal></div>}
-                >
+            >
                 {items.map(product => <ProductCard key={product.id} product={product} />)}
             </Carousel>
         </div>
