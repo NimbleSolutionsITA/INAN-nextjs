@@ -43,9 +43,16 @@ const ImageWrapper = styled.div<{bg: string, bgHover?: string}>`
     }
 `
 const ContentWrapper = styled.div`
+  height: 60px;  
+  display: flex;
+  flex-direction: column;  
   text-transform: uppercase;
+  padding-top: 10px;  
   p {
-      min-height: 18px;
+      padding: 0;
+  }
+  @media (max-width: 640px) {
+      height: 70px;
   }
 `
 const Sale = styled.span`
@@ -58,7 +65,6 @@ const ProductCard = ({product, isPrivate = false}: {product: ShopProduct, isPriv
     const subPath = isPrivate ? '/private-sales' : '/product'
 
     const { title, description } = splitTitleDescription(product.name)
-    console.log(description)
 
     const handleClick = () => {
         dispatch(addWishlistItem({
@@ -90,17 +96,18 @@ const ProductCard = ({product, isPrivate = false}: {product: ShopProduct, isPriv
                 </ImageWrapper>
             )}
             <ContentWrapper>
-                <Typography style={{paddingBottom: 0}} component="p" variant="body1"><b>{title}</b></Typography>
+                <Typography component="p" variant="body1"><b>{title}</b></Typography>
                 {description && (
-                    <Typography style={{padding: 0, fontSize: "8px"}} component="p"
+                    <Typography style={{fontSize: "8px"}} component="p"
                                 variant="body2"><b>{description}</b>
                     </Typography>
                 )}
-                <Typography style={{padding: 0}} component="p" variant="body1">
+                <Typography component="p" variant="body1">
                     { product.type === 'variable' && product.attributes.find(attribute => attribute.id === 3)?.options.find(opt => opt === 'Vegan') && (
                         isMobile ? 'Vegan option' : 'Vegan leather option'
                     )}
                 </Typography>
+                <div style={{flexGrow: 1}}/>
                 <Typography component="p" variant="body1">
                     {product.on_sale ?
                         <><Sale>€ {product.regular_price}</Sale> € {product.sale_price}</> :
