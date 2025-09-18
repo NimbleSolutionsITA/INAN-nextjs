@@ -173,3 +173,15 @@ export function getRelativePath(url: string) {
         return url;
     }
 }
+
+export function splitTitleDescription(input: string): {title: string, description: string|null} {
+    const parts = input.split(/\s[-–]\s/);
+    if (parts.length < 2) {
+        return { title: input, description: null }
+    }
+
+    const title = parts[0].trim();
+    const description = parts.slice(1).join(" - ").trim();
+
+    return { title, description };
+}

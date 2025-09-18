@@ -7,6 +7,7 @@ import {useDispatch} from "react-redux";
 import {addWishlistItem} from "../../../redux/wishlistSlice";
 import Image from "next/image";
 import {useIsMobile} from "../../../utils/layout";
+import {splitTitleDescription} from "../../../utils/helpers";
 
 const CardWrapper = styled.div`
     height: 100%;
@@ -56,6 +57,9 @@ const ProductCard = ({product, isPrivate = false}: {product: ShopProduct, isPriv
     const dispatch = useDispatch()
     const subPath = isPrivate ? '/private-sales' : '/product'
 
+    const { title, description } = splitTitleDescription(product.name)
+    console.log(description)
+
     const handleClick = () => {
         dispatch(addWishlistItem({
             id: product.id,
@@ -86,7 +90,12 @@ const ProductCard = ({product, isPrivate = false}: {product: ShopProduct, isPriv
                 </ImageWrapper>
             )}
             <ContentWrapper>
-                <Typography style={{paddingBottom: 0}} component="p" variant="body1"><b>{product.name}</b></Typography>
+                <Typography style={{paddingBottom: 0}} component="p" variant="body1"><b>{title}</b></Typography>
+                {description && (
+                    <Typography style={{padding: 0, fontSize: "8px"}} component="p"
+                                variant="body2"><b>{description}</b>
+                    </Typography>
+                )}
                 <Typography style={{padding: 0}} component="p" variant="body1">
                     { product.type === 'variable' && product.attributes.find(attribute => attribute.id === 3)?.options.find(opt => opt === 'Vegan') && (
                         isMobile ? 'Vegan option' : 'Vegan leather option'
