@@ -6,7 +6,7 @@ import {
     TextField,
     FormControl,
     FormGroup,
-    FormControlLabel
+    FormControlLabel, Autocomplete, Box
 } from "@mui/material"
 import Button from "../../../components/Button"
 import Checkbox from "../../../components/Checkbox";
@@ -17,6 +17,7 @@ import PaymentMethods from "../../paypal/PaymentMethods";
 import {FormFields} from "../../paypal/usePayPalFormProvider";
 import usePayPalCheckout from "../../paypal/PayPalCheckoutProvider";
 import { Country } from "../../../../@types/woocommerce";
+import React, {useState} from "react";
 
 type PreProcessAddressProps = {
     countries: Country[];
@@ -25,26 +26,86 @@ type PreProcessAddressProps = {
 
 const LeftTab = ({ isGuest, countries }: PreProcessAddressProps) => {
     const isMobile = useIsMobile()
-    const { watch, setValue, control } = useFormContext<FormFields>()
+    const { watch, setValue, control, trigger } = useFormContext<FormFields>()
     const { saveAddress, saveAddressError } = usePayPalCheckout()
     const { has_shipping, billing, shipping, address_tab, step } = watch()
-
+    const shipTo = has_shipping ? shipping : billing
     return (
         <>
             <Typography variant="h1" component="h1">{step === "PAYMENT"  ? "Payment" : "Address"}</Typography>
             <Divider />
             {saveAddressError && <Typography variant="body1" color="error">{saveAddressError}</Typography> }
             <br />
-            <Typography style={{float: 'right', margin: '10px 0'}} ><b>Billing</b></Typography>
-            <Typography style={{margin: '10px 0'}}><b>{billing.first_name && billing.last_name ? `${billing.first_name} ${billing.last_name}${billing.company && `- ${billing.company}`}` : ''}</b></Typography>
-            <Typography>{billing.address_1 ? `${billing.address_1}, ${billing.city}, ${billing.postcode},${billing.state && `${billing.state}, `} ${billing.country}` : ''}</Typography>
-            {has_shipping && (
+
+            {step !== 'EMAIL' && (
+                <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                    <Typography><b>Email: {billing.email}</b></Typography>
+                    <Button
+                        variant="text"
+                        style={{color: 'black'}}
+                        onClick={() => setValue("step", "EMAIL")}
+                    >
+                        EDIT
+                    </Button>
+                </Box>
+            )}
+
+            {!['EMAIL', 'COUNTRY'].includes(step) && (
+                <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                    <Typography><b>Ship to: {countries.find(c => c.code === billing.country)?.name}</b></Typography>
+                    <Button
+                        variant="text"
+                        style={{color: 'black'}}
+                        onClick={() => setValue("step", "COUNTRY")}
+                    >
+                        EDIT
+                    </Button>
+                </Box>
+            )}
+
+            {!['EMAIL', 'COUNTRY', 'ADDRESS', 'BILLING'].includes(step) && (
                 <>
-                    <Divider />
-                    <br />
-                    <Typography style={{float: 'right', margin: '10px 0'}} ><b>Shipping</b></Typography>
-                    <Typography style={{margin: '10px 0'}}><b>{shipping?.first_name} {shipping?.last_name} {shipping?.company && `- ${shipping.company}`}</b></Typography>
-                    <Typography>{shipping?.address_1 ? `${shipping.address_1}, ${shipping.city}, ${shipping.postcode},${shipping.state && `${shipping.state}, `} ${shipping.country}` : ''}</Typography>
+                    <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                        <Typography><b>Address</b></Typography>
+                        <Button
+                            variant="text"
+                            style={{color: 'black'}}
+                            onClick={() => setValue("step", "ADDRESS")}
+                        >
+                            EDIT
+                        </Button>
+                    </Box>
+                    <Typography>
+                        {shipTo?.first_name } {billing.last_name}<br />
+                        {shipTo?.company}<br />
+                        {shipTo?.address_1}<br />
+                        {shipTo?.city} {shipTo?.state}<br />
+                        {countries.find(c => c.code === shipTo?.country)?.name}<br />
+                        {billing.phone}
+                    </Typography>
+                    {has_shipping && (
+                        <>
+                            <Divider style={{marginBottom: '10px'}} />
+                            <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                                <Typography><b>Bill to</b></Typography>
+                                <Button
+                                    variant="text"
+                                    style={{color: 'black'}}
+                                    onClick={() => setValue("step", "BILLING")}
+                                >
+                                    EDIT
+                                </Button>
+                            </Box>
+                            <Typography>
+                                {billing.first_name } {billing.last_name}<br />
+                                {billing.company}<br />
+                                {billing.address_1}<br />
+                                {billing.city} {billing.state}<br />
+                                {countries.find(c => c.code === billing.country)?.name}<br />
+                                {billing.phone}
+                            </Typography>
+                        </>
+                    )}
                 </>
             )}
             {step === "PAYMENT" && !isMobile
@@ -52,7 +113,7 @@ const LeftTab = ({ isGuest, countries }: PreProcessAddressProps) => {
                 : (
                     <>
                         {isGuest &&
-                            <>
+                            <Collapse in={step === "EMAIL"}>
                                 <br />
                                 <Controller
                                     control={control}
@@ -66,7 +127,6 @@ const LeftTab = ({ isGuest, countries }: PreProcessAddressProps) => {
                                              }) => (
                                         <FormControl fullWidth>
                                             <TextField
-                                                disabled={step !== "ADDRESS"}
                                                 placeholder="ENTER YOUR EMAIL"
                                                 required
                                                 autoComplete="email"
@@ -86,89 +146,133 @@ const LeftTab = ({ isGuest, countries }: PreProcessAddressProps) => {
                                         </FormControl>
                                     )}
                                 />
-                            </>
+                            </Collapse>
                         }
 
-                        <Collapse in={step === "ADDRESS"} style={{marginBottom: '20px'}}>
-                            <br />
-                            <Typography variant="h2">{address_tab}</Typography>
-                            <br />
-
-                            <HookAddressForm countries={countries} namespace="billing" />
-
-                            {has_shipping && (<HookAddressForm countries={countries} namespace="shipping" />)}
-
-                            <FormControl component="fieldset" style={{width: '100%', padding: '10px 3px'}}>
-                                <FormGroup aria-label="position" style={{flexDirection: 'row-reverse'}}>
-                                    {has_shipping && (
-                                        <FormControlLabel
-                                            style={{marginRight: 0}}
-                                            value="shipping"
-                                            control={
-                                                <Checkbox
-                                                    edge="end"
-                                                    checked={address_tab === 'shipping'}
-                                                    inputProps={{ 'aria-label': 'primary checkbox' }}
-                                                    onChange={() => setValue('address_tab', 'shipping')}
-
-                                                />}
-                                            label="shipping"
-                                            labelPlacement="start"
+                        <Collapse in={step === 'COUNTRY'}>
+                            <Controller
+                                control={control}
+                                name={`${has_shipping ? 'shipping' : 'billing'}.country`}
+                                rules={{
+                                    required: "COUNTRY IS REQUIRED"
+                                }}
+                                render={({
+                                             field: { onChange, value },
+                                             fieldState: { invalid, error }
+                                         }) => (
+                                    <FormControl fullWidth>
+                                        <Autocomplete
+                                            autoComplete
+                                            autoSelect
+                                            value={countries.find(c => c.code === value) ?? null}
+                                            options={countries}
+                                            getOptionKey={(option) => option.code}
+                                            getOptionLabel={(option) => option.name}
+                                            isOptionEqualToValue={(option, value) => option.code === value.code}
+                                            onChange={(event,value ) => {
+                                                onChange(value?.code ?? '')
+                                                setValue(`${has_shipping ? 'shipping' : 'billing'}.state`, "")
+                                            }}
+                                            renderInput={(params) =>
+                                                <TextField
+                                                    {...params}
+                                                    autoComplete="off"
+                                                    placeholder="ENTER YOUR COUNTRY"
+                                                    required
+                                                    error={invalid}
+                                                    label="SHIPPING COUNTRY"
+                                                    helperText={error?.message}
+                                                    fullWidth
+                                                    type="text"
+                                                    InputLabelProps={{
+                                                        disableAnimation: true,
+                                                        focused: false,
+                                                        shrink: true,
+                                                    }}
+                                                />
+                                            }
                                         />
-                                    )}
+                                    </FormControl>
+                                )}
+                            />
+                        </Collapse>
+
+                        <Collapse in={step === "ADDRESS" || step === "BILLING"}>
+                            <br />
+                            <Typography variant="h2">{step}</Typography>
+                            <br />
+                            <HookAddressForm countries={countries} />
+                        </Collapse>
+
+                        <Grid container spacing={2}>
+                            {(step === 'COUPON' || step === 'BILLING')  && (
+                                <Grid item xs={step === 'COUPON' ? 12 : 6} style={{marginTop: '20px'}}>
                                     <FormControlLabel
-                                        style={{marginLeft: '20px', marginRight: 0}}
-                                        value="billing"
+                                        value={has_shipping}
                                         control={
                                             <Checkbox
-                                                edge="end"
-                                                checked={address_tab === 'billing'}
+                                                checked={has_shipping}
                                                 inputProps={{ 'aria-label': 'primary checkbox' }}
-                                                onChange={() => setValue('address_tab', 'billing')}
+                                                onChange={() => {
+                                                    if (has_shipping) {
+                                                        setValue('billing', {
+                                                            ...billing,
+                                                            ...shipping
+                                                        })
+                                                    } else {
+                                                        setValue('shipping', {
+                                                            ...billing
+                                                        })
+                                                    }
+                                                    setValue('step', has_shipping ? 'COUPON' : 'BILLING')
+                                                    setValue("has_shipping", !has_shipping)
+                                                }}
+                                                isCrossed
                                             />}
-                                        label="billing"
-                                        labelPlacement="start"
+                                        label={"USE A DIFFERENT ADDRESS FOR BILLING"}
+                                        labelPlacement="end"
+                                        sx={has_shipping ? {
+                                            '& .FormControlLabel-label': {
+                                                textDecoration: 'line-through'
+                                            }
+                                        } : undefined}
                                     />
-                                </FormGroup>
-                            </FormControl>
-                        </Collapse>
-                        <Divider/>
-
-                        <br />
-                        <Grid container spacing={2}>
-                            <Grid item xs={6}>
-                                <Button
-                                    disabled={step !== "ADDRESS"}
-                                    style={{marginBottom: '20px'}}
-                                    variant="outlined"
-                                    color="secondary"
-                                    fullWidth
-                                    disableGutters
-                                    onClick={() => {
-                                        if (has_shipping && address_tab === 'shipping') {
-                                            setValue("address_tab", "billing")
-                                        }
-                                        setValue("has_shipping", !has_shipping)
-                                    }}
-                                >
-                                    {has_shipping
-                                        ? `Same as billing${isMobile ? '' : ' Address'}`
-                                        : `Different shipping${isMobile ? '' : ' Address'}`}
-                                </Button>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Button
-                                    fullWidth
-                                    variant="contained"
-                                    color="secondary"
-                                    onClick={async () => step === "ADDRESS"
-                                        ? saveAddress()
-                                        : setValue('step', "ADDRESS")
-                                    }
-                                >
-                                    <b>{ step === "ADDRESS" ? "Save" : "Edit"}</b>
-                                </Button>
-                            </Grid>
+                                </Grid>
+                            )}
+                            {step !== 'COUPON' && (
+                                <Grid item xs={12}>
+                                    <Button
+                                        sx={{ mt: '10px'}}
+                                        fullWidth
+                                        variant="contained"
+                                        color="secondary"
+                                        onClick={async () => {
+                                            if (step === "ADDRESS" || step === "BILLING") {
+                                                saveAddress()
+                                            } else if (step === "EMAIL") {
+                                                const isValid = await trigger(['billing.email'])
+                                                if (!isValid) {
+                                                    return
+                                                }
+                                                setValue("step", "COUNTRY")
+                                            } else if (step === "COUNTRY") {
+                                                const isValid = await trigger([`${has_shipping ? 'shipping' : 'billing'}.country`])
+                                                if (!isValid) {
+                                                    return
+                                                }
+                                                setValue("step", "ADDRESS")
+                                            }
+                                        }}
+                                    >
+                                        <b>
+                                            { step === "EMAIL" && "shipping country"}
+                                            { step === "COUNTRY" && "address"}
+                                            { step === "ADDRESS" && "save"}
+                                            { step === "BILLING" && "save"}
+                                        </b>
+                                    </Button>
+                                </Grid>
+                            )}
                         </Grid>
                     </>
                 )

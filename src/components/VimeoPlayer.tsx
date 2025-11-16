@@ -2,7 +2,6 @@ import {Dispatch, SetStateAction, useState} from "react";
 import Vimeo from '@u-wave/react-vimeo';
 import styled from "@emotion/styled";
 import {Typography} from "@mui/material";
-import {ACFMedia} from "../utils/layout";
 
 type VimeoPlayerProps = {
     autoplay?: boolean

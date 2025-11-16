@@ -6,18 +6,18 @@ import {FormFields} from "../../paypal/usePayPalFormProvider";
 
 type AddressFormProps = {
     countries: AddressBookPageProps['countries']
-    namespace: "billing" | "shipping"
 }
 
-const HookAddressForm = ({ countries, namespace }: AddressFormProps) => {
+const HookAddressForm = ({ countries }: AddressFormProps) => {
     const { control, watch, setValue } = useFormContext<FormFields>()
-
+    const step = watch("step")
+    const has_shipping = watch("has_shipping")
+    const namespace = has_shipping && step === 'ADDRESS' ? 'shipping' : 'billing'
     const selectedCountry = watch(`${namespace}.country`)
-    const address_tab = watch("address_tab")
     const states = countries.find(c => c.code === selectedCountry)?.states ?? []
 
     return (
-        <div style={{ display: address_tab === namespace ? 'block' : 'none' }}>
+        <div>
             <Grid container spacing={2} direction="row">
                 <Grid item xs={12} lg={6}>
                     <ControlledField
@@ -78,53 +78,55 @@ const HookAddressForm = ({ countries, namespace }: AddressFormProps) => {
                         }}
                     />
                 </Grid>
-                <Grid item xs={12} lg={states?.length > 0  ? 6 : 12}>
-                    <Controller
-                        control={control}
-                        name={`${namespace}.country`}
-                        rules={{
-                            required: "COUNTRY IS REQUIRED"
-                        }}
-                        render={({
-                                     field: { onChange, value },
-                                     fieldState: { invalid, error }
-                                 }) => (
-                            <FormControl fullWidth>
-                                <Autocomplete
-                                    autoComplete
-                                    autoSelect
-                                    value={countries.find(c => c.code === value) ?? null}
-                                    options={countries}
-                                    getOptionKey={(option) => option.code}
-                                    getOptionLabel={(option) => option.name}
-                                    isOptionEqualToValue={(option, value) => option.code === value.code}
-                                    onChange={(event,value ) => {
-                                        onChange(value?.code ?? '')
-                                        setValue(`${namespace}.state`, "")
-                                    }}
-                                    renderInput={(params) =>
-                                        <TextField
-                                            {...params}
-                                            autoComplete="off"
-                                            placeholder="ENTER YOUR COUNTRY"
-                                            required
-                                            error={invalid}
-                                            label="COUNTRY"
-                                            helperText={error?.message}
-                                            fullWidth
-                                            type="text"
-                                            InputLabelProps={{
-                                                disableAnimation: true,
-                                                focused: false,
-                                                shrink: true,
-                                            }}
-                                        />
-                                    }
-                                />
-                            </FormControl>
-                        )}
-                    />
-                </Grid>
+                {step === "BILLING" && (
+                    <Grid item xs={12} lg={states?.length > 0  ? 6 : 12}>
+                        <Controller
+                            control={control}
+                            name={`${namespace}.country`}
+                            rules={{
+                                required: "COUNTRY IS REQUIRED"
+                            }}
+                            render={({
+                                         field: { onChange, value },
+                                         fieldState: { invalid, error }
+                                     }) => (
+                                <FormControl fullWidth>
+                                    <Autocomplete
+                                        autoComplete
+                                        autoSelect
+                                        value={countries.find(c => c.code === value) ?? null}
+                                        options={countries}
+                                        getOptionKey={(option) => option.code}
+                                        getOptionLabel={(option) => option.name}
+                                        isOptionEqualToValue={(option, value) => option.code === value.code}
+                                        onChange={(event,value ) => {
+                                            onChange(value?.code ?? '')
+                                            setValue(`${namespace}.state`, "")
+                                        }}
+                                        renderInput={(params) =>
+                                            <TextField
+                                                {...params}
+                                                autoComplete="off"
+                                                placeholder="ENTER YOUR COUNTRY"
+                                                required
+                                                error={invalid}
+                                                label="COUNTRY"
+                                                helperText={error?.message}
+                                                fullWidth
+                                                type="text"
+                                                InputLabelProps={{
+                                                    disableAnimation: true,
+                                                    focused: false,
+                                                    shrink: true,
+                                                }}
+                                            />
+                                        }
+                                    />
+                                </FormControl>
+                            )}
+                        />
+                    </Grid>
+                )}
 
                 {states?.length > 0 && (
                     <Grid item xs={12} lg={6}>

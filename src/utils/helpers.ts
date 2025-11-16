@@ -106,7 +106,7 @@ export function getShippingMethod({countries, continents, shippingIT, shippingEU
     }
     return {
         id: method.method_id,
-        cost: method.settings.cost.value,
+        cost: method.settings.cost?.value ?? 0,
         name: method.settings.title.value,
     }
 }

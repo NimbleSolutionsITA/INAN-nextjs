@@ -33,7 +33,7 @@ export type Totals = {
     subtotal: number
 }
 
-export type Step = 'ADDRESS'|'RECAP'|'COUPON'|'PAYMENT'
+export type Step = 'EMAIL'|'COUNTRY'|'ADDRESS'|'BILLING'|'COUPON'|'PAYMENT'
 
 const usePayPalFormProvider = (woocommerce: ShippingProps, cart: CartItem[]) => {
     const customer = useSelector((state: RootState) => state.customer.customer);
@@ -44,7 +44,7 @@ const usePayPalFormProvider = (woocommerce: ShippingProps, cart: CartItem[]) => 
     const methods = useForm<FormFields>({
         defaultValues: {
             customer_id: user?.id ?? 0,
-            step: 'ADDRESS',
+            step: customer ? 'COUPON' : 'EMAIL',
             has_shipping: false,
             payment_method: 'paypal',
             vat: customer?.meta_data.find(m => m.key === 'vat')?.value ?? '',
@@ -112,13 +112,18 @@ const usePayPalFormProvider = (woocommerce: ShippingProps, cart: CartItem[]) => 
         mutationFn: async () => {
             const isBillingValid = await methods.trigger(['billing', 'vat'])
             if (!isBillingValid) {
-                methods.setValue("address_tab", "billing")
+                if (methods.formState.errors.billing?.email) {
+                    methods.setValue("step", "EMAIL")
+                    return
+                }
+                methods.setValue("step", has_shipping ? "BILLING" : "ADDRESS")
                 return
             }
             if (has_shipping) {
+                console.log('Validating shipping')
                 const isShippingValid = await methods.trigger('shipping')
                 if (!isShippingValid) {
-                    methods.setValue("address_tab", "shipping")
+                    methods.setValue("step", "ADDRESS")
                     return
                 }
             }
@@ -132,7 +137,7 @@ const usePayPalFormProvider = (woocommerce: ShippingProps, cart: CartItem[]) => 
                         meta_data: [{key: 'vat', value: vat}]
                     })
                 })
-                if (!response.ok) {
+                if (response.ok) {
                     const { customer } = await response.json()
                     dispatch(setCustomer(customer))
                 }

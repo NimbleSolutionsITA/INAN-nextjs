@@ -11,6 +11,7 @@ import usePayPalCheckout from "../../paypal/PayPalCheckoutProvider";
 import {FormFields} from "../../paypal/usePayPalFormProvider";
 import PaymentMethods from "../../paypal/PaymentMethods";
 import {useIsMobile} from "../../../utils/layout";
+import Image from "next/image";
 
 const RightTab = () => {
     const { watch, setValue, control, clearErrors } = useFormContext<FormFields>()
@@ -81,13 +82,24 @@ const RightTab = () => {
                 }
             </Button>
         </div>
+        <div>
+            <Typography variant="h2">Signature gift box included</Typography>
+            <Typography variant="body2">ALL ORDERS ON INANSTUDIO.COM ARE SHIPPED IN OUR SIGNATURE GIFT BOX.</Typography>
+            <Image
+                src="/images/INAN-GIFT-BOX-VISUAL.jpg"
+                alt="gift box"
+                width={640}
+                height={427}
+                style={{width: '100%', height: 'auto', marginTop: '10px', marginBottom: '16px'}}
+            />
+        </div>
         <div style={{width: '100%'}}>
             <div style={{display: 'flex'}}>
                 <div style={{flexGrow: 1}}>SUBTOTAL</div>
                 <div>{formatPrice(totals.subtotal)}</div>
             </div>
             <div style={{display: 'flex'}}>
-                <div style={{flexGrow: 1}}>SHIPPING</div>
+                <div style={{flexGrow: 1}}>SHIPPING <span style={{fontStyle: 'italic', color: "#878787"}}>[FREE SHIPPING TO ITALY]</span></div>
                 <div>{formatPrice(totals.shipping)}</div>
             </div>
             {Number(totals?.tax) > 0 && (

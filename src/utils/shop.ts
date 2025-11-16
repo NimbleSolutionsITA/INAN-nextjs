@@ -154,7 +154,7 @@ export const getCheckoutProps = async ( ): Promise<ShippingProps> => {
         { name: 'shippingLocationsW', endpoint: 'shipping/zones/3/locations'},
         { name: 'shippingR', endpoint: 'shipping/zones/0/methods/12'},
         { name: 'shippingEU', endpoint: 'shipping/zones/1/methods/9'},
-        { name: 'shippingIT', endpoint: 'shipping/zones/2/methods/5'},
+        { name: 'shippingIT', endpoint: 'shipping/zones/2/methods/14'},
         { name: 'shippingW', endpoint: 'shipping/zones/3/methods/6'},
         { name: 'shippingGIFT', endpoint: 'shipping/zones/5/methods/13'},
         { name: 'shippingUK', endpoint: 'shipping/zones/6/methods/17'},
