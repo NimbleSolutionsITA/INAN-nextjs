@@ -69,7 +69,7 @@ export function getOrderPayloadFromFields({billing, shipping, shipping_method, h
             })),
             shipping_lines: [{
                 method_id: shipping_method.id,
-                total: shipping_method.cost
+                total: shipping_method.cost.toString()
             }],
             coupon_lines: coupon ? [
                 { code: coupon }
