@@ -109,7 +109,7 @@ const ProductCard = ({product, isPrivate = false}: {product: ShopProduct, isPriv
                 </Typography>
                 <div style={{flexGrow: 1}}/>
                 <Typography component="p" variant="body1">
-                    {product.on_sale ?
+                    {product.sale_price ?
                         <><Sale>€ {product.regular_price}</Sale> € {product.sale_price}</> :
                         `€ ${product.price}`
                     }
