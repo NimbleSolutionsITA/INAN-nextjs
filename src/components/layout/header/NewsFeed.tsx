@@ -3,12 +3,6 @@ import {Box, useMediaQuery} from "@mui/material";
 import Container from "../../Container";
 import {NewsFeed} from "../../../utils/layout";
 
-type SingleNews = {
-    title: {
-        rendered: string
-    }
-}
-
 type NewsFeedProps = {
     currentNews: NewsFeed[]
 }
@@ -22,7 +16,7 @@ const NewsFeed = ({ currentNews }: NewsFeedProps) => {
             sx={{
                 width: '100%',
                 textTransform: 'uppercase',
-                color: isMobile ? 'none' : '1px solid',
+                color: isMobile ? 'black' : 'none',
                 borderBottom: isMobile ? 'none' : '1px solid',
                 borderTop: isMobile ? '1px solid' : 'none',
             }}
