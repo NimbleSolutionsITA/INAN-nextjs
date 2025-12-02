@@ -12,9 +12,10 @@ type HomeCoversProps = {
     currentCover: Cover
     currentCoverIndex: number
     covers: Cover[]
+    hasNews?: boolean
 }
 
-const HomeCovers = ({covers, showContent, setShowContent, currentCoverIndex, setCurrentCoverIndex, currentCover }: HomeCoversProps) => {
+const HomeCovers = ({covers, showContent, setShowContent, currentCoverIndex, setCurrentCoverIndex, currentCover, hasNews }: HomeCoversProps) => {
     const isMobile = useIsMobile()
     const dispatch = useDispatch()
     const arrLength = covers?.length;
@@ -94,6 +95,7 @@ const HomeCovers = ({covers, showContent, setShowContent, currentCoverIndex, set
                         isMobile={isMobile}
                         showContent={showContent}
                         setShowContent={setShowContent}
+                        hasNews={hasNews}
                     />
                 </div>
             ))}

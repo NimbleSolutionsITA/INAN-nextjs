@@ -73,6 +73,7 @@ const Home: NextPage<HomeProps> = ({
                         ctaText={currentCover.ctaText}
                         color={currentCover.color}
                         colorMobile={currentCover.colorMobile}
+                        hasNews={!!news.length}
                     />
                 )}
                 <div ref={coversRef}>
@@ -83,6 +84,7 @@ const Home: NextPage<HomeProps> = ({
                         setCurrentCoverIndex={setCurrentCoverIndex}
                         covers={covers}
                         currentCover={currentCover}
+                        hasNews={!!news.length}
                     />
                 </div>
                 <Container sx={{my: '128px'}}>

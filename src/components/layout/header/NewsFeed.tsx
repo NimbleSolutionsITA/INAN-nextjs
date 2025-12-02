@@ -16,6 +16,7 @@ type NewsFeedProps = {
 const NewsFeed = ({ currentNews }: NewsFeedProps) => {
     const muiTheme = useTheme()
     const isMobile = useMediaQuery(muiTheme.breakpoints.down("sm"))
+
     return currentNews?.length > 0 ? (
         <Box
             sx={{
@@ -27,10 +28,12 @@ const NewsFeed = ({ currentNews }: NewsFeedProps) => {
             }}
         >
             {currentNews && (isMobile ? (
-                <Container>{currentNews[0].title}</Container>
-            ) : currentNews[0].title)}
+                <Container>
+                    <div dangerouslySetInnerHTML={{__html: currentNews[0].title}}/>
+                </Container>
+            ) : <div dangerouslySetInnerHTML={{__html: currentNews[0].title}}/>)}
         </Box>
-    ) : <span />
+    ) : <span/>
 }
 
 export default NewsFeed;

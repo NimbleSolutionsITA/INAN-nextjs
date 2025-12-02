@@ -20,9 +20,10 @@ type HomeCoverProps = {
     mute: boolean
     showContent: boolean
     setShowContent: Dispatch<SetStateAction<boolean>>
+    hasNews?: boolean
 }
 
-const CoverWrapper = styled.div<{hasBgImage: boolean, hasVideo: boolean, bg: string | undefined, isCoverMobile: boolean, isCover: boolean, isMobile: boolean}>`
+const CoverWrapper = styled.div<{hasBgImage: boolean, hasVideo: boolean, bg: string | undefined, isCoverMobile: boolean, isCover: boolean, isMobile: boolean, hasNews?: boolean}>`
   min-height:  auto;
   width: 100%;
   text-transform: uppercase;
@@ -31,7 +32,9 @@ const CoverWrapper = styled.div<{hasBgImage: boolean, hasVideo: boolean, bg: str
   background-position: center;
   background-color: ${({hasVideo}) => hasVideo ? '#000' : '#fff'};
   overflow: hidden;
-  margin-top: ${({isCover, isMobile}) => isCover ? (isMobile ? '-84px' : '-103px') : undefined};  
+  margin-top: ${({isCover, isMobile, hasNews}) => isCover 
+      ? (isMobile ? `-${84 + (hasNews ? 14 : 0)}px` : `-${103 + (hasNews ? 14 : 0)}px`) 
+      : undefined};  
 `;
 
 const PortraitImageWrapper = styled.div<{ isMobile: boolean }>`
@@ -43,7 +46,7 @@ const PortraitImageWrapper = styled.div<{ isMobile: boolean }>`
   }
 `;
 
-const HomeCover = ({bg, bgMobile, title, isCover, isCoverMobile, color, colorMobile, video, loop, autoplay, mute, showContent, setShowContent, isMobile}: HomeCoverProps) => {
+const HomeCover = ({bg, bgMobile, title, isCover, isCoverMobile, color, colorMobile, video, loop, autoplay, mute, showContent, setShowContent, isMobile, hasNews}: HomeCoverProps) => {
     return(
         <CoverWrapper
             hasBgImage={(isMobile ? isCoverMobile : isCover) || (!!video && showContent)}
@@ -52,6 +55,7 @@ const HomeCover = ({bg, bgMobile, title, isCover, isCoverMobile, color, colorMob
             isCover={isCover}
             isCoverMobile={isCoverMobile}
             isMobile={isMobile}
+            hasNews={hasNews}
         >
             <Link underline="none" color="inherit" href={'/shop'}>
                 {!video && isMobile && isCoverMobile && <img src={bgMobile || bg} alt="" style={{width: '100%', opacity: 0}} />}

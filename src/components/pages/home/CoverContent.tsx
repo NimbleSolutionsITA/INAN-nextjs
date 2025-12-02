@@ -13,6 +13,7 @@ type CoverContentProps = {
     ctaText?: string | undefined
     color: string | undefined
     colorMobile: string | undefined
+    hasNews?: boolean
 }
 
 const CoverWrapper = styled.div<{isMobile: boolean}>`
@@ -39,7 +40,7 @@ const Cta = styled.div`
   }
 `;
 
-const CoverContent = ({title, ctaLink, ctaText, color, colorMobile}: CoverContentProps) => {
+const CoverContent = ({title, ctaLink, ctaText, color, colorMobile, hasNews}: CoverContentProps) => {
     const { headerColor, headerColorMobile } = useSelector((state: RootState) => state.header);
     const isMobile = useIsMobile()
     return (
@@ -49,7 +50,7 @@ const CoverContent = ({title, ctaLink, ctaText, color, colorMobile}: CoverConten
                     {title && (
                         <Typography
                             sx={{
-                                marginTop: {xs: '10px', md: '103px'},
+                                marginTop: {xs: `${hasNews ? 24 : 10}px`, md: `${hasNews ? 117 : 103}px`},
                                 textTransform: 'uppercase',
                                 minHeight: '75px',
                                 width: {xs: '100%', md: 'calc(100% - 80px)'},

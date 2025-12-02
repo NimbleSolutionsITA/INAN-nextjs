@@ -158,6 +158,7 @@ export const getLayoutProps = async (): Promise<LayoutProps> => {
         fetch(NEWS_FEED_ENDPOINT, { cache: "force-cache", next: { revalidate: 60 * 60 } }).then(response => response.json()),
         fetch(HEADER_FOOTER_ENDPOINT, { cache: "force-cache", next: { revalidate: 60 * 60 } }).then(response => response.json())
     ])
+    console.log(news)
     return ({
         layoutProps: {
             ...layoutProps,
