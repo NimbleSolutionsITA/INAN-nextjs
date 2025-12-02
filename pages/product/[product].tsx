@@ -110,7 +110,7 @@ export async function getStaticProps({ params: {product} }: { params: {product: 
             sizeGuide,
             page
         },
-        revalidate: 10
+        revalidate: 1
     }
 }
 
