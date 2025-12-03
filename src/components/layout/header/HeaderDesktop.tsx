@@ -45,11 +45,11 @@ const HeaderDesktop = ({ links, news, headerMenuItems, activeLink, pageTitle }: 
         <div style={{height, width: '100%'}}>
             <HeaderWrapper color={headerColor} bgColor={bgColor} ref={ref}>
                 <Container>
-                    <NewsFeed  currentNews={news}/>
                     <LogoBar />
                     {!sizeGuideOpen && (
                         <>
                             <NavBar headerMenuItems={headerMenuItems} />
+                            <NewsFeed  currentNews={news}/>
                             {links && <Filters activeLink={activeLink} links={links} />}
                             {!open && <PageTitle pageTitle={pageTitle} />}
                         </>

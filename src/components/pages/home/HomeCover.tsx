@@ -33,7 +33,7 @@ const CoverWrapper = styled.div<{hasBgImage: boolean, hasVideo: boolean, bg: str
   background-color: ${({hasVideo}) => hasVideo ? '#000' : '#fff'};
   overflow: hidden;
   margin-top: ${({isCover, isMobile, hasNews}) => isCover 
-      ? (isMobile ? `-${84 + (hasNews ? 14 : 0)}px` : `-${103 + (hasNews ? 14 : 0)}px`) 
+      ? (isMobile ? `-${84 + (hasNews ? 25 : 0)}px` : `-${103 + (hasNews ? 25 : 0)}px`) 
       : undefined};  
 `;
 

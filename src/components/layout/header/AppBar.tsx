@@ -65,7 +65,6 @@ const AppBar = ({children, navLinks, height = 94}: AppBarProps) => {
     const cartItems = useSelector((state: RootState) => state.cart.items);
     const wishlistItems = useSelector((state: RootState) => state.wishlist.items);
     const {open, bgColor, headerColor, headerColorMobile} = useSelector((state: RootState) => state.header);
-    const isMobile = useIsMobile()
     const dispatch = useDispatch()
 
     const handleOpenDrawer = (open: boolean) => {

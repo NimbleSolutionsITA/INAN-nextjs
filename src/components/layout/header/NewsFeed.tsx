@@ -19,6 +19,9 @@ const NewsFeed = ({ currentNews }: NewsFeedProps) => {
                 color: isMobile ? 'black' : 'none',
                 borderBottom: isMobile ? 'none' : '1px solid',
                 borderTop: isMobile ? '1px solid' : 'none',
+                lineHeight: '24px',
+                fontSize: '20px',
+                fontWeight: 'bold'
             }}
         >
             {currentNews && (isMobile ? (

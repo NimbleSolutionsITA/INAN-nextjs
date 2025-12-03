@@ -7,11 +7,10 @@ import {initWishlist} from "../redux/wishlistSlice";
 import {LinkItem, PageSettings} from "../../@types";
 import {useIsMobile} from "./layout";
 
-const useLayoutHook = (pageSettings: PageSettings, links?: LinkItem[]) => {
+const useLayoutHook = (pageSettings: PageSettings, links?: LinkItem[], hasNews: boolean = false) => {
 	const router = useRouter()
 	const dispatch = useDispatch()
 	const isMobile = useIsMobile()
-
 	useEffect( () => {
 		let settings;
 		if (router.pathname === '/')
@@ -25,7 +24,8 @@ const useLayoutHook = (pageSettings: PageSettings, links?: LinkItem[]) => {
 
 	useEffect(() => {
 		if (isMobile)
-			dispatch(setHeader({ height: pageSettings.pageTitle || links ? 94 : 74 }))
+			console.log(((pageSettings.pageTitle || links) ? 94 : 74) + (hasNews ? 25 : 0))
+			dispatch(setHeader({ heightMobile: ((pageSettings.pageTitle || links) ? 94 : 74) + (hasNews ? 25 : 0) }))
 	}, [isMobile]);
 
 	useEffect(() => {

@@ -19,7 +19,7 @@ type CoverContentProps = {
 const CoverWrapper = styled.div<{isMobile: boolean}>`
   width: 100%;
   position: ${({isMobile}) => isMobile ? 'relative' : 'fixed'};
-  top: 0;  
+  top: ${({isMobile}) => isMobile ? '-20px' : '0'};
   z-index: 1;
   overflow: hidden;
   -ms-overflow: hidden;

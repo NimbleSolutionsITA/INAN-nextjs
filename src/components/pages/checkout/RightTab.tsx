@@ -92,6 +92,8 @@ const RightTab = () => {
                 height={427}
                 style={{width: '100%', height: 'auto', marginTop: '10px', marginBottom: '16px'}}
             />
+            <Typography variant="body2" sx={{mb: '12px'}}>Orders placed before December 15th are guaranteed to be delivered before Christmas.
+                Orders placed after December 15th will be processed and shipped starting in January.</Typography>
         </div>
         <div style={{width: '100%'}}>
             <div style={{display: 'flex'}}>

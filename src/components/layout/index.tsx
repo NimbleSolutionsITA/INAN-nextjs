@@ -26,7 +26,7 @@ export type PageLayoutProps = BasePageProps['layoutProps'] & {
 export default function Layout({ header: { favicon, headerMenuItems }, footer, news, children, links, activeLink, pageSettings, yoast }: PageLayoutProps) {
     const router = useRouter()
     const { loading } = useSelector((state: RootState) => state.header);
-    useLayoutHook(pageSettings, links)
+    useLayoutHook(pageSettings, links, !!news?.length);
     return (
         <PayPalProvider>
             <Head>
