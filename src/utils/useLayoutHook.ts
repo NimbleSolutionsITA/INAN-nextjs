@@ -24,7 +24,6 @@ const useLayoutHook = (pageSettings: PageSettings, links?: LinkItem[], hasNews: 
 
 	useEffect(() => {
 		if (isMobile)
-			console.log(((pageSettings.pageTitle || links) ? 94 : 74) + (hasNews ? 25 : 0))
 			dispatch(setHeader({ heightMobile: ((pageSettings.pageTitle || links) ? 94 : 74) + (hasNews ? 25 : 0) }))
 	}, [isMobile]);
 

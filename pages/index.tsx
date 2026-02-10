@@ -18,7 +18,7 @@ const pageSettings = {
     bgColor: '#fff',
     headerColor: '#000',
     headerColorMobile: '#000',
-    pageTitle: null
+    pageTitle: null,
 }
 
 const Home: NextPage<HomeProps> = ({

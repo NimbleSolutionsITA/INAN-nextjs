@@ -42,7 +42,7 @@ const HeaderDesktop = ({ links, news, headerMenuItems, activeLink, pageTitle }: 
     }, [pathname, dispatch]);
 
     return (
-        <div style={{height, width: '100%'}}>
+        <div style={{height: news?.length > 0 ? height + 30 : height, width: '100%'}}>
             <HeaderWrapper color={headerColor} bgColor={bgColor} ref={ref}>
                 <Container>
                     <LogoBar />

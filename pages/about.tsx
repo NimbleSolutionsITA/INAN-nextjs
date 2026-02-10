@@ -20,7 +20,9 @@ const pageSettings = {
     bgColor: '#000',
     headerColor: '#fff',
     headerColorMobile: '#fff',
-    pageTitle: 'about'
+    pageTitle: 'about',
+    height: 94,
+    heightMobile: 94,
 }
 
 const AboutPage: NextPage<AboutPageProps> = ({
