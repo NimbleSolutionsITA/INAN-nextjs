@@ -15,7 +15,8 @@ const useLayoutHook = (pageSettings: PageSettings, links?: LinkItem[], hasNews: 
 		let settings;
 		if (router.pathname === '/')
 			settings = {
-				pageTitle: pageSettings.pageTitle
+				pageTitle: pageSettings.pageTitle,
+				headerColorMobile: '#000000'
 			}
 		else
 			settings = pageSettings
