@@ -99,9 +99,14 @@ const CookieSettingsRow = () => {
     return (
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>© {new Date().getFullYear()} INAN. All Rights Reserved</div>
-            <Button sx={{padding: 0}} variant="text" color={isMobile ? "primary": "secondary"} onClick={() => dispatch(openCookieModal())}>
-                Cookie Settings
-            </Button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <Link color="inherit" href="/legal_area/privacy-policy/">
+                    Privacy Policy
+                </Link>
+                <Button sx={{padding: 0}} variant="text" color={isMobile ? "primary": "secondary"} onClick={() => dispatch(openCookieModal())}>
+                    Cookie Settings
+                </Button>
+            </div>
         </div>
     )
 }
