@@ -80,9 +80,40 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
         const data = await response.json();
 
+        // The custom nimble endpoint doesn't reliably return the schedule-aware
+        // sale fields (on_sale / regular_price), so the grid couldn't show the
+        // struck-out regular price next to the discounted one. Enrich each
+        // product with the authoritative price fields from wc/v3 (the same
+        // source the product page uses) in a single batched request.
+        const priceById: Record<number, Partial<Product>> = {};
+        const ids = (Array.isArray(data) ? data : [])
+            .map((product: Product) => product.id)
+            .filter(Boolean);
+        if (ids.length) {
+            try {
+                const { data: authoritative }: { data: Product[] } = await api.get('products', {
+                    include: ids.join(','),
+                    per_page: ids.length,
+                    status,
+                });
+                authoritative.forEach((product) => {
+                    priceById[product.id] = {
+                        price: product.price,
+                        regular_price: product.regular_price,
+                        sale_price: product.sale_price,
+                        on_sale: product.on_sale,
+                    };
+                });
+            } catch {
+                // fall back to the nimble price fields if the batch lookup fails
+            }
+        }
+
         // Map the response products
         responseData.success = true;
-        responseData.products = await Promise.all(data.map(mapProduct));
+        responseData.products = await Promise.all(
+            data.map((product: ShopProduct) => mapProduct({ ...product, ...priceById[product.id] }))
+        );
         res.json(responseData);
     } catch (error) {
         responseData.error = error instanceof Error ? error.message : String(error);
