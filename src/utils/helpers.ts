@@ -3,8 +3,35 @@ import DOMPurify from 'dompurify'
 import {Continent, Order} from "../../@types/woocommerce";
 import {getCollectionProps, getLayoutProps} from "./layout";
 import {FormFields} from "../components/paypal/usePayPalFormProvider";
-import {CartItem} from "../../@types";
-import {ShippingProps} from "./shop";
+import {CartItem, LinkItem} from "../../@types";
+import type {CategoryProps, ShippingProps} from "./shop";
+
+export const SALE_LINK: LinkItem = { id: -1, name: 'SALES', slug: 'sale', url: '/sale' };
+
+/**
+ * Build the shop sub-navigation links from the product categories, inserting
+ * the "SALES" tab right after the "in-stock" tab — but only when there are
+ * products currently on sale. Pure data transformation over props already
+ * fetched server-side; safe to run in the client bundle.
+ */
+export const buildShopNavLinks = (categories: CategoryProps[], hasSale: boolean): LinkItem[] => {
+    const links: LinkItem[] = categories.map(category => ({
+        id: category.id,
+        slug: category.slug,
+        name: category.name,
+        url: `/shop/${category.slug}`,
+    }));
+
+    if (!hasSale) return links;
+
+    const inStockIndex = links.findIndex(link => link.slug === 'in-stock');
+    if (inStockIndex === -1) {
+        links.push(SALE_LINK);
+    } else {
+        links.splice(inStockIndex + 1, 0, SALE_LINK);
+    }
+    return links;
+};
 
 export const sanitize = ( content: string ) => {
     return typeof window !== 'undefined' ? DOMPurify.sanitize( content ) : content

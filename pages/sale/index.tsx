@@ -6,7 +6,8 @@ import Container from "../../src/components/Container";
 import ProductCard from "../../src/components/pages/shop/ProductCard";
 import { getLayoutProps, getPageProps, useIsMobile } from "../../src/utils/layout";
 import { getSaleProducts, ShopProduct } from "../../src/utils/products";
-import { buildShopNavLinks, CategoryProps, getCategoriesProps } from "../../src/utils/shop";
+import { CategoryProps, getCategoriesProps } from "../../src/utils/shop";
+import { buildShopNavLinks } from "../../src/utils/helpers";
 import { BasePageProps, WordpressPage } from "../../@types";
 
 export type SaleProps = Omit<BasePageProps, "page"> & {
