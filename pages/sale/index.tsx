@@ -6,7 +6,7 @@ import Container from "../../src/components/Container";
 import ProductCard from "../../src/components/pages/shop/ProductCard";
 import { getLayoutProps, getPageProps, useIsMobile } from "../../src/utils/layout";
 import { getSaleProducts, ShopProduct } from "../../src/utils/products";
-import { CategoryProps, getCategoriesProps } from "../../src/utils/shop";
+import { buildShopNavLinks, CategoryProps, getCategoriesProps } from "../../src/utils/shop";
 import { BasePageProps, WordpressPage } from "../../@types";
 
 export type SaleProps = Omit<BasePageProps, "page"> & {
@@ -26,15 +26,7 @@ const Sale: NextPage<SaleProps> = ({ layoutProps, productCategories, products, n
     const isMobile = useIsMobile();
     const router = useRouter();
 
-    const links = [
-        ...productCategories.map(productCategory => ({
-            id: productCategory.id,
-            slug: productCategory.slug,
-            name: productCategory.name,
-            url: `/shop/${productCategory.slug}`,
-        })),
-        { id: -1, slug: 'sale', name: 'SALES', url: '/sale' },
-    ];
+    const links = buildShopNavLinks(productCategories, products.length > 0);
 
     return (
         <Layout

@@ -8,6 +8,33 @@ import {
 } from "../../@types/woocommerce";
 import {SizeGuidePost} from "./layout";
 import {CUSTOM_PAGES, WORDPRESS_API_ENDPOINT} from "./endpoints";
+import {LinkItem} from "../../@types";
+
+export const SALE_LINK: LinkItem = { id: -1, name: 'SALES', slug: 'sale', url: '/sale' };
+
+/**
+ * Build the shop sub-navigation links from the product categories, inserting
+ * the "SALES" tab right after the "in-stock" tab — but only when there are
+ * products currently on sale.
+ */
+export const buildShopNavLinks = (categories: CategoryProps[], hasSale: boolean): LinkItem[] => {
+    const links: LinkItem[] = categories.map(category => ({
+        id: category.id,
+        slug: category.slug,
+        name: category.name,
+        url: `/shop/${category.slug}`,
+    }));
+
+    if (!hasSale) return links;
+
+    const inStockIndex = links.findIndex(link => link.slug === 'in-stock');
+    if (inStockIndex === -1) {
+        links.push(SALE_LINK);
+    } else {
+        links.splice(inStockIndex + 1, 0, SALE_LINK);
+    }
+    return links;
+};
 
 export type ProductProps = {
     productCategories: Category[]

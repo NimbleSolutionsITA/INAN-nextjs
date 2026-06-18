@@ -2,14 +2,15 @@ import type { NextPage } from 'next';
 import Layout from "../../src/components/layout";
 import { getLayoutProps, getPageProps, ShopPageProps } from "../../src/utils/layout";
 import { BasePageProps } from "../../@types";
-import { getCategoriesProps } from "../../src/utils/shop";
+import { buildShopNavLinks, getCategoriesProps } from "../../src/utils/shop";
 import GridView from "../../src/components/pages/shop/GridView";
 import { useRouter } from "next/router";
 import {getAttributes} from "../api/products/attributes";
-import {Attribute} from "../../src/utils/products";
+import {Attribute, hasSaleProducts} from "../../src/utils/products";
 
 export type ShopProps = BasePageProps & ShopPageProps & {
     attributes: Attribute[]; // Replace `any[]` with a proper type if available
+    hasSale: boolean;
 };
 
 const pageSettings = {
@@ -26,6 +27,7 @@ const Shop: NextPage<ShopProps> = ({
                                        news,
                                        page,
                                        attributes, // Attributes fetched and passed to the component
+                                       hasSale,
                                    }) => {
     const router = useRouter();
     return (
@@ -33,15 +35,7 @@ const Shop: NextPage<ShopProps> = ({
             key={router.asPath}
             pageSettings={pageSettings}
             {...layoutProps}
-            links={[
-                ...productCategories.map(productCategory => ({
-                    id: productCategory.id,
-                    slug: productCategory.slug,
-                    name: productCategory.name,
-                    url: `/shop/${productCategory.slug}`,
-                })),
-                { id: -1, slug: 'sale', name: 'SALES', url: '/sale' },
-            ]}
+            links={buildShopNavLinks(productCategories, hasSale)}
             activeLink={router.query.category?.toString() || productCategories[0].slug}
             news={news}
             yoast={page.yoast_head}
@@ -64,11 +58,13 @@ export async function getStaticProps(context: { params?: { category?: string } }
         productCategories,
         { page },
         attributesData, // Fetch attributes
+        hasSale,
     ] = await Promise.all([
         getLayoutProps(),
         getCategoriesProps(),
         getPageProps('shop'),
         getAttributes(), // Fetch attributes from WooCommerce API
+        hasSaleProducts(),
     ]);
 
     const currentCategoryId = context.params?.category
@@ -89,6 +85,7 @@ export async function getStaticProps(context: { params?: { category?: string } }
             news,
             page,
             attributes: attributesData, // Pass attributes as props
+            hasSale,
         },
         revalidate: 10,
     };

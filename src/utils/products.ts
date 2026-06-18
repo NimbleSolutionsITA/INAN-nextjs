@@ -149,6 +149,32 @@ export const getSaleProducts = async (): Promise<ProductsProps> => {
     return { products: await Promise.all(onSale.map(mapProduct)) };
 };
 
+/**
+ * Whether there is at least one product currently on sale (schedule-aware).
+ * Lightweight check used to decide if the "SALES" nav tab should be shown.
+ * Short-circuits as soon as an on_sale product is found.
+ */
+export const hasSaleProducts = async (): Promise<boolean> => {
+    let page = 1;
+    let batch: any = [];
+    do {
+        const { data } = await api.get(
+            'products',
+            {
+                per_page: 100,
+                page,
+                status: 'publish',
+                on_sale: true,
+            },
+        );
+        batch = data;
+        if (batch.some((product: ShopProduct) => product.on_sale)) return true;
+        page = page + 1;
+    } while (batch.length > 0);
+
+    return false;
+};
+
 export const getProductVariations = async (id: number): Promise<ProductsProps> => {
     const { data: products } =  await api.get(
         `products/${id}/variations`,
