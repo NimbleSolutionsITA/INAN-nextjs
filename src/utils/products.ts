@@ -99,6 +99,7 @@ type GetProductsParams = Partial<{
     include: number | number[]
     stock_status: 'instock' | 'outofstock' | 'onbackorder',
     status: 'publish' | 'private' | 'draft' | 'pending'
+    on_sale: boolean
 }>
 
 export const getProducts = async (params: GetProductsParams): Promise<ProductsProps> => {
@@ -112,6 +113,40 @@ export const getProducts = async (params: GetProductsParams): Promise<ProductsPr
         },
     );
     return { products: await Promise.all(products.map(mapProduct)) };
+};
+
+/**
+ * Get all products currently on sale (respecting the WooCommerce sale schedule).
+ *
+ * WooCommerce computes `on_sale` from the sale price AND the scheduled
+ * date_on_sale_from / date_on_sale_to, so a product with a future-scheduled
+ * sale is correctly excluded until its start date. We also pass `on_sale: true`
+ * to let WooCommerce pre-filter, then re-filter in JS as a safety net in case
+ * the param is ignored by the endpoint.
+ *
+ * @return {Promise<ProductsProps>}
+ */
+export const getSaleProducts = async (): Promise<ProductsProps> => {
+    let page = 1;
+    let batch: any = [];
+    let all: any = [];
+    do {
+        const { data } = await api.get(
+            'products',
+            {
+                per_page: 100,
+                page,
+                status: 'publish',
+                on_sale: true,
+            },
+        );
+        batch = data;
+        all = [...all, ...batch];
+        page = page + 1;
+    } while (batch.length > 0);
+
+    const onSale = all.filter((product: ShopProduct) => product.on_sale);
+    return { products: await Promise.all(onSale.map(mapProduct)) };
 };
 
 export const getProductVariations = async (id: number): Promise<ProductsProps> => {

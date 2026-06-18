@@ -33,12 +33,15 @@ const Shop: NextPage<ShopProps> = ({
             key={router.asPath}
             pageSettings={pageSettings}
             {...layoutProps}
-            links={productCategories.map(productCategory => ({
-                id: productCategory.id,
-                slug: productCategory.slug,
-                name: productCategory.name,
-                url: `/shop/${productCategory.slug}`,
-            }))}
+            links={[
+                ...productCategories.map(productCategory => ({
+                    id: productCategory.id,
+                    slug: productCategory.slug,
+                    name: productCategory.name,
+                    url: `/shop/${productCategory.slug}`,
+                })),
+                { id: -1, slug: 'sale', name: 'SALES', url: '/sale' },
+            ]}
             activeLink={router.query.category?.toString() || productCategories[0].slug}
             news={news}
             yoast={page.yoast_head}
