@@ -197,6 +197,7 @@ export const mapProduct = async (product: ShopProduct) => {
         stock_quantity: product.stock_quantity || 0,
         stock_status: product.stock_status,
     }
+    let priceFields: Partial<ShopProduct> = {}
     if (product.type === 'variable' && !product.manage_stock) {
         const {products} = await getProductVariations(product.id)
         if (products.length > 0) {
@@ -207,8 +208,29 @@ export const mapProduct = async (product: ShopProduct) => {
                 stock_status: variation.stock_status,
             }
         }
+        priceFields = variablePriceFields(product, products)
     }
-    return mapProd({...product, ...stockStatus})
+    return mapProd({...product, ...stockStatus, ...priceFields})
+}
+
+/**
+ * Variable products keep the regular/sale price empty on the parent (the price
+ * lives on the variations), so cards would render "€ - €". Derive the display
+ * price from a representative variation — preferring one that is on sale so the
+ * struck-out regular + sale price shows correctly.
+ */
+export const variablePriceFields = (
+    product: Pick<ShopProduct, 'regular_price'>,
+    variations: Array<Pick<ShopProduct, 'price' | 'regular_price' | 'sale_price' | 'on_sale'>>,
+): Partial<ShopProduct> => {
+    if (product.regular_price || !variations.length) return {}
+    const variation = variations.find(v => v.on_sale) ?? variations[0]
+    return {
+        price: variation.price,
+        regular_price: variation.regular_price,
+        sale_price: variation.sale_price,
+        on_sale: variation.on_sale,
+    }
 }
 
 export const mapProd = (product: ShopProduct) => ({

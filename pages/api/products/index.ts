@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Product, Variation } from "../../../@types/woocommerce";
-import { mapProd, ShopProduct } from "../../../src/utils/products";
+import { mapProd, ShopProduct, variablePriceFields } from "../../../src/utils/products";
 
 type Data = {
     success: boolean;
@@ -133,6 +133,7 @@ const mapProduct = async (product: ShopProduct) => {
         stock_status: product.stock_status,
     };
 
+    let priceFields: Partial<ShopProduct> = {};
     if (product.type === 'variable' && !product.manage_stock) {
         const { data }: { data: Variation[] } = await api.get(`products/${product.id}/variations`);
         if (data.length > 0) {
@@ -145,7 +146,8 @@ const mapProduct = async (product: ShopProduct) => {
                 };
             }
         }
+        priceFields = variablePriceFields(product, data);
     }
-    return mapProd({ ...product, ...stockStatus });
+    return mapProd({ ...product, ...stockStatus, ...priceFields });
 };
 
