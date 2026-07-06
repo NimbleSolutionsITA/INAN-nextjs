@@ -198,9 +198,12 @@ export const mapProduct = async (product: ShopProduct) => {
         stock_status: product.stock_status,
     }
     let priceFields: Partial<ShopProduct> = {}
-    if (product.type === 'variable' && !product.manage_stock) {
+    // Variable products need their variations both for stock (when the parent
+    // doesn't manage it) and to derive the display price (the parent leaves the
+    // price empty). Fetch them whenever either piece is missing.
+    if (product.type === 'variable' && (!product.manage_stock || !product.regular_price)) {
         const {products} = await getProductVariations(product.id)
-        if (products.length > 0) {
+        if (products.length > 0 && !product.manage_stock) {
             const variation = products.find(p => p.manage_stock && p.stock_status === 'instock') ?? products[0]
             stockStatus = {
                 manage_stock: variation.manage_stock,
