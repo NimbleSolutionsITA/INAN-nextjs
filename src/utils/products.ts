@@ -198,12 +198,15 @@ export const mapProduct = async (product: ShopProduct) => {
         stock_status: product.stock_status,
     }
     let priceFields: Partial<ShopProduct> = {}
-    // Variable products need their variations both for stock (when the parent
-    // doesn't manage it) and to derive the display price (the parent leaves the
-    // price empty). Fetch them whenever either piece is missing.
-    if (product.type === 'variable' && (!product.manage_stock || !product.regular_price)) {
+    // Variable products need their variations for stock (when the parent doesn't
+    // manage it) and, when on sale, to derive the struck-out regular price the
+    // parent leaves empty. Skip the fetch for non-sale products — their parent
+    // `price` already renders correctly.
+    const needsStock = product.type === 'variable' && !product.manage_stock
+    const needsPrice = product.type === 'variable' && product.on_sale && !product.regular_price
+    if (needsStock || needsPrice) {
         const {products} = await getProductVariations(product.id)
-        if (products.length > 0 && !product.manage_stock) {
+        if (products.length > 0 && needsStock) {
             const variation = products.find(p => p.manage_stock && p.stock_status === 'instock') ?? products[0]
             stockStatus = {
                 manage_stock: variation.manage_stock,
@@ -218,16 +221,18 @@ export const mapProduct = async (product: ShopProduct) => {
 
 /**
  * Variable products keep the regular/sale price empty on the parent (the price
- * lives on the variations), so cards would render "€ - €". Derive the display
- * price from a representative variation — preferring one that is on sale so the
- * struck-out regular + sale price shows correctly.
+ * lives on the variations), so on-sale cards would render "€ - €". Derive the
+ * display price from the on-sale variation so the struck-out regular + sale
+ * price shows correctly. Returns nothing when the parent already has a price or
+ * no variation is on sale, leaving non-sale products untouched.
  */
 export const variablePriceFields = (
     product: Pick<ShopProduct, 'regular_price'>,
     variations: Array<Pick<ShopProduct, 'price' | 'regular_price' | 'sale_price' | 'on_sale'>>,
 ): Partial<ShopProduct> => {
-    if (product.regular_price || !variations.length) return {}
-    const variation = variations.find(v => v.on_sale) ?? variations[0]
+    if (product.regular_price) return {}
+    const variation = variations.find(v => v.on_sale)
+    if (!variation) return {}
     return {
         price: variation.price,
         regular_price: variation.regular_price,

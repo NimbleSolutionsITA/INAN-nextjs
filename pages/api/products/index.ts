@@ -134,9 +134,11 @@ const mapProduct = async (product: ShopProduct) => {
     };
 
     let priceFields: Partial<ShopProduct> = {};
-    if (product.type === 'variable' && (!product.manage_stock || !product.regular_price)) {
+    const needsStock = product.type === 'variable' && !product.manage_stock;
+    const needsPrice = product.type === 'variable' && product.on_sale && !product.regular_price;
+    if (needsStock || needsPrice) {
         const { data }: { data: Variation[] } = await api.get(`products/${product.id}/variations`);
-        if (data.length > 0 && !product.manage_stock) {
+        if (data.length > 0 && needsStock) {
             const variation = data.find(p => p.manage_stock && p.stock_status === 'instock') ?? data[0] ?? false;
             if (variation) {
                 stockStatus = {
