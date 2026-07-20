@@ -1,7 +1,7 @@
 import Container from "../../Container";
 import styled from "@emotion/styled";
 import {Typography} from "@mui/material";
-import VimeoPlayer from "../../VimeoPlayer";
+import VideoPlayer from "../../VideoPlayer";
 import {Dispatch, SetStateAction} from "react";
 import Link from "../../Link";
 
@@ -62,7 +62,7 @@ const HomeCover = ({bg, bgMobile, title, isCover, isCoverMobile, color, colorMob
                 {!video && !isMobile && isCover && <img src={bg} alt="" style={{width: '100%', opacity: 0}} />}
             </Link>
             {video ? (
-                <VimeoPlayer
+                <VideoPlayer
                     cover={{url: isMobile ? bgMobile || bg : bg}}
                     video={video}
                     loop={loop}

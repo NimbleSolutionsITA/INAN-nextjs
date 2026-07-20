@@ -1,9 +1,8 @@
-import {Dispatch, SetStateAction, useState} from "react";
-import Vimeo from '@u-wave/react-vimeo';
+import {Dispatch, SetStateAction, useEffect, useRef, useState} from "react";
 import styled from "@emotion/styled";
 import {Typography} from "@mui/material";
 
-type VimeoPlayerProps = {
+type VideoPlayerProps = {
     autoplay?: boolean
     loop?: boolean
     mute?: boolean
@@ -33,11 +32,20 @@ const WatchButton = styled.div`
   }
 `;
 
-const VimeoPlayer = ({autoplay = true, video, loop = true, mute = true, color, background, cover, setShowContent}: VimeoPlayerProps) => {
+const VideoPlayer = ({autoplay = true, video, loop = true, mute = true, color, background, cover, setShowContent}: VideoPlayerProps) => {
+    const videoRef = useRef<HTMLVideoElement>(null)
     const [isPlaying, setIsPlaying] = useState(autoplay)
+
+    // React does not reliably reflect the `muted` prop to the DOM attribute,
+    // which browsers require for autoplay. Set it imperatively.
+    useEffect(() => {
+        if (videoRef.current) videoRef.current.muted = mute
+    }, [mute])
+
     const handlePlay = () => {
         setIsPlaying(true)
         setShowContent && setShowContent(false)
+        videoRef.current?.play().catch(() => {})
     }
     const handlePause = () => {
         setIsPlaying(false)
@@ -46,21 +54,18 @@ const VimeoPlayer = ({autoplay = true, video, loop = true, mute = true, color, b
 
     return video ? (
         <div style={{position: 'relative', backgroundSize: 'cover', backgroundPosition: 'center', backgroundImage: cover ? `url(${cover.url})` : undefined}}>
-            <Vimeo
-                style={{opacity: (!isPlaying && cover) ? 0 : 1}}
-                paused={!isPlaying}
-                onPlay={handlePlay}
-                onPause={handlePause}
-                video={video}
-                color={color.substring(1)}
-                responsive={true}
-                background={background}
-                showTitle={false}
-                showPortrait={false}
-                showByline={false}
-                autoplay={autoplay}
+            <video
+                ref={videoRef}
+                src={video}
+                poster={cover ? cover.url : undefined}
+                style={{width: '100%', height: 'auto', display: 'block', opacity: (!isPlaying && cover) ? 0 : 1, accentColor: color}}
+                autoPlay={autoplay}
                 loop={loop}
                 muted={mute}
+                playsInline
+                controls={isPlaying && !background}
+                onPlay={handlePlay}
+                onPause={handlePause}
             />
             <WatchButton style={{color, display: isPlaying ? 'none' : 'block'}}>
                 <Typography
@@ -75,4 +80,4 @@ const VimeoPlayer = ({autoplay = true, video, loop = true, mute = true, color, b
     ) : <span />
 }
 
-export default VimeoPlayer
+export default VideoPlayer

@@ -1,4 +1,4 @@
-import VimeoPlayer from "../../VimeoPlayer";
+import VideoPlayer from "../../VideoPlayer";
 import CollectionCard from "./CollectionCard";
 import Container from "../../Container";
 import {Divider, Grid, Typography} from "@mui/material";
@@ -38,7 +38,7 @@ const Collection = ({collection}: CollectionProps) => {
             </Grid>
             {collection.acf.video && (
                 <div style={{position: 'relative', marginTop: '24px'}}>
-                    <VimeoPlayer
+                    <VideoPlayer
                         video={collection.acf.video.video}
                         autoplay={false}
                         cover={collection.acf.video.video_poster}

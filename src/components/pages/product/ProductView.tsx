@@ -6,7 +6,7 @@ import {ProductAttribute} from "../../../../@types/woocommerce";
 import ProductSidebar from "./ProductSidebar";
 import Carousel from "../../Carousel";
 import ModalImage from "../../ModalImage";
-import VimeoPlayer from "../../VimeoPlayer";
+import VideoPlayer from "../../VideoPlayer";
 import {ShopProduct, Variation} from "../../../utils/products";
 import CrossSell from "./CrossSell";
 
@@ -42,7 +42,7 @@ const ProductView = ({product, relatedProducts, variations, colors, sizeGuide, i
     const images = (product.type === 'variable' && variationImage) ? [variationImage, ...product.images.slice(1)] : product.images
     const slides =  video ? [
         ...images.map((image) =>  <ModalImage url={image} alt={image.alt} />),
-        <VimeoPlayer video={video} autoplay={!videoCover && !isMobile} cover={videoCover} color="#fff" />
+        <VideoPlayer video={video} autoplay={!videoCover && !isMobile} cover={videoCover} color="#fff" />
     ] : images.map((image) =>  <ModalImage url={image} alt={image.alt} />)
     return (
         <div style={{
@@ -60,7 +60,7 @@ const ProductView = ({product, relatedProducts, variations, colors, sizeGuide, i
                         {!isMobile && (
                             <Grid xs={12} md={8} item>
                                 {images.map((image) =>  <ModalImage key={image.src} url={image} alt={image.alt} />)}
-                                {video && <VimeoPlayer video={video} autoplay={!videoCover && !isMobile} cover={videoCover} color="#fff" />}
+                                {video && <VideoPlayer video={video} autoplay={!videoCover && !isMobile} cover={videoCover} color="#fff" />}
                             </Grid>
                         )}
                         <Grid xs={12} md={4} item>

@@ -25,7 +25,6 @@
     "@tanstack/react-query": "^4.19.1",
     "@types/node-fetch": "^2.6.2",
     "@types/woocommerce__woocommerce-rest-api": "^1.0.2",
-    "@u-wave/react-vimeo": "^0.9.10",
     "@woocommerce/woocommerce-rest-api": "^1.0.1",
     "axios": "^1.2.0",
     "dompurify": "^2.4.1",
