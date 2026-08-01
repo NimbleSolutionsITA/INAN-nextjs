@@ -1,9 +1,27 @@
 import {Box, Drawer, Typography} from "@mui/material";
 import Button from "../Button";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+
+const ADVICE_KEY = 'inan_Advice';
+
+// Local calendar day the notice was dismissed on: the "OK" choice is kept
+// until the following day, then the notice shows again.
+const today = () => new Date().toDateString();
 
 const AdviceDrawer = () => {
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
+
+    useEffect(() => {
+        if (localStorage.getItem(ADVICE_KEY) !== today()) {
+            setOpen(true)
+        }
+    }, []);
+
+    const handleClose = () => {
+        localStorage.setItem(ADVICE_KEY, today())
+        setOpen(false)
+    }
+
     return (
         <Drawer
             variant="persistent"
@@ -11,7 +29,7 @@ const AdviceDrawer = () => {
             sx={{width: "100%"}}
             anchor="top"
             elevation={0}
-            onClose={() => setOpen(false)}
+            onClose={handleClose}
         >
             <Box sx={{display: "flex", backgroundColor: "black", padding: "8px", gap: '10px', justifyContent: "center", alignItems: "center"}}>
                 <Typography color="primary">
@@ -19,7 +37,7 @@ const AdviceDrawer = () => {
                 </Typography>
                 <Button
                     variant="outlined"
-                    onClick={() => setOpen(false)}
+                    onClick={handleClose}
                     sx={{width: {xs: "100%", md: "150px"}, height: "21px"}}
                 >
                     OK
