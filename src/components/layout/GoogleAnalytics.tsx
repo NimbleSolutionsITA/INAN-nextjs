@@ -8,6 +8,7 @@ import CookieDrawer from "./CookieDrawer";
 import CookieModal from "./CookieModal";
 import {useSelector} from "react-redux";
 import {RootState} from "../../redux/store";
+import AdviceDrawer from "./AdviceDrawer";
 
 const TAG_MANAGER_ID = process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID as string;
 export const COOKIE_CONSENT_NAME = process.env.NEXT_PUBLIC_COOKIE_CONSENT_NAME as string;
@@ -69,6 +70,7 @@ export default function GoogleAnalytics() {
 		<>
 			<GoogleTagManager gtmId={TAG_MANAGER_ID} />
 			<CookieDrawer open={drawerOpen} onConsentChange={onConsentChange} />
+			<AdviceDrawer />
 			{cookieModalOpen && <CookieModal onConsentChange={onConsentChange}/>}
 		</>
 	);
