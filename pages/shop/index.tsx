@@ -3,7 +3,7 @@ import Layout from "../../src/components/layout";
 import { getLayoutProps, getPageProps, ShopPageProps } from "../../src/utils/layout";
 import { BasePageProps } from "../../@types";
 import { getCategoriesProps } from "../../src/utils/shop";
-import { buildShopNavLinks } from "../../src/utils/helpers";
+import { buildShopNavLinks, SALES_ENABLED } from "../../src/utils/helpers";
 import GridView from "../../src/components/pages/shop/GridView";
 import { useRouter } from "next/router";
 import {getAttributes} from "../api/products/attributes";
@@ -65,7 +65,7 @@ export async function getStaticProps(context: { params?: { category?: string } }
         getCategoriesProps(),
         getPageProps('shop'),
         getAttributes(), // Fetch attributes from WooCommerce API
-        hasSaleProducts(),
+        SALES_ENABLED ? hasSaleProducts() : Promise.resolve(false),
     ]);
 
     const currentCategoryId = context.params?.category

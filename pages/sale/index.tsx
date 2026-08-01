@@ -7,7 +7,7 @@ import ProductCard from "../../src/components/pages/shop/ProductCard";
 import { getLayoutProps, getPageProps, useIsMobile } from "../../src/utils/layout";
 import { getSaleProducts, ShopProduct } from "../../src/utils/products";
 import { CategoryProps, getCategoriesProps } from "../../src/utils/shop";
-import { buildShopNavLinks } from "../../src/utils/helpers";
+import { buildShopNavLinks, SALES_ENABLED } from "../../src/utils/helpers";
 import { BasePageProps, WordpressPage } from "../../@types";
 
 export type SaleProps = Omit<BasePageProps, "page"> & {
@@ -72,6 +72,14 @@ const Sale: NextPage<SaleProps> = ({ layoutProps, productCategories, products, n
 export default Sale;
 
 export async function getStaticProps() {
+    // Sale section is off between campaigns: keep /sale unreachable.
+    if (!SALES_ENABLED) {
+        return {
+            notFound: true,
+            revalidate: 10,
+        };
+    }
+
     const [
         { layoutProps, news },
         productCategories,

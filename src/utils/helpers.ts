@@ -9,10 +9,17 @@ import type {CategoryProps, ShippingProps} from "./shop";
 export const SALE_LINK: LinkItem = { id: -1, name: 'SALES', slug: 'sale', url: '/sale' };
 
 /**
+ * Master switch for the sale section (the "SALES" nav tab and the /sale page).
+ * Turned off between campaigns: flip back to `true` when the next sale starts.
+ */
+export const SALES_ENABLED = false;
+
+/**
  * Build the shop sub-navigation links from the product categories, inserting
- * the "SALES" tab right after the "in-stock" tab — but only when there are
- * products currently on sale. Pure data transformation over props already
- * fetched server-side; safe to run in the client bundle.
+ * the "SALES" tab right after the "in-stock" tab — but only when the sale
+ * section is enabled and there are products currently on sale. Pure data
+ * transformation over props already fetched server-side; safe to run in the
+ * client bundle.
  */
 export const buildShopNavLinks = (categories: CategoryProps[], hasSale: boolean): LinkItem[] => {
     const links: LinkItem[] = categories.map(category => ({
@@ -22,7 +29,7 @@ export const buildShopNavLinks = (categories: CategoryProps[], hasSale: boolean)
         url: `/shop/${category.slug}`,
     }));
 
-    if (!hasSale) return links;
+    if (!SALES_ENABLED || !hasSale) return links;
 
     const inStockIndex = links.findIndex(link => link.slug === 'in-stock');
     if (inStockIndex === -1) {
