@@ -25,13 +25,13 @@ const HeaderWrapper = styled.div<{color: string, bgColor: string}>`
   width: 100%;
   color: ${({color}) => color};
   z-index: 2;
-  transition: fill .25s ease;
+  transition: fill .25s ease, top .225s ease;
   background-color: ${({bgColor}) => bgColor};
 `;
 
 const HeaderDesktop = ({ links, news, headerMenuItems, activeLink, pageTitle }: HeaderDesktopProps) => {
     const ref = useRef<HTMLDivElement>(null);
-    const { headerColor, sizeGuideOpen, open, bgColor, height } = useSelector((state: RootState) => state.header);
+    const { headerColor, sizeGuideOpen, open, bgColor, height, adviceHeight } = useSelector((state: RootState) => state.header);
     const dispatch = useDispatch()
     const { pathname } = useRouter();
 
@@ -42,8 +42,9 @@ const HeaderDesktop = ({ links, news, headerMenuItems, activeLink, pageTitle }: 
     }, [pathname, dispatch]);
 
     return (
-        <div style={{height: news?.length > 0 ? height + 30 : height, width: '100%'}}>
-            <HeaderWrapper color={headerColor} bgColor={bgColor} ref={ref}>
+        <div style={{height: (news?.length > 0 ? height + 30 : height) + adviceHeight, width: '100%'}}>
+            {/* pushed down by the advice notice, which is fixed on top of it */}
+            <HeaderWrapper style={{top: adviceHeight || undefined}} color={headerColor} bgColor={bgColor} ref={ref}>
                 <Container>
                     <LogoBar />
                     {!sizeGuideOpen && (

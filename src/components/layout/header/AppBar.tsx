@@ -64,7 +64,7 @@ const AppBar = ({children, navLinks, height = 94}: AppBarProps) => {
     const authenticated = useSelector((state: RootState) => state.auth.authenticated);
     const cartItems = useSelector((state: RootState) => state.cart.items);
     const wishlistItems = useSelector((state: RootState) => state.wishlist.items);
-    const {open, bgColor, headerColor, headerColorMobile} = useSelector((state: RootState) => state.header);
+    const {open, bgColor, headerColor, headerColorMobile, adviceHeight} = useSelector((state: RootState) => state.header);
     const dispatch = useDispatch()
 
     const handleOpenDrawer = (open: boolean) => {
@@ -92,9 +92,11 @@ const AppBar = ({children, navLinks, height = 94}: AppBarProps) => {
     const backgroundColor = colors.bg[device][drawerStatus]
 
     return (
-        <Box sx={{...styles.root, height}}>
+        <Box sx={{...styles.root, height: height + adviceHeight}}>
             <MuiAppBar position="fixed" square elevation={0} sx={{
                 backgroundColor,
+                top: adviceHeight, // leaves room for the advice notice on top
+                transition: 'top .225s ease',
                 zIndex: (theme) => theme.zIndex.modal+2,
             }}>
                 <>

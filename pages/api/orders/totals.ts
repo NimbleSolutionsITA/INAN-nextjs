@@ -42,12 +42,20 @@ export default async function handler(
         }
     } catch (error) {
         responseData.success = false
-        if (typeof error === "string") {
+        // WooCommerce rejects invalid coupons (expired, min-spend, sale-item
+        // exclusion, usage limit, ...) with an HTTP 400 whose real reason is in
+        // response.data.message. Axios only exposes a generic "Request failed
+        // with status code 400" on error.message, so surface the upstream body.
+        const wcError = error as { response?: { status?: number; data?: { message?: string } } }
+        const wcMessage = wcError?.response?.data?.message
+        if (wcMessage) {
+            responseData.error = wcMessage
+        } else if (typeof error === "string") {
             responseData.error = error
         } else if (error instanceof Error) {
             responseData.error = error.message
         }
-        res.status(500)
+        res.status(wcError?.response?.status ?? 500)
     }
     return res.json(responseData)
 }

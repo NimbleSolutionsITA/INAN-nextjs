@@ -92,8 +92,9 @@ const usePayPalFormProvider = (woocommerce: ShippingProps, cart: CartItem[]) => 
                 },
                 body: JSON.stringify(getOrderPayloadFromFields(fields, cart))
             })
-            const { totals, success } = await response.json();
+            const { totals, success, error } = await response.json();
             if (success) {
+                methods.clearErrors("coupon")
                 return {
                     subtotal: Number(totals.total) - Number(totals.tax) - Number(totals.shipping) + Number(totals.discount),
                     tax: Number(totals.tax),
@@ -101,6 +102,15 @@ const usePayPalFormProvider = (woocommerce: ShippingProps, cart: CartItem[]) => 
                     discount: Number(totals.discount),
                     total: Number(totals.total),
                 }
+            }
+            // Only report the failure against the coupon field when a coupon was
+            // actually entered — otherwise the totals request failed for another
+            // reason and shouldn't blame the coupon input.
+            if (fields.coupon) {
+                methods.setError("coupon", {
+                    type: "server",
+                    message: error || "This code cannot be applied to your cart.",
+                })
             }
             return  initialData
         },

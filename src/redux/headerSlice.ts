@@ -10,6 +10,7 @@ const initialState: Header = {
     sizeGuideOpen: false,
     height: 168,
     heightMobile: 94,
+    adviceHeight: 0,
     pageTitle: null,
     loading: false,
 }

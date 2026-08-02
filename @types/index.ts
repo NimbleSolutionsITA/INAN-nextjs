@@ -35,6 +35,7 @@ export type Cart = CartItem[] | undefined
 export type Header = {
     height: number
     heightMobile: number
+    adviceHeight: number
     headerColorMobile: string
     headerColor: string
     open: boolean
