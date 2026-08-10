@@ -16,10 +16,12 @@ type CoverContentProps = {
     hasNews?: boolean
 }
 
-const CoverWrapper = styled.div<{isMobile: boolean}>`
+const CoverWrapper = styled.div<{isMobile: boolean, adviceHeight: number}>`
   width: 100%;
   position: ${({isMobile}) => isMobile ? 'relative' : 'fixed'};
-  top: ${({isMobile}) => isMobile ? '-20px' : '0'};
+  /* on desktop it overlays the fixed header, so it follows the same offset */
+  top: ${({isMobile, adviceHeight}) => isMobile ? '-20px' : `${adviceHeight}px`};
+  transition: top .225s ease;
   z-index: 1;
   overflow: hidden;
   -ms-overflow: hidden;
@@ -41,10 +43,10 @@ const Cta = styled.div`
 `;
 
 const CoverContent = ({title, ctaLink, ctaText, color, colorMobile, hasNews}: CoverContentProps) => {
-    const { headerColor, headerColorMobile } = useSelector((state: RootState) => state.header);
+    const { headerColor, headerColorMobile, adviceHeight } = useSelector((state: RootState) => state.header);
     const isMobile = useIsMobile()
     return (
-        <CoverWrapper isMobile={isMobile}>
+        <CoverWrapper isMobile={isMobile} adviceHeight={adviceHeight}>
             <Container sx={{color: {xs: colorMobile ?? headerColorMobile, md: color ?? headerColor}}}>
                 <TitleWrapper>
                     {title && (
